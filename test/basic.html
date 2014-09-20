@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WhiteRabbit3D Basic Test</title>
+  <link rel="shortcut icon" href="images/wr3d.png" />
+  <style>
+    .canvas-container {
+      width: 700px;
+      height: 500px;
+      margin: 40px auto 0px auto;
+      background-color: gray;
+    }
+
+    .canvas-3d {
+      width: 700px;
+      height: 700px;
+    }
+  </style>
+
+  <script id="flat-vertex-shader" type="x-shader/x-vertex">
+    // A basic flat vertex shader, hello world'esque.
+    uniform mat4 projectionMatrix;
+    attribute vec2 position;
+    uniform float size;
+
+    void main() {
+      vec4 sizedPosition = vec4(position[0]*size, position[1]*size, 0.0, 1.0);
+      gl_Position = projectionMatrix*sizedPosition;
+    }
+  </script>
+
+  <script id="flat-fragment-shader" type="x-shader/x-fragment">
+    // A basic flat fragment shader, hello world'esque.
+
+    void main() {
+      gl_FragColor = vec4(1, 0, 0, 1);
+    }
+  </script>
+
+
+</head>
+<body>
+  <div class="canvas-container">
+    <canvas class="canvas-3d" width="700" height="700"/>
+  </div>
+
+  <script src="../src/lib/bower_components/jquery/dist/jquery.js"></script>
+  <script src="../src/lib/bower_components/gl-matrix/dist/gl-matrix.js"></script>
+  <script src="../src/lib/webgl-utils/webgl-utils.js"></script>
+  <script src="../src/wr3d/scene.js"></script>
+  <script src="../src/wr3d/dock.js"></script>
+  <script>
+    $().ready(function() {
+      var canvas = $('.canvas-3d');
+      var scene = Ngl.Scene();
+      canvas.data('scene', scene);
+      scene.initialize(canvas);
+
+      var surface = Ngl.Object3D({ x: 0.0, y: 0.0 }, 0.5);
+      scene.add(surface);
+
+      scene.render();
+    });
+  </script>
+
+</body>
+</html>

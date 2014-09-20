@@ -1,0 +1,11 @@
+{
+  "name": "whiterabbit3d",
+  "version": "0.0.1",
+  "dependencies": {
+    "jquery": "2.1.1",
+    "lodash": "2.4.1",
+    "javascript-state-machine": "2.3.0",
+    "jquery-ui": "1.11.1",
+    "gl-matrix": "git://github.com/toji/gl-matrix"
+  }
+}
