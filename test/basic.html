@@ -31,9 +31,10 @@
 
   <script id="flat-fragment-shader" type="x-shader/x-fragment">
     // A basic flat fragment shader, hello world'esque.
+    uniform lowp vec4 surfaceColor;
 
     void main() {
-      gl_FragColor = vec4(1, 0, 0, 1);
+      gl_FragColor = surfaceColor;
     }
   </script>
 
@@ -59,8 +60,28 @@
       var surface = Ngl.Object3D({ x: 0.0, y: 0.0 }, 0.5);
       scene.add(surface);
 
-      scene.render();
+      var mouseMoveX = 0; mouseMoveY = 0;
+      $(document).mousemove(function(event) {
+        var offset = canvas.offset();
+        mouseMoveX = event.pageX-offset.left;
+        mouseMoveY = event.pageY-offset.top;
+});
+
+      var renderCount = 0;
+      function render() {
+        requestAnimationFrame(render);
+
+        if(renderCount % 2) {
+          scene.render();
+        } else {
+          scene.getObjectUnderPixel(mouseMoveX, mouseMoveY);
+        }
+        renderCount++;
+      }
+
+      render();
     });
+
   </script>
 
 </body>
