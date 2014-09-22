@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>WhiteRabbit3D: Perspective calculation unit tests</title>
+  <link rel="shortcut icon" href="../images/wr3d.png" />
+
+  <link rel="stylesheet" href="../../src/lib/bower_components/qunit/qunit/qunit.css"/>
+  <script src="../../src/lib/bower_components/qunit/qunit/qunit.js"></script>
+  <script src="../../src/lib/bower_components/lodash/dist/lodash.js"></script>
+  <script src="../../src/lib/bower_components/gl-matrix/dist/gl-matrix.js"></script>
+  <script src="../../src/wr3d/perspective.js"></script>
+
+
+  <script>
+  QUnit.assert.near = function( actual, expected, eps, message ) {
+    var hasEps = (arguments.length > 2 && typeof eps !== "string");
+    var actualMessage = (hasEps ? message : eps);
+    var tolerance = 1.0e-6;
+    if(hasEps) {
+      tolerance = eps;
+    }
+    var diff = Math.abs(actual-expected);
+    QUnit.push(diff < tolerance, actual, expected, actualMessage);
+  };
+
+  mat4.value = function(matrix, row, col) {
+    return matrix[row+col*4];
+  }
+
+  test("Basic tests", function() {
+
+    var perspectMatrix = mat4.create();
+    var left     = -0.5;
+    var right    =  0.5;
+    var bottom   = -0.5;
+    var top      =  0.5;
+    var far      =  1.0;
+    var near     =  2.0;
+
+    var p = Ngl.Perspective();
+    p.perspective(perspectMatrix, left, right, bottom, top, near, far);
+    console.log('matrix = '+mat4.str(perspectMatrix));
+    equal(mat4.value(perspectMatrix, 3, 2), -1.0, '-1 in bottom row in third column');
+
+    
+    // QUnit.assert.near(signalSaw.Average(), 0.0, "Average of sawtooth -1.0 t0 1.0 signal");
+    // equal(search.GetIndexLow(), 0, "Initially zero");
+  });
+
+  </script>
+</head>
+<body>
+
+<div id="qunit"></div>
+
+</body>
+</html>

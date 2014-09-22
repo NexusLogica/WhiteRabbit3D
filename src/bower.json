@@ -6,6 +6,8 @@
     "lodash": "2.4.1",
     "javascript-state-machine": "2.3.0",
     "jquery-ui": "1.11.1",
-    "gl-matrix": "git://github.com/toji/gl-matrix"
+    "gl-matrix": "git://github.com/toji/gl-matrix",
+    "qunit": "1.15.0",
+    "angular": "1.2.25"
   }
 }

@@ -33,6 +33,8 @@ Ngl.Scene = function() {
   this.vu = vec3.create();
   this.vn = vec3.create();
   this.m  = mat4.create();
+  this.perpPerspective   = mat4.create();
+  this.selectPerspective = mat4.create();
 
   var initialize = function(canvas) {
     var canvasElement = $(canvas);
@@ -218,13 +220,9 @@ Ngl.Scene = function() {
     var b = vec3.dot(_this.vu, _this.va)*nOverD;
     var t = vec3.dot(_this.vu, _this.vc)*nOverD;
 
-    // Load the perpendicular projection.
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glFrustum(l, r, b, t, n, f);
+    perspective(_this.perpPerspective , l, r, b, t, n, f);
 
     // Rotate the projection to be non-perpendicular.
-
     mat4.identity(_this.m);
 
     _this.m[0] = _this.vr[0]; _this.m[4] = _this.vr[1]; _this.m[ 8] = _this.vr[2];
@@ -233,13 +231,12 @@ Ngl.Scene = function() {
 
     _this.m[15] = 1.0;
 
-    glMultMatrixf(_this.m);
+    mat4.multiply(_this.selectPerspective, _this.perspective, _this.m);
 
     // Move the apex of the frustum to the origin.
-
-    glTranslatef(-pe[0], -pe[1], -pe[2]);
-
-    glMatrixMode(GL_MODELVIEW);
+    _this.selectPerspective[12] -= pe[0];
+    _this.selectPerspective[13] -= pe[1];
+    _this.selectPerspective[14] -= pe[2];
   }
 
   return {

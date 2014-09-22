@@ -12,6 +12,8 @@ All Rights Reserved.
 */
 'use strict';
 
+var Ngl = Ngl || {};
+
 Ngl.Object3D = function(position, size) {
   var _this = this;
   _this.position = position;
