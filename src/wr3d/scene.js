@@ -24,7 +24,7 @@ Ngl.Scene = function() {
   this.worldTransform = mat4.create();
   this.cameraTransform = mat4.create();
   this.inverseCameraTransform = mat4.create();
-  mat4.translate(this.cameraTransform, this.cameraTransform, vec3.fromValues(0.0, 0.0, 3.0));
+  mat4.translate(this.cameraTransform, this.cameraTransform, vec3.fromValues(0.0, 0.0, 0.15 ));
 
   this.va = vec3.create();
   this.vb = vec3.create();
@@ -35,6 +35,8 @@ Ngl.Scene = function() {
   this.m  = mat4.create();
   this.projectionMatrix = mat4.create();
   this.selectProjectionMatrix = mat4.create();
+  this.selectTextureWidth = 1;
+  this.selectTextureHeight = 1;
 
   var initialize = function(canvas) {
     var canvasElement = $(canvas);
@@ -44,6 +46,9 @@ Ngl.Scene = function() {
     _this.nearFrustrum = 0.1;
     _this.farFrustrum = 10000.0;
     _this.verticalViewAngle = 30.0; // degrees
+
+    _this.selectTextureWidth = _this.width;
+    _this.selectTextureHeight = _this.height;
 
     _this.gl = canvasElement.get(0).getContext('experimental-webgl', { preserveDrawingBuffer: true } );
     var gl = _this.gl;
@@ -73,6 +78,14 @@ Ngl.Scene = function() {
 
     _this.perspective = Ngl.Perspective();
     _this.perspective.perspective(_this.projectionMatrix, _this.perspectiveParams);
+    _this.perspective.perspective(_this.selectProjectionMatrix, _this.perspectiveParams);
+//    mat4.frustum(_this.projectionMatrix, -xHalf, xHalf, -yHalf, yHalf, _this.nearFrustrum, _this.farFrustrum);
+//    console.log('from mine = '+mat4.str(_this.projectionMatrix));
+
+//    var verification = mat4.create();
+//    mat4.frustum(verification, -xHalf, xHalf, -yHalf, yHalf, _this.nearFrustrum, _this.farFrustrum);
+//    console.log('from mat4.frustum = '+mat4.str(verification));
+//    mat4.copy(_this.projectionMatrix, verification);
 
     // Create the selection framebuffer's texture.
     _this.selectionTexture = gl.createTexture();
@@ -81,7 +94,7 @@ Ngl.Scene = function() {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, _this.selectTextureWidth, _this.selectTextureHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
 
     // Selection frame buffer object.
     _this.selectionFBO = gl.createFramebuffer();
@@ -108,9 +121,10 @@ Ngl.Scene = function() {
     _this.time = (new Date()).getTime() - _this.initialTime;
 
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    //  gl.bindFramebuffer(gl.FRAMEBUFFER, _this.selectionFBO);
     gl.viewport(0, 0, _this.width, _this.height);
 
-      gl.clearColor(0.0, 1.0, 0.5, 1.0);
+    gl.clearColor(0.0, 1.0, 0.5, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.disable(gl.BLEND);
 
@@ -129,9 +143,8 @@ Ngl.Scene = function() {
     }
 
     _this.transformUpdated = false;
-
-//    gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, _this.selectionPixel);
-//    console.log('color='+_this.selectionPixel[0]+' '+_this.selectionPixel[1]+' '+_this.selectionPixel[2]);
+  //  gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, _this.selectionPixel);
+  //  console.log('color='+_this.selectionPixel[0]+' '+_this.selectionPixel[1]+' '+_this.selectionPixel[2]);
   };
 
   var getObjectUnderPixel = function(x, y) {
@@ -141,9 +154,10 @@ Ngl.Scene = function() {
       _this.renderForSelect = true;
 
       gl.bindFramebuffer(gl.FRAMEBUFFER, _this.selectionFBO);
-      gl.viewport(0, 0, 1, 1);
+//      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      gl.viewport(0, 0, _this.width, _this.height);
 
-      _this.perspective.pixelPerspective(_this.selectProjectionMatrix, _this.perspectiveParams, _this.viewPort, { x: x, y: y });
+//      _this.perspective.pixelPerspective(_this.selectProjectionMatrix, _this.perspectiveParams, _this.viewPort, { x: x, y: y });
 
       gl.clearColor(0.0, 0.5+0.5*Math.sin(_this.time/5000), 0.5+0.5*Math.cos(_this.time/5000), 1.0);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -164,8 +178,8 @@ Ngl.Scene = function() {
       }
 
       _this.transformUpdated = false;
-      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, _this.selectionPixel);
-      console.log('color='+_this.selectionPixel[0]+' '+_this.selectionPixel[1]+' '+_this.selectionPixel[2]);
+      gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, _this.selectionPixel);
+      console.log('x,y = '+x+','+y+'   color='+_this.selectionPixel[0]+' '+_this.selectionPixel[1]+' '+_this.selectionPixel[2]);
     }
   };
 

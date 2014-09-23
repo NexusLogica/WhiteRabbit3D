@@ -59,10 +59,10 @@
       canvas.data('scene', scene);
       scene.initialize(canvas);
 
-      var surface = Ngl.Object3D({ x: 0.0, y: 0.0 }, 0.5);
+      var surface = Ngl.Object3D({ x: 0.0, y: 0.0 }, .05);
       scene.add(surface);
 
-      var mouseMoveX = 0; mouseMoveY = 0;
+      var mouseMoveX = -1; mouseMoveY = -1, previousX = -1, previousY = -1;
       $(document).mousemove(function(event) {
         var offset = canvas.offset();
         mouseMoveX = event.pageX-offset.left;
@@ -76,7 +76,11 @@
         if(renderCount % 2) {
           scene.render(mouseMoveX, mouseMoveY);
         } else {
-          scene.getObjectUnderPixel(mouseMoveX, mouseMoveY);
+//          if(previousX !== mouseMoveX || previousY !== mouseMoveY) {
+            scene.getObjectUnderPixel(mouseMoveX, mouseMoveY);
+//          }
+          previousX = mouseMoveX;
+          previousY = mouseMoveY;
         }
         renderCount++;
       }

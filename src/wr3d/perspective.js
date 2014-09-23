@@ -17,6 +17,11 @@ var Ngl = Ngl || {};
 Ngl.Perspective = function() {
 
   // Work arrays.
+  var _this = this;
+  this.pa = vec3.create();
+  this.pb = vec3.create();
+  this.pc = vec3.create();
+  this.pe = vec3.create();
   this.va = vec3.create();
   this.vb = vec3.create();
   this.vc = vec3.create();
@@ -27,6 +32,13 @@ Ngl.Perspective = function() {
   this.perpPerspective   = mat4.create(); // The perpendicular perspective - a working matrix.
 
 
+  /***
+   *
+   * @param out
+   * @param box
+   * @param viewport
+   * @param pixel
+   */
 
   var pixelPerspective = function(
     out,      // mat4 that will contain the perspective matrix
@@ -41,7 +53,12 @@ Ngl.Perspective = function() {
     pixelBox.right = pixelBox.left+pixelWidth;
     pixelBox.bottom = pixelBox.bottom+pixel.y*pixelHeight;
     pixelBox.top = pixelBox.bottom+pixelHeight;
-    perspective(out, pixelBox);
+
+    vec3.set(_this.pa, pixelBox.left, pixelBox.bottom, pixelBox.near);
+    vec3.set(_this.pb, pixelBox.right, pixelBox.bottom, pixelBox.near);
+    vec3.set(_this.pc, pixelBox.left, pixelBox.top, pixelBox.near);
+    vec3.set(_this.pe, 0.0, 0.0, 0.0);
+    offsetPerspective(out, _this.pa, _this.pb, _this.pc, _this.pe, pixelBox.near, pixelBox.far);
   };
 
   var perspective = function(
@@ -63,7 +80,7 @@ Ngl.Perspective = function() {
     out[12] = 0.0;
     out[13] = 0.0;
     out[14] = -2.0*box.far*box.near/(box.far-box.near);
-    out[16] = 0.0;
+    out[15] = 0.0;
   };
 
   /***
@@ -109,7 +126,7 @@ Ngl.Perspective = function() {
     var b = vec3.dot(_this.vu, _this.va)*nOverD;
     var t = vec3.dot(_this.vu, _this.vc)*nOverD;
 
-    perspective(_this.perpPerspective , l, r, b, t, n, f);
+    perspective(_this.perpPerspective , { left: l, right: r, bottom: b, top: t, near: n, far: f } );
 
     // Rotate the projection to be non-perpendicular.
     mat4.identity(_this.m);
@@ -120,7 +137,7 @@ Ngl.Perspective = function() {
 
     _this.m[15] = 1.0;
 
-    mat4.multiply(out, _this.perspective, _this.m);
+    mat4.multiply(out, _this.perpPerspective, _this.m);
 
     // Move the apex of the frustum to the origin.
     out[12] -= pe[0];

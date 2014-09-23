@@ -58,17 +58,9 @@ Ngl.Object3D = function(position, size) {
       mat4.multiply(_this.projectionModelView, scene.projectionMatrix, _this.worldTransform);
     }
 
-    if(scene.renderForSelect) {
-      mat4.multiply(_this.worldTransform, parent.worldTransform,  _this.transform);
-      mat4.multiply(_this.selectProjectionModelView, scene.selectProjectionMatrix, _this.worldTransform);
-    } else {
-      mat4.multiply(_this.worldTransform, parent.worldTransform,  _this.transform);
-      mat4.multiply(_this.projectionModelView, scene.projectionMatrix, _this.worldTransform);
-    }
-
     gl.useProgram(_this.program);
     gl.uniform1f(_this.sizeLocation, _this.size);
-    gl.uniformMatrix4fv(_this.projectionMatrixLocation, gl.FALSE, scene.renderForSelect ? _this.selectProjectionModelView : _this.projectionModelView);
+    gl.uniformMatrix4fv(_this.projectionMatrixLocation, gl.FALSE, _this.projectionModelView);
     gl.uniform4fv(_this.surfaceColorLocation, scene.renderForSelect ? _this.selectColor : _this.color);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, _this.buffer);
