@@ -30,20 +30,19 @@
 
   test("Basic tests", function() {
 
-    var perspectMatrix = mat4.create();
-    var left     = -0.5;
-    var right    =  0.5;
-    var bottom   = -0.5;
-    var top      =  0.5;
-    var far      =  1.0;
-    var near     =  2.0;
+    var perspectiveMatrix = mat4.create();
+    var box = { left: -0.5, right: 0.5, bottom: -0.5, top: 0.5, near: 1.0, far: 2.0 };
 
     var p = Ngl.Perspective();
-    p.perspective(perspectMatrix, left, right, bottom, top, near, far);
-    console.log('matrix = '+mat4.str(perspectMatrix));
-    equal(mat4.value(perspectMatrix, 3, 2), -1.0, '-1 in bottom row in third column');
+    p.perspective(perspectiveMatrix, box);
+    console.log('matrix = '+mat4.str(perspectiveMatrix));
+    equal(mat4.value(perspectiveMatrix, 3, 2), -1.0, '-1 in bottom row in third column');
 
-    
+    var comparisonMatrix = mat4.create();
+    mat4.frustum(comparisonMatrix, box.left, box.right, box.bottom, box.top, box.near, box.far);
+    console.log('comparison = '+mat4.str(comparisonMatrix));
+
+
     // QUnit.assert.near(signalSaw.Average(), 0.0, "Average of sawtooth -1.0 t0 1.0 signal");
     // equal(search.GetIndexLow(), 0, "Initially zero");
   });

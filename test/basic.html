@@ -46,10 +46,12 @@
   </div>
 
   <script src="../src/lib/bower_components/jquery/dist/jquery.js"></script>
+  <script src="../src/lib/bower_components/lodash/dist/lodash.js"></script>
   <script src="../src/lib/bower_components/gl-matrix/dist/gl-matrix.js"></script>
   <script src="../src/lib/webgl-utils/webgl-utils.js"></script>
   <script src="../src/wr3d/scene.js"></script>
   <script src="../src/wr3d/dock.js"></script>
+  <script src="../src/wr3d/perspective.js"></script>
   <script>
     $().ready(function() {
       var canvas = $('.canvas-3d');
@@ -65,14 +67,14 @@
         var offset = canvas.offset();
         mouseMoveX = event.pageX-offset.left;
         mouseMoveY = event.pageY-offset.top;
-});
+      });
 
-      var renderCount = 0;
+      var renderCount = 1;
       function render() {
         requestAnimationFrame(render);
 
         if(renderCount % 2) {
-          scene.render();
+          scene.render(mouseMoveX, mouseMoveY);
         } else {
           scene.getObjectUnderPixel(mouseMoveX, mouseMoveY);
         }

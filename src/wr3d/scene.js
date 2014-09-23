@@ -33,8 +33,8 @@ Ngl.Scene = function() {
   this.vu = vec3.create();
   this.vn = vec3.create();
   this.m  = mat4.create();
-  this.perpPerspective   = mat4.create();
-  this.selectPerspective = mat4.create();
+  this.projectionMatrix = mat4.create();
+  this.selectProjectionMatrix = mat4.create();
 
   var initialize = function(canvas) {
     var canvasElement = $(canvas);
@@ -66,7 +66,13 @@ Ngl.Scene = function() {
 
     // Set up the camera.
     _this.projectionMatrix = mat4.create();
-    mat4.perspective(_this.projectionMatrix, _this.verticalViewAngle*Math.PI/180.0, _this.width/_this.height, _this.nearFrustrum, _this.farFrustrum);
+    var yHalf = _this.nearFrustrum*Math.tan(_this.verticalViewAngle*Math.PI/180.0);
+    var xHalf = yHalf*_this.width/_this.height;
+    _this.perspectiveParams = { left: -xHalf, right: xHalf, bottom: -yHalf, top: yHalf, near: _this.nearFrustrum, far: _this.farFrustrum };
+    _this.viewPort = { width: _this.width, height: _this.height };
+
+    _this.perspective = Ngl.Perspective();
+    _this.perspective.perspective(_this.projectionMatrix, _this.perspectiveParams);
 
     // Create the selection framebuffer's texture.
     _this.selectionTexture = gl.createTexture();
@@ -95,7 +101,7 @@ Ngl.Scene = function() {
     _this.children.push(obj);
   };
 
-  var render = function() {
+  var render = function(x, y) {
 
     var gl = _this.gl;
     _this.renderForSelect = false;
@@ -104,6 +110,7 @@ Ngl.Scene = function() {
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.viewport(0, 0, _this.width, _this.height);
 
+      gl.clearColor(0.0, 1.0, 0.5, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.disable(gl.BLEND);
 
@@ -122,6 +129,9 @@ Ngl.Scene = function() {
     }
 
     _this.transformUpdated = false;
+
+//    gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, _this.selectionPixel);
+//    console.log('color='+_this.selectionPixel[0]+' '+_this.selectionPixel[1]+' '+_this.selectionPixel[2]);
   };
 
   var getObjectUnderPixel = function(x, y) {
@@ -131,11 +141,12 @@ Ngl.Scene = function() {
       _this.renderForSelect = true;
 
       gl.bindFramebuffer(gl.FRAMEBUFFER, _this.selectionFBO);
-      gl.viewport(0, 0, 700, 700);
-//      gl.viewport(10, 0, 700, 700);
+      gl.viewport(0, 0, 1, 1);
 
-//      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-      gl.clear(gl.COLOR_BUFFER_BIT);
+      _this.perspective.pixelPerspective(_this.selectProjectionMatrix, _this.perspectiveParams, _this.viewPort, { x: x, y: y });
+
+      gl.clearColor(0.0, 0.5+0.5*Math.sin(_this.time/5000), 0.5+0.5*Math.cos(_this.time/5000), 1.0);
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       gl.disable(gl.BLEND);
 
       if(_this.cameraTransformUpdated) {
@@ -154,90 +165,9 @@ Ngl.Scene = function() {
 
       _this.transformUpdated = false;
       gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, _this.selectionPixel);
-      var value = _this.selectionPixel[0]+_this.selectionPixel[1]+_this.selectionPixel[2];
       console.log('color='+_this.selectionPixel[0]+' '+_this.selectionPixel[1]+' '+_this.selectionPixel[2]);
     }
-  }
-
-  var perspective = function(
-    out,    // mat4 that will contain the perspective matrix
-    left,   // x min
-    right,  // x max
-    bottom, // y min
-    top,    // y max
-    n,      // near plane
-    f       // far plane
-  ) {
-    out[0]  = 2.0*n/(right-left);
-    out[1]  = 0.0;
-    out[2]  = 0.0;
-    out[3]  = 0.0;
-    out[4]  = 0.0;
-    out[5]  = 2.0*n/(top-bottom);
-    out[6]  = 0.0;
-    out[7]  = 0.0;
-    out[8]  = (right+left)/(right-left);
-    out[9]  = (top+bottom)/(top-bottom);
-    out[10] = -(f+n)/(f-n);
-    out[11] = -1.0;
-    out[12] = 0.0;
-    out[13] = 0.0;
-    out[14] = -2.0*f*n/(f-n);
-    out[16] = 0.0;
-  }
-
-
-  var offsetPerspective = function(
-    out, // mat4 that will contain the perspective matrix
-    pa,  // vec3 - lower left position
-    pb,  // vec3 - lower right position
-    pc,  // vec3 - upper left position
-    pe,  // vec3 - eye position (i.e. the origin)
-    n,   // near plane distance
-    f    // far plane distance
-  ) {
-    // Compute an orthonormal basis for the screen.
-    vec3.subtract(_this.vr, pb, pa);
-    vec3.subtract(_this.vu, pc, pa);
-
-    vec3.normalize(_this.vr, _this.vr);
-    vec3.normalize(_this.vu, _this.vu);
-    vec3.cross(_this.vn, _this.vr, _this.vu);
-    vec3.normalize(_this.vn, _this.vn);
-
-    // Compute the screen corner vectors.
-    vec3.subtract(_this.va, pa, pe);
-    vec3.subtract(_this.vb, pb, pe);
-    vec3.subtract(_this.vc, pc, pe);
-
-    // Find the distance from the eye to screen plane.
-    var d = -vec3.dot(_this.va, _this.vn);
-
-    // Find the extent of the perpendicular projection.
-    var nOverD = n/d;
-    var l = vec3.dot(_this.vr, _this.va)*nOverD;
-    var r = vec3.dot(_this.vr, _this.vb)*nOverD;
-    var b = vec3.dot(_this.vu, _this.va)*nOverD;
-    var t = vec3.dot(_this.vu, _this.vc)*nOverD;
-
-    perspective(_this.perpPerspective , l, r, b, t, n, f);
-
-    // Rotate the projection to be non-perpendicular.
-    mat4.identity(_this.m);
-
-    _this.m[0] = _this.vr[0]; _this.m[4] = _this.vr[1]; _this.m[ 8] = _this.vr[2];
-    _this.m[1] = _this.vu[0]; _this.m[5] = _this.vu[1]; _this.m[ 9] = _this.vu[2];
-    _this.m[2] = _this.vn[0]; _this.m[6] = _this.vn[1]; _this.m[10] = _this.vn[2];
-
-    _this.m[15] = 1.0;
-
-    mat4.multiply(_this.selectPerspective, _this.perspective, _this.m);
-
-    // Move the apex of the frustum to the origin.
-    _this.selectPerspective[12] -= pe[0];
-    _this.selectPerspective[13] -= pe[1];
-    _this.selectPerspective[14] -= pe[2];
-  }
+  };
 
   return {
     initialize: initialize,

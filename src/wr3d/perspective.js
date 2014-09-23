@@ -26,32 +26,45 @@ Ngl.Perspective = function() {
   this.m  = mat4.create();
   this.perpPerspective   = mat4.create(); // The perpendicular perspective - a working matrix.
 
-  var perspective = function(
-    out,    // mat4 that will contain the perspective matrix
-    left,   // x min
-    right,  // x max
-    bottom, // y min
-    top,    // y max
-    n,      // near plane
-    f       // far plane
+
+
+  var pixelPerspective = function(
+    out,      // mat4 that will contain the perspective matrix
+    box,      // { left, right, bottom, top, near, far },
+    viewport, // { width, height } - width and height of the display/viewport in pixels
+    pixel     // { x, y }
   ) {
-    out[0]  = 2.0*n/(right-left);
+    var pixelBox = _.clone(box);
+    var pixelWidth  = (box.right-box.left)/viewport.width;
+    var pixelHeight = (box.top-box.bottom)/viewport.height;
+    pixelBox.left = pixelBox.left+pixel.x*pixelWidth;
+    pixelBox.right = pixelBox.left+pixelWidth;
+    pixelBox.bottom = pixelBox.bottom+pixel.y*pixelHeight;
+    pixelBox.top = pixelBox.bottom+pixelHeight;
+    perspective(out, pixelBox);
+  };
+
+  var perspective = function(
+    out,  // mat4 that will contain the perspective matrix
+    box   // { left, right, bottom, top, near, far }
+  ) {
+    out[0]  = 2.0*box.near/(box.right-box.left);
     out[1]  = 0.0;
     out[2]  = 0.0;
     out[3]  = 0.0;
     out[4]  = 0.0;
-    out[5]  = 2.0*n/(top-bottom);
+    out[5]  = 2.0*box.near/(box.top-box.bottom);
     out[6]  = 0.0;
     out[7]  = 0.0;
-    out[8]  = (right+left)/(right-left);
-    out[9]  = (top+bottom)/(top-bottom);
-    out[10] = -(f+n)/(f-n);
+    out[8]  = (box.right+box.left)/(box.right-box.left);
+    out[9]  = (box.top+box.bottom)/(box.top-box.bottom);
+    out[10] = -(box.far+box.near)/(box.far-box.near);
     out[11] = -1.0;
     out[12] = 0.0;
     out[13] = 0.0;
-    out[14] = -2.0*f*n/(f-n);
+    out[14] = -2.0*box.far*box.near/(box.far-box.near);
     out[16] = 0.0;
-  }
+  };
 
   /***
    * This fills the mat4 output matrix 'out' with the offset perspective.
@@ -113,10 +126,11 @@ Ngl.Perspective = function() {
     out[12] -= pe[0];
     out[13] -= pe[1];
     out[14] -= pe[2];
-  }
+  };
 
   return {
     perspective: perspective,
+    pixelPerspective: pixelPerspective,
     offsetPerspective: offsetPerspective
   }
 };
