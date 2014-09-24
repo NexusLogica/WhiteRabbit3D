@@ -51,15 +51,15 @@
   <script src="../src/lib/webgl-utils/webgl-utils.js"></script>
   <script src="../src/wr3d/scene.js"></script>
   <script src="../src/wr3d/dock.js"></script>
-  <script src="../src/wr3d/perspective.js"></script>
+  <script src="../src/wr3d/rectangular-surface.js"></script>
   <script>
     $().ready(function() {
       var canvas = $('.canvas-3d');
-      var scene = Ngl.Scene();
+      var scene = new Ngl.Scene();
       canvas.data('scene', scene);
       scene.initialize(canvas);
 
-      var surface = Ngl.Object3D({ x: 0.0, y: 0.0 }, .05);
+      var surface = new Ngl.RectangularSurface(0.05, 0.05);
       scene.add(surface);
 
       var mouseMoveX = -1; mouseMoveY = -1, previousX = -1, previousY = -1;
@@ -70,6 +70,7 @@
       });
 
       var renderCount = 1;
+
       function render() {
         requestAnimationFrame(render);
 
