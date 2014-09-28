@@ -1,0 +1,57 @@
+/**********************************************************************
+
+File     : core.scss
+Project  : N Simulator Library
+Purpose  : Source file for a core SCSS/CSS file.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+
+$primary-font: "Raleway", sans-serif;
+$secondary-font: "Raleway", sans-serif;
+
+$thin: 100;
+$font-size-large: 40px;
+$font-size-med: 22px;
+$font-size-avg: 16px;
+$font-size-text: 16px;
+$font-size-small: 12px;
+
+$text-color: #000000;
+$text-color-med: #888888;
+$text-color-light: #cccccc;
+$text-color-success: dodgerblue;
+$text-color-error: #fa1e20;
+
+$separator-color-light: #eeeeee;
+
+$color-darkest: #153450;
+$color-dark: #294052;
+$color-med-dark: #447294;
+$color-med: #8fbcdb;
+$color-light: #f4d6bc;
+$color-lightest: #f8e4cc;
+$color-error: #eb881e;
+
+//$color-space: #F8F2EA
+$color-space: lighten($color-lightest, 9.5%);
+$color-body: lighten($color-lightest, 11%);
+$color-gray: gainsboro;
+$color-light-gray: lighten($color-gray, 11%);
+$color-dialog: lighten($color-lightest, 8.5%);
+
+$drop-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2);
+
+$placeholder-color: #dddddd;
+
+$padding-med: 20px;
+
+// Placeholder text color.
+input::-webkit-input-placeholder  { color: $placeholder-color; }
+input::-moz-placeholder           { color: $placeholder-color; }
+input::-moz-placeholder           { color: $placeholder-color; }
+input:-ms-input-placeholder       { color: $placeholder-color; }

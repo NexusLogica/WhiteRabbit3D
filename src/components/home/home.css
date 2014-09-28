@@ -1,0 +1,128 @@
+/**********************************************************************
+
+File     : home.scss
+Project  : N Simulator Library
+Purpose  : Source file for home component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/27
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+/**********************************************************************
+
+File     : core.scss
+Project  : N Simulator Library
+Purpose  : Source file for a core SCSS/CSS file.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+input::-webkit-input-placeholder {
+  color: #dddddd; }
+
+input::-moz-placeholder {
+  color: #dddddd; }
+
+input::-moz-placeholder {
+  color: #dddddd; }
+
+input:-ms-input-placeholder {
+  color: #dddddd; }
+
+/**********************************************************************
+
+File     : mixins.scss
+Project  : N Simulator Library
+Purpose  : Source file for a mixin SCSS/CSS file.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+/**********************************************************************
+
+File     : common.scss
+Project  : Home
+Purpose  : CSS file for a home page.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/27
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+ul::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 11px;
+  height: 11px;
+  background-color: #f8f8f8; }
+
+ul::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  border: 2px solid white;
+  background-color: #c1d5e3; }
+
+body {
+  background-color: #fffefd;
+  margin: 0px;
+  padding: 0px;
+  font-family: 'Cabin', sans-serif; }
+  body .placeholder {
+    color: #cccccc; }
+
+.n-component {
+  background-color: #fefbf7;
+  border: #f4d6bc 1px solid;
+  border-top-style: none;
+  border-radius: 0px 0px 5px 5px;
+  padding-top: 20px; }
+
+.n-alert {
+  display: none;
+  width: 400px;
+  background-color: #fdf8f2;
+  border-color: #447294;
+  -webkit-box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2); }
+
+.pi-error {
+  border-color: #eb881e; }
+
+.home .container {
+  width: 100%;
+  clear: both; }
+.home .title-container {
+  position: absolute;
+  right: 20px;
+  font-family: 'Raleway', sans-serif;
+  font-weight: 100;
+  margin-top: 20px;
+  text-align: right; }
+.home .pre-title {
+  vertical-align: top;
+  font-weight: 400;
+  font-size: 16px;
+  color: gray; }
+.home .top-title {
+  vertical-align: top;
+  top: 10px;
+  color: white;
+  font-size: 60px;
+  font-weight: 400;
+  z-index: 100; }
+.home .home-title {
+  z-index: 100;
+  position: absolute;
+  color: silver;
+  opacity: 0.5;
+  font-weight: 100;
+  font-size: 80px;
+  font-family: 'Raleway', sans-serif; }

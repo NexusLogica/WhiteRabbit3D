@@ -60,6 +60,11 @@ Ngl.Scene.prototype = {
     this.simpleShader.fragment = createShaderFromScriptElement(gl, 'flat-fragment-shader');
     this.simpleShader.program = createProgram(gl, [this.simpleShader.vertex, this.simpleShader.fragment]);
 
+    this.textureShader = {};
+    this.textureShader.vertex = createShaderFromScriptElement(gl, 'texture-vertex-shader');
+    this.textureShader.fragment = createShaderFromScriptElement(gl, 'texture-fragment-shader');
+    this.textureShader.program = createProgram(gl, [this.textureShader.vertex, this.textureShader.fragment]);
+
     gl.cullFace(gl.BACK);
     gl.enable(gl.CULL_FACE);
     gl.clearColor(0.0, 0.0, 1.0, 1.0);

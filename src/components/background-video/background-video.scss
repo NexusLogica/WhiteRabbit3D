@@ -1,0 +1,48 @@
+/**********************************************************************
+
+File     : background-video.scss
+Project  : N Simulator Library
+Purpose  : Source file for administration component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+
+@import '../../appearance/css/core.scss';
+@import '../../appearance/css/mixins.scss';
+@import '../../appearance/css/common.scss';
+
+.background-video {
+
+  .clipping-div {
+    background-color: #2B374D;
+    position:absolute;
+    overflow:hidden;
+    height: 800px;
+    width: 100%;
+    z-index: 1;
+
+    .overlay {
+      vertical-align: top;
+      color: white;
+      width: 100%;
+      position: absolute;
+      top: 0px;
+      height: 100%;
+      z-index: 100;
+      background-color: rgba(44,62,80 , 0.2 );
+      background-image: url("../../appearance/resources/images/pattern-overlay.png");
+      background-repeat: repeat;
+    }
+
+    .player {
+      position: absolute;
+      top: -50px;
+      z-index: 1;
+      height: 800px;
+    }
+  }
+};

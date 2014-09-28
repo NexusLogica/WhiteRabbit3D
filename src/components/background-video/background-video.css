@@ -1,0 +1,410 @@
+/**********************************************************************
+
+File     : background-video.scss
+Project  : N Simulator Library
+Purpose  : Source file for administration component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+/**********************************************************************
+
+File     : core.scss
+Project  : N Simulator Library
+Purpose  : Source file for a core SCSS/CSS file.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+input::-webkit-input-placeholder {
+  color: #dddddd; }
+
+input::-moz-placeholder {
+  color: #dddddd; }
+
+input::-moz-placeholder {
+  color: #dddddd; }
+
+input:-ms-input-placeholder {
+  color: #dddddd; }
+
+/**********************************************************************
+
+File     : mixins.scss
+Project  : N Simulator Library
+Purpose  : Source file for a mixin SCSS/CSS file.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+/**********************************************************************
+
+File     : common.scss
+Project  : N Simulator Library
+Purpose  : CSS file for Pi neurons and other graphic elements.
+Revisions: Original definition by Lawrence Gunn.
+           2014/02/26
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+.n-large-title, .n-large-title-light {
+  font-weight: 100;
+  font-size: 22px;
+  font-family: "Raleway", sans-serif;
+  color: #294052;
+  font-size: 40px;
+  color: #153450; }
+
+.n-large-title-light {
+  color: #fffefd; }
+
+.n-med-title, .n-med-title-light {
+  font-weight: 100;
+  font-size: 22px;
+  font-family: "Raleway", sans-serif;
+  color: #294052;
+  font-weight: normal;
+  font-size: 22px;
+  color: #153450; }
+
+.n-med-title-light {
+  color: #fffefd; }
+
+.n-small-title {
+  font-weight: 100;
+  font-size: 22px;
+  font-family: "Raleway", sans-serif;
+  color: #294052;
+  font-size: 16px;
+  padding-bottom: 20px; }
+
+ul::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 11px;
+  height: 11px;
+  background-color: #f8f8f8; }
+
+ul::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  border: 2px solid white;
+  background-color: #c1d5e3; }
+
+.form-vertical input {
+  display: block; }
+
+body {
+  background-color: #fffefd; }
+  body .placeholder {
+    color: #cccccc; }
+
+.fadex {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%; }
+
+.fadex.ng-enter,
+.fadex.ng-leave {
+  -webkit-transition: all 2s ease;
+  -moz-transition: all 2s ease;
+  -o-transition: all 2s ease;
+  transition: all 2s ease; }
+
+.fadex.ng-enter {
+  opacity: 0; }
+
+.fadex.ng-enter {
+  top: 100%; }
+
+.fadex.ng-enter-active {
+  top: 0; }
+
+.fadex.ng-leave {
+  top: 0; }
+
+.fadex.ng-leave-active {
+  top: -100%; }
+
+ /*.fadex.ng-enter-active {
+    opacity: 1;
+}
+.fadex.ng-leave {
+    opacity: 1;
+}
+.fadex.ng-leave-active {
+    opacity: 0;
+}
+*/
+.n-component {
+  background-color: #fefbf7;
+  border: #f4d6bc 1px solid;
+  border-top-style: none;
+  border-radius: 0px 0px 5px 5px;
+  padding-top: 20px; }
+
+.n-alert {
+  display: none;
+  width: 400px;
+  background-color: #fdf8f2;
+  border-color: #447294;
+  -webkit-box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2); }
+
+.pi-error {
+  border-color: #eb881e; }
+
+.pi-body .modal-dialog .modal-header {
+  padding: 4px 12px; }
+.pi-body .modal-dialog .modal-body {
+  padding: 10px 12px; }
+.pi-body .modal-dialog .modal-footer {
+  border-top: none;
+  padding: 10px 12px; }
+
+.item-set {
+  margin-bottom: 8px;
+  height: 20px; }
+  .item-set .item-label {
+    text-align: right; }
+
+.footer-message {
+  width: 335px;
+  text-align: left;
+  margin-top: 14px;
+  float: left;
+  color: black; }
+  .footer-message.success {
+    color: dodgerblue; }
+  .footer-message.error {
+    color: #FA1E20; }
+
+.tooltip.top .tooltip-inner {
+  background-color: #ffa500;
+  color: white; }
+.tooltip.top .tooltip-arrow {
+  border-top-color: #ffa500; }
+
+.pi-canvas {
+  display: block;
+  border: 1px solid lightgray;
+  fill: #fffdfa;
+  rx: 20;
+  -webkit-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03);
+  -moz-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03);
+  box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03); }
+  .pi-canvas svg .axis {
+    stroke: silver;
+    stroke-width: 0.5; }
+  .pi-canvas svg text {
+    alignment-baseline: hanging; }
+
+.blah {
+  stroke: lightskyeblue;
+  stroke: darkgray;
+  stroke: darkseagreen;
+  stroke: gainsboro;
+  stroke: lavendar;
+  stroke: lightblue;
+  stroke: lightcoral;
+  stroke: lightgray;
+  stroke: lightpink;
+  stroke: lightsteelblue;
+  stroke: mistyrose;
+  stroke: moccasin;
+  stroke: papayawhip;
+  stroke: peachpuff;
+  stroke: pink;
+  stroke: powderblue;
+  stroke: skyblue;
+  stroke: thistle;
+  stroke: wheat; }
+
+.pi-connection {
+  stroke-width: 1.75; }
+  .pi-connection.pi-excitatory-connection {
+    stroke: gainsboro; }
+  .pi-connection.pi-inhibitory-connection {
+    stroke: #ffdae0; }
+  .pi-connection.pi-spine-connection {
+    stroke: #b3e0f2; }
+  .pi-connection.pi-gap-junction-connection {
+    stroke: #ffdca2;
+    stroke-width: 1.5; }
+  .pi-connection.pi-electrode-connection {
+    stroke: #d07ad0;
+    stroke-width: 1.5; }
+
+.pi-connection-end {
+  stroke: powderblue;
+  stroke-width: 1.5;
+  fill: white;
+  stroke: #999999; }
+  .pi-connection-end.pi-excitatory-connection {
+    stroke: gainsboro; }
+  .pi-connection-end.pi-inhibitory-connection {
+    stroke: #ffdae0;
+    fill: #ffe9ed; }
+  .pi-connection-end.pi-spine-connection {
+    stroke: #b3e0f2; }
+  .pi-connection-end.pi-gap-junction-connection {
+    stroke: #ffdca2;
+    fill: #ffdca2; }
+  .pi-connection-end.pi-electrode-connection {
+    stroke: #d07ad0;
+    fill: #d07ad0; }
+
+.pi-neuron .compartment {
+  stroke: #999999;
+  stroke-width: 1.75px;
+  stroke-linejoin: round;
+  transition-property: stroke, stroke-width;
+  transition-duration: 0.5s; }
+  .pi-neuron .compartment.selected {
+    stroke-width: 2.25px;
+    stroke: #333333;
+    transition-property: stroke, stroke-width;
+    transition-duration: 0.5s; }
+  .pi-neuron .compartment.excitatory-body {
+    fill: #dceef4; }
+  .pi-neuron .compartment.inhibitory-body {
+    fill: bisque; }
+  .pi-neuron .compartment.proximal-basal-dendrites {
+    fill: #f1efe2; }
+  .pi-neuron .compartment.distal-basal-dendrites {
+    fill: #f5ebdb; }
+  .pi-neuron .compartment.apical-dendrite-distal-tufts {
+    fill: #afd3ef; }
+  .pi-neuron .compartment.apical-dendrite-proximal-tufts {
+    fill: #d6e8f5; }
+  .pi-neuron .compartment.apical-dendrite-trunk {
+    fill: #ebf4fa; }
+  .pi-neuron .compartment.dendrites {
+    fill: #dfe7f2; }
+  .pi-neuron .compartment.acetylcholine-receptors {
+    fill: linen; }
+.pi-neuron .callout-label {
+  stroke: #666;
+  fill: #666;
+  font-weight: 100;
+  font-family: "Raleway", sans-serif;
+  font-size: 6px;
+  text-anchor: middle;
+  alignment-baseline: middle;
+  dominant-baseline: central;
+  fill-opacity: 0;
+  stroke-opacity: 0; }
+.pi-neuron .callout-line {
+  stroke: #666;
+  fill: #666;
+  fill-opacity: 0;
+  stroke-opacity: 0; }
+.pi-neuron.highlight .compartment {
+  stroke-width: 2.5px;
+  stroke: #1a1a1a;
+  transition-property: stroke, stroke-width;
+  transition-duration: 0.5s; }
+.pi-neuron.highlight .callout-label {
+  display: inline;
+  fill-opacity: 1;
+  stroke-opacity: 1;
+  transition-property: stroke-opacity, fill-opacity;
+  transition-duration: 2.5s; }
+.pi-neuron.highlight .callout-line {
+  display: inline;
+  fill-opacity: 1;
+  stroke-opacity: 0.5;
+  transition-property: stroke-opacity, fill-opacity;
+  transition-duration: 3.0s; }
+.pi-neuron.highlight .callout-label {
+  display: inline; }
+
+.pi-network > rect {
+  stroke-width: 0.8px;
+  stroke: #a6a6a6;
+  fill: #fdfbf8;
+  fill: #FDFDFD; }
+.pi-network > text {
+  fill: gray;
+  stroke: none;
+  font-size: 14px;
+  font-family: "Raleway", sans-serif;
+  text-anchor: start;
+  alignment-baseline: hanging; }
+.pi-network .background-light-tan-even {
+  fill: #fdfcfb;
+  stroke: none; }
+.pi-network .background-light-tan-odd {
+  fill: #faf7f4;
+  stroke: none; }
+.pi-network .network-separator {
+  stroke-width: 1px;
+  stroke: #eeeeee; }
+
+.pi-signal-graph .graph-background {
+  fill: #fbfbfb;
+  stroke: #eeeeee; }
+.pi-signal-graph .pi-signal-trace .background {
+  fill: papayawhip; }
+.pi-signal-graph .pi-signal-trace.even .background {
+  fill: #fffbf4; }
+.pi-signal-graph .pi-signal-trace.odd .background {
+  fill: #fff9ef; }
+.pi-signal-graph .pi-signal-trace .no-data {
+  stroke: none;
+  fill: #e8e8e8;
+  font-family: "Raleway", sans-serif;
+  font-size: 25px;
+  text-anchor: middle; }
+
+.pi-grid > rect {
+  stroke-width: 1.4px;
+  stroke: #f4f4f4;
+  fill: #fdfbf8;
+  fill: #FDFDFD; }
+.pi-grid .grid-dot {
+  fill: blue;
+  fill: none; }
+.pi-grid .grid-path-line {
+  stroke: #dddddd;
+  fill: none;
+  stroke-width: 2px;
+  stroke-linejoin: bevel; }
+.pi-grid .grid-circle {
+  stroke: #999999;
+  stroke-width: 1.75px;
+  stroke-linejoin: round;
+  fill: #dceef4; }
+.pi-grid .block-edge {
+  fill: none;
+  stroke: red;
+  stroke: none;
+  stroke-opacity: 0.5; }
+
+.background-video .overlay {
+  vertical-align: top;
+  color: white;
+  width: 100%;
+  position: absolute;
+  top: 0px;
+  height: 500px;
+  z-index: 100;
+  background-color: rgba(44, 62, 80, 0.2);
+  background-image: url("../../appearance/resources/images/pattern-overlay.png");
+  background-repeat: repeat; }
+.background-video .player {
+  position: absolute;
+  top: -50px;
+  z-index: 1; }

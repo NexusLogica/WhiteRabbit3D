@@ -1,0 +1,78 @@
+/**********************************************************************
+
+File     : home.scss
+Project  : N Simulator Library
+Purpose  : Source file for home component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/27
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+
+@import '../../appearance/css/core.scss';
+@import '../../appearance/css/mixins.scss';
+@import '../../appearance/css/common.scss';
+
+.home {
+  background-color: #2B374D;
+
+  .container {
+    width: 100%;
+    clear: both;
+
+    .about-lawrence {
+      display: block;
+      clear: both;
+      height: 800px;
+
+      .home-title {
+        top: 67px;
+        left: 65px;
+        z-index: 100;
+        position: absolute;
+        color: silver;
+        opacity: 0.5;
+        font-weight: 100;
+        font-size: 80px;
+        font-family: 'Raleway', sans-serif;
+      }
+
+      .title-container {
+        position: absolute;
+        right: 64px;
+        top: 42px;
+        font-family: 'Raleway', sans-serif;
+        font-weight: 100;
+        margin-top:20px;
+        text-align: right;
+        z-index: 100;
+
+        .pre-title {
+          vertical-align: top;
+          font-weight: 400;
+          font-size: 16px;
+          color:gray;
+
+        }
+
+        .top-title {
+          vertical-align: top;
+          top: 10px;
+          color: white;
+          font-size: 60px;
+          font-weight: 400;
+          z-index: 100;
+        }
+      }
+    }
+
+    .about-pi {
+      display: block;
+      background-color:black;
+      width: 100%;
+      height: 500px;
+    }
+  }
+};

@@ -1,0 +1,65 @@
+/**********************************************************************
+
+File     : common.scss
+Project  : Home
+Purpose  : CSS file for a home page.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/27
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+
+//****************************
+// Scrollbars in webkit on OS-X. They disappear...
+
+ul::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 11px;
+  height: 11px;
+  background-color: $color-light-gray;
+}
+
+ul::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  border: 2px solid white;
+  background-color: lighten($color-med-dark, 40%);
+}
+
+//*****************************
+// Page
+
+body {
+  background-color: $color-body;
+  margin: 0px;
+  padding: 0px;
+  font-family: 'Cabin', sans-serif;
+
+  .placeholder {
+    color: $text-color-light;
+  }
+}
+
+.n-component {
+  background-color: $color-space;
+  border: $color-light 1px solid;
+  border-top-style: none;
+  border-radius: 0px 0px 5px 5px;
+  padding-top: $padding-med;
+}
+
+.n-alert {
+  display: none;
+  width: 400px;
+  background-color: $color-dialog;
+  border-color: $color-med-dark;
+  -webkit-box-shadow: $drop-shadow;
+  -moz-box-shadow: $drop-shadow;
+  box-shadow: $drop-shadow;
+}
+
+.pi-error {
+  border-color: $color-error;
+}
+

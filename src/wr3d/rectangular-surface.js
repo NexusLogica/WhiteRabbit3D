@@ -16,6 +16,7 @@ Ngl.RectangularSurface = function(width, height, texture) {
   Ngl.Dock.call(this);
   this.width = width;
   this.height = height;
+  this.texture = texture;
 };
 
 Ngl.RectangularSurface.prototype = Object.create(Ngl.Dock.prototype);
@@ -26,13 +27,15 @@ Ngl.RectangularSurface.prototype = {
   initialize: function(gl, scene, parent) {
     Ngl.Dock.prototype.initialize.call(this, gl, scene, parent);
 
+    var w2 = this.width/2.0;
+    var h2 = this.height/2.0;
     var array = new Float32Array([
-        -1.0, -1.0,
-         1.0, -1.0,
-        -1.0,  1.0,
-        -1.0,  1.0,
-         1.0, -1.0,
-         1.0,  1.0]);
+        -w2, -h2, 0.0, 0.0,
+         w2, -h2, 1.0, 0.0,
+        -w2,  h2, 0.0, 1.0,
+        -w2,  h2, 0.0, 1.0,
+         w2, -h2, 1.0, 0.0,
+         w2,  h2, 1.0, 1.0]);
     this.buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
     gl.bufferData(gl.ARRAY_BUFFER, array, gl.STATIC_DRAW);
@@ -40,18 +43,18 @@ Ngl.RectangularSurface.prototype = {
     this.color = vec4.fromValues(1, 0, 0, 1);
     this.selectColor = vec4.fromValues(0, 0, 1, 1);
 
-    this.program = scene.simpleShader.program;
+    this.program = scene.textureShader.program;
     this.positionLocation = gl.getAttribLocation(this.program, 'position');
-    this.sizeLocation = gl.getUniformLocation(this.program, 'size');
     this.projectionMatrixLocation = gl.getUniformLocation(this.program, 'projectionMatrix');
-    this.surfaceColorLocation = gl.getUniformLocation(this.program, 'surfaceColor');
+    this.textureLocation = gl.getAttribLocation(this.program, 'texCoord');
   },
 
   render: function(gl, scene, parent) {
     Ngl.Dock.prototype.preRender.call(this, gl, scene, parent);
 
+    this.texture.bindTexture(gl);
+
     gl.useProgram(this.program);
-    gl.uniform1f(this.sizeLocation, this.width);
     gl.uniformMatrix4fv(this.projectionMatrixLocation, gl.FALSE, this.projectionModelView);
     gl.uniform4fv(this.surfaceColorLocation, scene.renderForSelect ? this.selectColor : this.color);
 
@@ -59,7 +62,9 @@ Ngl.RectangularSurface.prototype = {
 
     // Where the vertex data needs to go.
     gl.enableVertexAttribArray(this.positionLocation);
-    gl.vertexAttribPointer(this.positionLocation, 2, gl.FLOAT, gl.FALSE, 0, 0);
+    gl.enableVertexAttribArray(this.textureLocation);
+    gl.vertexAttribPointer(this.positionLocation, 2, gl.FLOAT, gl.FALSE, 16, 0);
+    gl.vertexAttribPointer(this.textureLocation,  2, gl.FLOAT, gl.FALSE, 16, 8);
 
     gl.drawArrays(gl.TRIANGLES, 0, 6);
 

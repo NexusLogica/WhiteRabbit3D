@@ -1,0 +1,64 @@
+/*
+Syntax error: Undefined mixin 'title-base'.
+        on line 15 of common.scss, in `title-base'
+        from line 15 of common.scss
+
+10: All Rights Reserved.
+11: 
+12: *\/
+13: 
+14: .n-large-title {
+15:   @include title-base;
+16:   font-size: $font-size-large;
+17:   color: $color-darkest;
+18: }
+19: 
+20: .n-large-title-light {
+
+Backtrace:
+common.scss:15:in `title-base'
+common.scss:15
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/tree/visitors/perform.rb:253:in `visit_mixin'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/tree/visitors/base.rb:37:in `visit'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/tree/visitors/perform.rb:100:in `visit'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/tree/visitors/base.rb:53:in `block in visit_children'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/tree/visitors/base.rb:53:in `map'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/tree/visitors/base.rb:53:in `visit_children'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/tree/visitors/perform.rb:109:in `block in visit_children'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/tree/visitors/perform.rb:121:in `with_environment'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/tree/visitors/perform.rb:108:in `visit_children'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/tree/visitors/base.rb:37:in `block in visit'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/tree/visitors/perform.rb:320:in `visit_rule'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/tree/visitors/base.rb:37:in `visit'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/tree/visitors/perform.rb:100:in `visit'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/tree/visitors/base.rb:53:in `block in visit_children'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/tree/visitors/base.rb:53:in `map'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/tree/visitors/base.rb:53:in `visit_children'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/tree/visitors/perform.rb:109:in `block in visit_children'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/tree/visitors/perform.rb:121:in `with_environment'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/tree/visitors/perform.rb:108:in `visit_children'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/tree/visitors/base.rb:37:in `block in visit'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/tree/visitors/perform.rb:128:in `visit_root'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/tree/visitors/base.rb:37:in `visit'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/tree/visitors/perform.rb:100:in `visit'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/tree/visitors/perform.rb:7:in `visit'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/tree/root_node.rb:20:in `render'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/engine.rb:315:in `_render'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/engine.rb:262:in `render'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/plugin/compiler.rb:362:in `update_stylesheet'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/plugin/compiler.rb:203:in `block in update_stylesheets'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/plugin/compiler.rb:201:in `each'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/plugin/compiler.rb:201:in `update_stylesheets'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/plugin.rb:81:in `update_stylesheets'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/exec.rb:443:in `watch_or_update'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/exec.rb:326:in `process_result'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/exec.rb:41:in `parse'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/lib/sass/exec.rb:21:in `parse!'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.2.13/bin/scss:13:in `<top (required)>'
+/usr/bin/scss:23:in `load'
+/usr/bin/scss:23:in `<main>'
+*/
+body:before {
+  white-space: pre;
+  font-family: monospace;
+  content: "Syntax error: Undefined mixin 'title-base'.\A         on line 15 of common.scss, in `title-base'\A         from line 15 of common.scss\A \A 10: All Rights Reserved.\A 11: \A 12: */\A 13: \A 14: .n-large-title {\A 15:   @include title-base;\A 16:   font-size: $font-size-large;\A 17:   color: $color-darkest;\A 18: }\A 19: \A 20: .n-large-title-light {"; }

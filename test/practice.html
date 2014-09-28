@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html ng-app="examApp">
+<head>
+  <title>Practice Page</title>
+  <link rel="shortcut icon" href="images/wr3d.png" />
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Questrial' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Cabin' rel='stylesheet' type='text/css'>
+  <style>
+    body {
+      font-family: 'Cabin', sans-serif;
+      font-size: 16px;
+    }
+    .container {
+      width: 900px;
+      margin: 40px auto 40px auto;
+      border: #EEEEEE solid 1px;
+      padding: 20px;
+    }
+
+    .test-container {
+      margin-bottom: 20px;
+      border: silver solid 1px;
+      padding: 15px;
+    }
+
+    .test-label, .test-name {
+      display: inline-block;
+      font-size:24px;
+    }
+
+    .test-label {
+      color: gray;
+      margin-right: 9px;
+    }
+
+    .inline {
+      display: inline-block;
+      width: 150px;
+    }
+
+    .error-text {
+      color: red;
+    }
+  </style>
+
+</head>
+<body>
+
+  <script src="../src/lib/bower_components/jquery/dist/jquery.js"></script>
+  <script src="../src/lib/bower_components/lodash/dist/lodash.js"></script>
+  <script src="../src/lib/bower_components/angular/angular.js"></script>
+  <script src="../src/lib/bower_components/gl-matrix/dist/gl-matrix.js"></script>
+  <script src="../src/exam/sort-helper.js"></script>
+  <script src="../src/exam/bubble-sort.js"></script>
+  <script src="../src/exam/quick-sort.js"></script>
+  <script src="../src/exam/merge-sort.js"></script>
+  <script src="../src/exam/binary-search-tree.js"></script>
+
+  <div class="container">
+    <div ng-view>
+      <div>
+        <algorithm-output test-name="BinarySearchTree" test-size="100"></algorithm-output>
+        <algorithm-output test-name="BubbleSort" test-size="500"></algorithm-output>
+        <algorithm-output test-name="BubbleSort" test-size="10000"></algorithm-output>
+        <algorithm-output test-name="QuickSort" test-size="500"></algorithm-output>
+        <algorithm-output test-name="QuickSort" test-size="10000"></algorithm-output>
+        <algorithm-output test-name="MergeSort" test-size="500"></algorithm-output>
+        <algorithm-output test-name="MergeSort" test-size="10000"></algorithm-output>
+      </div>
+    </div>
+  </div>
+
+  <div ng-show="false">
+    <div class="algorithm-output-template test-container">
+      <div class="test-container">
+        <div class="test-label">Test:</div><div class="test-name" ng-bind="test.name"></div>
+        <div>
+          <div class="inline">Size: <span ng-bind="testSize"></span></div>
+          <div class="inline">Time: <span ng-bind="test.getTime()"></span></div>
+          <div class="inline">Valid: <span ng-show="test.getIsValid()">True</span><span class="error-text" ng-hide="test.getIsValid()">False</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    var helper = Exam.SortHelper();
+    angular.module('examApp', []);
+
+    angular.module('examApp').directive('algorithmOutput', ['$timeout', function($timeout) {
+      return {
+        restrict: 'E',
+        scope: {
+          testName: '@testName',
+          testSize: '@testSize'
+        },
+        template: function() { return $('.algorithm-output-template').html(); },
+        link: function($scope, $element) {
+          $scope.test = Exam[$scope.testName](helper);
+          $timeout(function() {
+            $scope.test.runTest($scope.testSize);
+          }, 1);
+        }
+      };
+    }]);
+
+  </script>
+
+</body>
+</html>
