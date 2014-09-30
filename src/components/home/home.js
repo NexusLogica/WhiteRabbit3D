@@ -24,17 +24,19 @@ angular.module('wr3dApp').directive('home', [function() {
     link: function($scope, $element, $attrs, $ctrl) {
       $scope.scrollToPi = function() {
         $('html, body').animate({
-          //scrollTop: $(".about-pi").offset().top
+          scrollTop: $(".about-pi").offset().top
         }, 1000);
       };
 
       var piParallax = function(initialOffset) {
 
         var activeRange = 2.25;
-        var maxRotation = 30.0;
+        var maxRotation = 15.0;
+        var maxOffset   = 50;
 
         var pi = $element.find('.about-pi');
         var piBox = pi.find('.box');
+        var piBoxContainer = pi.find('.box-container');
         var piBoxHeight = piBox.height();
         var offset = pi.offset();
         var height = pi.height();
@@ -46,7 +48,9 @@ angular.module('wr3dApp').directive('home', [function() {
 
         var update = function(ratio) {
           var r = maxRotation*(0.5*(1.0+Math.cos(2*Math.PI*ratio)));
+          var offset = 70-maxOffset*0.5*(1.0+Math.cos(2*Math.PI*ratio));
           piBox.css('transform', 'rotateY('+r+'deg)');
+          piBoxContainer.css('left', ''+offset+'px');
         }
 
         var onScroll = function(pageMiddle) {
@@ -81,6 +85,88 @@ angular.module('wr3dApp').directive('home', [function() {
         }
       };
 */
+
+      var scroller = function(element, scrollTo, scrollTime) {
+        var startTime;
+        $(element).on('click', function() {
+          startTime = (new Date()).getTime();
+        });
+
+        var onTimer = function(elapsed) {
+
+        };
+
+        return {
+          onTimer: onTimer
+        };
+      };
+
+      /***
+       * Returns a value between 0.0 when t is 0.0 and 1.0 when t is 1.0.
+       * @param p0
+       * @param p1
+       * @param p2
+       * @param p3
+       * @param t {float} Time fraction, between 0.0 and 1.0.
+       * @returns {number}
+       */
+      var bezier = function(p0, p1, p2, p3, t) {
+        var mt = 1.0-t;
+        var mt2 = mt*mt;
+        var t2 = t*t;
+        return mt*mt2*p0+3*mt2*t*p1+3*mt*t2*p2+t2*t*p3;
+      };
+
+      var easing = function(startTime, duration, currentTime) {
+        var t = (currentTime-startTime)/duration;
+        return bezier(0.250, 0.100, 0.250, 1.000, t);
+      };
+
+      // **** animation timer *****************************************
+
+      var animationTimer = function() {
+        var stopped = false;
+        var listeners = [];
+        var startTime = (new Date()).getTime();
+
+        var addListener = function(listener) {
+          listeners.push(listener);
+        };
+
+        var removeListener = function(listener) {
+          listeners = _.remove(listeners, listener);
+        };
+
+        var animate = function() {
+          if(!stopped) {
+            requestAnimationFrame(animate);
+          }
+
+          var now = (new Date()).getTime();
+          var ellapsed = now-startTime;
+          _.forEach(listeners, function(listener) {
+            listener.onTimer(ellapsed);
+          });
+        };
+
+        var start = function() {
+          animate();
+        };
+
+        var stop = function() {
+          stopped = false;
+        };
+
+        return {
+          addListener: addListener,
+          removeListener: removeListener,
+          start: start,
+          stop: stop
+        };
+      }();
+
+      // **** animation timer *****************************************
+
       var parallaxEffects = [ piParallax ];
 
       var currentMiddle = -1;
@@ -98,9 +184,8 @@ angular.module('wr3dApp').directive('home', [function() {
       }, 20);
 
       $scope.$on('$destroy', function() {
-        if(!_.isUndefined(timerId)) {
-          clearInterval(timerId);
-          timerId = undefined;
+        if(!_.isUndefined(animationTimer)) {
+          animationTimer.stop();
         }
       });
 /*
