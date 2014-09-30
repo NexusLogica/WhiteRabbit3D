@@ -10,6 +10,12 @@ Exam.BinarySearchTree = function() {
   var treeIsValid = false;
   var time = 0;
 
+  var assert = function(actual, expected, msg) {
+    if(actual !== expected) {
+//      debugger;
+    }
+  };
+
   var Node = function(key, value) {
     this.key = key;
     this.value = value;
@@ -48,12 +54,71 @@ Exam.BinarySearchTree = function() {
     return null;
   };
 
+  Node.prototype.findParent = function(key) {
+    var foundNode = null;
+    if(this.right) {
+      if(this.right.key === key) {
+        return this;
+      }
+      foundNode = this.right.findParent(key);
+    }
+    if(!foundNode && this.left) {
+      if(this.left.key === key) {
+        return this;
+      }
+      foundNode = this.left.findParent(key);
+    }
+    return foundNode;
+  };
+
+  Node.prototype.deleteChild = function(childSide) {
+    var child = this[childSide];
+
+    // Easy, just delete the node.
+    if(!child.left && !child.right) {
+      this[childSide] = null;
+    } else if(child.left && child.right) {
+      // The hard case.
+      var replaceSide = Math.random() > 0.5 ? 'left' : 'right';
+      var replaceNode = child[replaceSide];
+      if(replaceNode.left && replaceNode.right) {
+        var replacedChildSide = Math.random() > 0.5 ? 'left' : 'right';
+        replaceNode.deleteChild(replacedChildSide);
+      }
+      this[childSide] = replaceNode;
+    } else if(child.left) {
+      // Left only
+      parent[childSide] = child.left;
+    } else {
+      // Right only.
+      parent[childSide] = child.right;
+    }
+  };
+
   var insert = function(key, value) {
     if(!root) {
       root = new Node(key, value);
     } else {
       root.insert(new Node(key, value));
     }
+  };
+
+  var deleteNode = function(key) {
+    if(!root) {
+      return false;
+    } else if(root.key === key) {
+      root = null;
+    } else {
+      var parent = root.findParent(key);
+
+      if(parent) {
+        // Found the child.
+        var childSide = (parent.left && parent.left.key === key ? 'left' : 'right');
+        parent.deleteChild(childSide);
+        return true;
+      }
+    }
+    return false;
   };
 
   var isValid = function(node) {
@@ -88,7 +153,9 @@ Exam.BinarySearchTree = function() {
   };
 
   var runTest = function(size) {
-    var input = helper.generateRandomStrings(size);
+    var input = helper.generateRandomStrings(size, 42);
+    console.log('Binary tree strings are...');
+    console.log(input);
     var start = new Date();
     _.forEach(input, function(str) {
       insert(str, str.toUpperCase());
@@ -100,6 +167,8 @@ Exam.BinarySearchTree = function() {
     insert('blahblah', 'blahblah'.toUpperCase());
 
     _.shuffle(input);
+    console.log('Schuffled tree is...');
+    console.log(input);
 
     _.forEach(input, function(str) {
       var node = find(str);
@@ -110,6 +179,22 @@ Exam.BinarySearchTree = function() {
         debugger;
       }
     });
+
+    var deleted = deleteNode('blahblah');
+    assert(deleted, true, 'Deleted blahblah');
+    var found = find('blahblah');
+    assert(found, null, 'Not found');
+
+    _.forEach(input, function(key) {
+      if(key !== root.key) {
+        console.log('Deleting '+key);
+        var deleted = deleteNode(key);
+        assert(deleted, true, 'Deleted '+key);
+        var found = find(key);
+        assert(found, null, 'Key '+key+' found');
+      }
+    });
+
     var end = new Date();
     time = end.getTime()-start.getTime();
     treeIsValid = isValid(root);

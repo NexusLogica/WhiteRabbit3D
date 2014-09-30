@@ -57,8 +57,8 @@ angular.module('wr3dApp').directive('backgroundVideo', [function() {
       $element.find('.player').tubeplayer( {
         width: $scope.videoWidth, // the width of the player
         height: $scope.videoHeight, // the height of the player
-        start: 1,
-        autoPlay: true,
+        start: 0,
+        autoPlay: false,
         showinfo: false,
         modestbranding: false,
         playbackRate: 0.25,
