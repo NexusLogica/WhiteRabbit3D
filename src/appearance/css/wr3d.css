@@ -319,33 +319,34 @@ body {
 
 .home {
   background-color: #2B374D;
-  font-family: 'Raleway', sans-serif; }
+  font-family: 'Raleway', sans-serif;
+  min-width: 1350px; }
   .home .inline {
     display: inline-block; }
-  .home .container {
+  .home .home-container {
     width: 100%;
     clear: both; }
-    .home .container .header {
+    .home .home-container .header {
       width: 100%;
       height: 40px;
       background-color: black; }
-    .home .container .main {
+    .home .home-container .main {
       display: block;
       position: relative;
       clear: both;
       height: 800px;
       color: white; }
-      .home .container .main .home-title {
+      .home .home-container .main .home-title {
         top: 67px;
         left: 65px;
         z-index: 100;
         position: absolute;
-        color: silver;
+        color: #EEEEEE;
         opacity: 0.5;
         font-weight: 100;
         font-size: 80px;
         font-family: 'Raleway', sans-serif; }
-      .home .container .main .title-container {
+      .home .home-container .main .title-container {
         position: absolute;
         right: 64px;
         top: 42px;
@@ -354,65 +355,65 @@ body {
         margin-top: 20px;
         text-align: right;
         z-index: 100; }
-        .home .container .main .title-container .pre-title {
+        .home .home-container .main .title-container .pre-title {
           vertical-align: top;
           font-weight: 400;
           font-size: 16px;
           color: gray; }
-        .home .container .main .title-container .top-title {
+        .home .home-container .main .title-container .top-title {
           vertical-align: top;
           top: 10px;
           color: white;
           font-size: 60px;
           font-weight: 400;
           z-index: 100; }
-      .home .container .main .page-menu {
+      .home .home-container .main .page-menu {
         position: absolute;
         top: 450px;
         left: 100px;
         z-index: 100; }
-        .home .container .main .page-menu .inline {
+        .home .home-container .main .page-menu .inline {
           vertical-align: top; }
-        .home .container .main .page-menu .projects {
+        .home .home-container .main .page-menu .projects {
           margin-left: 30px;
           margin-right: 10px;
           margin-top: 105px;
           font-size: 30px; }
-        .home .container .main .page-menu .dash {
+        .home .home-container .main .page-menu .dash {
           width: 65px;
           position: relative; }
-          .home .container .main .page-menu .dash .dash-box {
+          .home .home-container .main .page-menu .dash .dash-box {
             position: absolute;
             border-bottom: 1px solid white;
             top: 124px;
             width: 68px; }
-        .home .container .main .page-menu .items-container {
+        .home .home-container .main .page-menu .items-container {
           position: relative; }
-          .home .container .main .page-menu .items-container .bracket {
+          .home .home-container .main .page-menu .items-container .bracket {
             position: absolute;
             top: 0px;
             width: 20px;
-            height: 173px;
+            height: 148px;
             border: solid 1px white;
             border-right: none; }
-          .home .container .main .page-menu .items-container .items {
+          .home .home-container .main .page-menu .items-container .items {
             font-size: 20px;
             margin-left: 15px;
             margin-top: 15px; }
-            .home .container .main .page-menu .items-container .items .item {
+            .home .home-container .main .page-menu .items-container .items .item {
               margin-bottom: 15px; }
-              .home .container .main .page-menu .items-container .items .item a {
+              .home .home-container .main .page-menu .items-container .items .item a {
                 color: white;
                 text-decoration: none; }
-                .home .container .main .page-menu .items-container .items .item a .sub {
+                .home .home-container .main .page-menu .items-container .items .item a .sub {
                   font-weight: 100; }
-                  .home .container .main .page-menu .items-container .items .item a .sub:hover {
+                  .home .home-container .main .page-menu .items-container .items .item a .sub:hover {
                     color: #BBBBBB; }
-                .home .container .main .page-menu .items-container .items .item a:hover {
+                .home .home-container .main .page-menu .items-container .items .item a:hover {
                   color: #BBBBBB; }
-                  .home .container .main .page-menu .items-container .items .item a:hover .pre {
+                  .home .home-container .main .page-menu .items-container .items .item a:hover .pre {
                     color: white; }
-      .home .container .main .preamble {
+      .home .home-container .main .preamble {
         position: absolute;
         font-weight: 100;
         top: 460px;
@@ -424,7 +425,7 @@ body {
         letter-spacing: 1.5px;
         font-kerning: 9.5;
         text-align: justify; }
-    .home .container .about-pi {
+    .home .home-container .about-pi {
       display: block;
       position: relative;
       background-color: black;
@@ -437,7 +438,7 @@ body {
       background-color: peachpuff;
       background-color: steelblue;
       background-color: #D0C398; }
-      .home .container .about-pi .box-container {
+      .home .home-container .about-pi .box-container {
         perspective: 100px;
         -webkit-perspective: 100px;
         -webkit-perspective-origin-x: 50%;
@@ -447,7 +448,7 @@ body {
         position: absolute;
         top: 57px;
         left: 70px; }
-        .home .container .about-pi .box-container .box {
+        .home .home-container .about-pi .box-container .box {
           background-color: white;
           color: black;
           position: absolute;
@@ -456,47 +457,163 @@ body {
           height: 251px;
           width: 198px;
           background-image: url("../../appearance/resources/images/simple-network.png"); }
-      .home .container .about-pi .title {
+      .home .home-container .about-pi .title {
         position: absolute;
         top: 25px;
         right: 100px;
         font-size: 64px;
         font-weight: 100;
         width: 640px; }
-      .home .container .about-pi .about {
+      .home .home-container .about-pi .about {
         position: absolute;
-        top: 80px;
+        top: 130px;
         width: 640px;
         right: 100px;
         font-size: 20px;
         font-weight: 100; }
-      .home .container .about-pi .access {
+      .home .home-container .about-pi .access {
         position: absolute;
         top: 406px;
         right: 100px;
-        font-weight: 100;
+        font-weight: 400;
+        font-size: 16px;
         width: 640px; }
-        .home .container .about-pi .access a {
+        .home .home-container .about-pi .access a {
           color: #eeeeee;
           text-decoration: none; }
-          .home .container .about-pi .access a:hover {
+          .home .home-container .about-pi .access a:hover {
             color: white;
             text-decoration: underline; }
-    .home .container .about-wr3d {
+    .home .home-container .about-wr3d {
       display: block;
+      position: relative;
       background-color: #AD826B;
       color: white;
       width: 100%;
       height: 500px; }
-    .home .container .about-inductance {
+      .home .home-container .about-wr3d .text-container {
+        position: absolute;
+        width: 700px;
+        top: 22px;
+        left: 30px; }
+        .home .home-container .about-wr3d .text-container .title {
+          font-size: 64px;
+          font-weight: 100;
+          width: 700px;
+          font-family: 'Open Sans', sans-serif; }
+          .home .home-container .about-wr3d .text-container .title .wr {
+            display: inline-block;
+            font-weight: 600;
+            color: white;
+            letter-spacing: -3px; }
+          .home .home-container .about-wr3d .text-container .title .three-d {
+            display: inline-block;
+            margin-left: 5px;
+            margin-top: -11px;
+            font-weight: 800;
+            vertical-align: middle;
+            letter-spacing: -6px;
+            color: black; }
+          .home .home-container .about-wr3d .text-container .title .extra {
+            display: inline-block;
+            font-size: 28px;
+            margin-left: 26px; }
+        .home .home-container .about-wr3d .text-container .about {
+          position: relative;
+          top: 25px;
+          width: 600px;
+          font-size: 18px; }
+        .home .home-container .about-wr3d .text-container .access {
+          position: absolute;
+          top: 385px;
+          left: 00px;
+          font-weight: 400;
+          font-size: 16px;
+          width: 640px; }
+          .home .home-container .about-wr3d .text-container .access a {
+            color: #eeeeee;
+            text-decoration: none; }
+            .home .home-container .about-wr3d .text-container .access a:hover {
+              color: white;
+              text-decoration: underline; }
+      .home .home-container .about-wr3d .image-carousel {
+        position: absolute;
+        top: 124px;
+        right: 50px;
+        width: 525px; }
+        .home .home-container .about-wr3d .image-carousel .carousel-control.right, .home .home-container .about-wr3d .image-carousel .carousel-control.left {
+          background-image: none; }
+        .home .home-container .about-wr3d .image-carousel .carousel-indicators {
+          bottom: -40px; }
+        .home .home-container .about-wr3d .image-carousel .carousel-inner > .item {
+          margin: 0px auto 0px auto;
+          width: 525px; }
+        .home .home-container .about-wr3d .image-carousel .slide {
+          height: 250px;
+          width: 300px; }
+          .home .home-container .about-wr3d .image-carousel .slide .image-container {
+            background-size: contain;
+            position: absolute;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100%;
+            width: 100%; }
+    .home .home-container .about-inductance {
       display: block;
       background-color: #495C71;
       color: white;
       width: 100%;
       height: 500px; }
-    .home .container .about-lawrence {
+    .home .home-container .about-lawrence {
       display: block;
+      position: relative;
       background-color: #D0C398;
       color: white;
       width: 100%;
       height: 500px; }
+      .home .home-container .about-lawrence .title {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        font-size: 40px;
+        font-weight: 100; }
+        .home .home-container .about-lawrence .title .about {
+          opacity: .5; }
+      .home .home-container .about-lawrence .pic {
+        display: block;
+        position: absolute;
+        top: 138px;
+        left: 79px;
+        background: url("../../appearance/resources/images/lawrence.png") 0px 0px no-repeat;
+        background-size: contain;
+        width: 190.8px;
+        height: 240px; }
+      .home .home-container .about-lawrence .resume {
+        display: block;
+        position: absolute;
+        bottom: 35px;
+        left: 40px;
+        color: white;
+        text-decoration: none;
+        font-size: 20px; }
+        .home .home-container .about-lawrence .resume:hover {
+          text-decoration: underline; }
+      .home .home-container .about-lawrence .bio {
+        position: absolute;
+        width: 700px;
+        right: 40px;
+        top: 30px;
+        font-weight: 100; }
+        .home .home-container .about-lawrence .bio .bio-title {
+          font-size: 40px;
+          margin-bottom: 20px; }
+        .home .home-container .about-lawrence .bio .bio-text {
+          font-size: 19px; }
+      .home .home-container .about-lawrence .linked-in {
+        display: block;
+        position: absolute;
+        width: 28px;
+        height: 28px;
+        bottom: 40px;
+        left: 140px;
+        background: transparent url("../../appearance/resources/images/social-sprite.png") left 0px no-repeat; }

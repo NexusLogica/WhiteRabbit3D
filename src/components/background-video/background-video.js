@@ -57,12 +57,12 @@ angular.module('wr3dApp').directive('backgroundVideo', [function() {
       $element.find('.player').tubeplayer( {
         width: $scope.videoWidth, // the width of the player
         height: $scope.videoHeight, // the height of the player
-        start: 0,
-        autoPlay: false,
+        start: 1,
+        autoPlay: true,
         showinfo: false,
         modestbranding: false,
         playbackRate: 0.25,
-        loop:0,
+        loop:1,
         showControls: false,
         allowFullScreen: "false", // true by default, allow user to go full screen
         initialVideo: $scope.videoId, // "RgIxcrA7BfM" is water and drops - "oQTtZLtkVEc" are balls

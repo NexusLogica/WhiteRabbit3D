@@ -1,4 +1,4 @@
-<div class="container">
+<div class="home-container">
 
   <div class="header"  ng-click="scrollToPi">
 
@@ -18,10 +18,10 @@
       </div>
       <div class="inline items-container">
         <div class="items">
-          <div class="item"><a href="#pi-anchor" ng-click="scrollToPi()"><span class="pre">Pi </span><span class="sub">- a biological neuron simulator</span></a></div>
-          <div class="item"><a href="javascript:void(0)"><span class="pre">White Rabbit </span><span class="sub">- 3D user interface technology</span></a></div>
-          <div class="item"><a href="javascript:void(0)"><span class="pre">Inductance </span><span class="sub">- a biological neuron simulator</span></a></div>
-          <div class="item"><a href="javascript:void(0)"><span class="pre">About </span><span class="sub">- a biological neuron simulator</span></a></div>
+          <div class="item"><a href="javascript:void(0)" ng-click="scrollToPi()"><span class="pre">Pi </span><span class="sub">- a biological neuron simulator</span></a></div>
+          <div class="item"><a href="javascript:void(0)" ng-click="scrollToWr3d()"><span class="pre">White Rabbit </span><span class="sub">- 3D user interface technology</span></a></div>
+          <!-- <div class="item"><a href="javascript:void(0)" ng-click="scrollToPi()"><span class="pre">Inductance </span><span class="sub">- a biological neuron simulator</span></a></div> -->
+          <div class="item"><a href="javascript:void(0)" ng-click="scrollToLawrence()"><span class="pre">About Lawrence</span></a></div>
         </div>
         <div class="bracket">
         </div>
@@ -56,20 +56,71 @@
       <div class="git">
         The project page is available on <a href="http://nexuslogica.github.io/N">GitHub</a>.
       </div>
-
     </div>
   </div>
 
   <div class="about-wr3d">
-    WR3D
+
+    <div class="text-container">
+      <div class="title">
+        <span class="wr">WhiteRabbit</span><span class="three-d">3D</span><span class="extra">HTML + CSS + 3D</span>
+      </div>
+      <div class="about">
+        <p>The WhiteRabbit3D is a technology that allows standard 2 dimensional content to be easily laid out and positioned
+          in 3D space. The WhiteRabbit browser is an implementation of this for HTML, where the 3D aspects are expressed as
+          CSS styles, hence, CSS-3D. More content can be displayed on a page and the placement makes the information more
+          readily understandable.</p>
+      </div>
+      <div class="access">
+        <div class="link">
+          The sandbox is available <a href="http://nexuslogica.com/N/app/index.html">here</a>. The site may or may not be functional.
+        </div>
+        <div class="git">
+          The technology is currently being ported from OpenGL to WebGL. The project page on <a href="http://nexuslogica.github.io/WhiteRabbit3D">GitHub</a>.
+          It is anticipated that the
+        </div>
+      </div>
+    </div>
+
+    <div class="image-carousel">
+      <div style="height: 305px">
+        <carousel interval="carouselInterval">
+          <slide class="slide" ng-repeat="slide in slides" active="slide.active">
+            <div class="image-container" ng-style="{'background-image':'url('+slide.image+')'}" style="margin:auto;"/>
+            <div class="carousel-caption">
+            </div>
+          </slide>
+        </carousel>
+      </div>
+    </div>
+
   </div>
 
+  <!--
   <div class="about-inductance">
     Inductance
   </div>
+  -->
 
   <div class="about-lawrence">
-    Lawrence
+    <div class="title"><span class="about">about</span><span class="name"> Lawrence Gunn</span> </div>
+    <a class="resume" href="http://www.nexuslogica.com/resume.html">Resume</a>
+    <a class="linked-in" href="http://ca.linkedin.com/in/lawrencegunn/"></a>
+    <div class="pic"></div>
+    <div class="bio">
+      <div class="bio-title">Bio</div>
+      <div class="bio-text">
+        <p>I'm a Canadian engineer with a graduate degree in Vehicle Dynamics and Control Systems. After racing Karts in
+          Canada and abroad I moved to England where I was manager and lead dynamicist of the Vehicle Dynamics department
+          at Reynard Motorsport. I working on their Indy Car, Le Mans, Formula Nippon, and American Le Mans projects as
+          well as being contracted to British American Formula 1 Team.</p>
+        <p>After leaving racing I moved to Silicon Valley, working for SideStep, Athoc, Amazon's A9 and YouSendIt, later
+          renamed Hightail.</p>
+        <p>I've maintained an interest in 3D user interfaces, outrigger canoe boath and paddle design, and from my Master's
+          a longer term investigation into neurosciences, mainly cortical dynamics and learning. A recent diversion has been an exploration of
+          molecular level inductive interactions among bond electrons.</p>
+      </div>
+    </div>
   </div>
 
 </div>

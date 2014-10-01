@@ -25,7 +25,17 @@ angular.module('wr3dApp').directive('home', [function() {
       $scope.scrollToPi = function() {
         $('html, body').animate({
           scrollTop: $(".about-pi").offset().top
-        }, 1000);
+        }, 1300);
+      };
+      $scope.scrollToWr3d = function() {
+        $('html, body').animate({
+          scrollTop: $(".about-wr3d").offset().top
+        }, 1700);
+      };
+      $scope.scrollToLawrence = function() {
+        $('html, body').animate({
+          scrollTop: $(".about-lawrence").offset().top
+        }, 2000);
       };
 
       var piParallax = function(initialOffset) {
@@ -188,6 +198,18 @@ angular.module('wr3dApp').directive('home', [function() {
           animationTimer.stop();
         }
       });
+
+      $scope.carouselInterval = 5000;
+      $scope.slides = [
+        { image: 'src/appearance/resources/images/wr3d/docking.png', text: "" },
+        { image: 'src/appearance/resources/images/wr3d/nefertiti.png', text: "" },
+        { image: 'src/appearance/resources/images/wr3d/positioninggrid.png', text: "" },
+        { image: 'src/appearance/resources/images/wr3d/schedule.png', text: "" },
+        { image: 'src/appearance/resources/images/wr3d/surfaces.png', text: "" },
+        { image: 'src/appearance/resources/images/wr3d/shapesangled.png', text: "" },
+        { image: 'src/appearance/resources/images/wr3d/figure3.png', text: "" }
+      ];
+
 /*
       // Smooth scroll for in page links
       var setupScroll = function() {

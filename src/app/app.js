@@ -12,7 +12,7 @@ All Rights Reserved.
 */
 'use strict';
 
-angular.module('wr3dApp', ['ngRoute']).
+angular.module('wr3dApp', ['ngRoute', 'ui.bootstrap']).
   config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
     $routeProvider.when('/home', { templateUrl: 'src/pages/home-page/home-page.html' });
     $routeProvider.otherwise({redirectTo: '/home'});
