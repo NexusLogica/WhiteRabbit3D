@@ -15,16 +15,19 @@
       width: 700px;
       height: 700px;
     }
+    .canvas-2d {
+      display: none;
+    }
   </style>
 
   <script id="flat-vertex-shader" type="x-shader/x-vertex">
     // A basic flat vertex shader, hello world'esque.
-    uniform mat4 projectionMatrix;
+    uniform mat4 projectionViewMatrix;
     attribute vec2 position;
 
     void main() {
       vec4 sizedPosition = vec4(position[0], position[1], 0.0, 1.0);
-      gl_Position = projectionMatrix*sizedPosition;
+      gl_Position = projectionViewMatrix*sizedPosition;
     }
   </script>
 
@@ -33,13 +36,14 @@
     uniform highp vec4 surfaceColor;
 
     void main() {
-      gl_FragColor = surfaceColor;
+      //gl_FragColor = surfaceColor;
+      gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
     }
   </script>
 
   <script id="texture-vertex-shader" type="x-shader/x-vertex">
     // A basic flat vertex shader, hello world'esque.
-    uniform mat4 projectionMatrix;
+    uniform mat4 projectionViewMatrix;
     attribute vec2 position;
     attribute vec2 texCoord;
 
@@ -48,7 +52,7 @@
     void main() {
       texCoordVarying = texCoord;
       vec4 sizedPosition = vec4(position[0], position[1], 0.0, 1.0);
-      gl_Position = projectionMatrix*sizedPosition;
+      gl_Position = projectionViewMatrix*sizedPosition;
     }
   </script>
 
@@ -58,7 +62,9 @@
     uniform sampler2D mainTexture;
 
     void main() {
+      //gl_FragColor = vec4(texture2D(mainTexture, texCoordVarying));
       gl_FragColor = vec4(texture2D(mainTexture, texCoordVarying));
+//      gl_FragColor = vec4(0.0, texCoordVarying[1], 0.0, 1.0);
     }
   </script>
 
@@ -66,8 +72,8 @@
 </head>
 <body>
   <div class="canvas-container">
-    <canvas class="canvas-3d" width="700" height="700"/>
-    <canvas
+    <canvas class="canvas-3d" width="700" height="700"></canvas>
+    <canvas class="canvas-2d" width="256" height="256"></canvas>
   </div>
 
   <script src="../src/lib/bower_components/jquery/dist/jquery.js"></script>
@@ -79,59 +85,53 @@
   <script src="../src/wr3d/dock.js"></script>
   <script src="../src/wr3d/rectangular-surface.js"></script>
   <script src="../src/wr3d/texturemap.js"></script>
+  <script src="../src/wr3d/canvas.js"></script>
 
   <script>
-    zebra()["zebra.json"] = "../src/lib/bower_components/zebra/zebra.json";
-    zebra.ready(function() {
-      // create canvas 400x700 pixels
-      var canvas = new zebra.ui.zCanvas(256, 256);
 
-      // fill canvas root panel with UI components
-      canvas.root.setLayout(new zebra.layout.BorderLayout(8));
-      canvas.root.add(zebra.layout.CENTER, new zebra.ui.TextArea(""));
-      canvas.root.add(zebra.layout.BOTTOM, new zebra.ui.Button("Clean"));
+    var canvasHtml = '../src/components/canvasTest/canvasTest.json';
 
-      setTimeout(function() {
-        var canvas = $('.canvas-3d');
-        var scene = new Ngl.Scene();
-        canvas.data('scene', scene);
-        scene.initialize(canvas);
+    setTimeout(function() {
+      var canvas = $('.canvas-3d');
+      var scene = new Ngl.Scene();
+      canvas.data('scene', scene);
+      scene.initialize(canvas);
 
-        var texture = new Ngl.Texturemap($('.zebcanvas'));
+      var textureCanvas = new Ngl.Canvas('.canvas-2d', canvasHtml, 300, 200);
+      textureCanvas.build();
+      var texture = new Ngl.Texturemap(textureCanvas);
 
-        var surface = new Ngl.RectangularSurface(0.05, 0.05, texture);
-        scene.add(surface);
+      var surface = new Ngl.RectangularSurface(0.05, 0.05, texture);
+      scene.add(surface);
 
-        var mouseMoveX = -1; mouseMoveY = -1, previousX = -1, previousY = -1;
-        $(document).mousemove(function(event) {
-          var offset = canvas.offset();
-          mouseMoveX = event.pageX-offset.left;
-          mouseMoveY = event.pageY-offset.top;
-        });
+      var mouseMoveX = -1; mouseMoveY = -1, previousX = -1, previousY = -1;
+      $(document).mousemove(function(event) {
+        var offset = canvas.offset();
+        mouseMoveX = event.pageX-offset.left;
+        mouseMoveY = event.pageY-offset.top;
+      });
 
-        var renderCount = 1;
+      var renderCount = 1;
 
-        function render() {
-          requestAnimationFrame(render);
+      function render() {
+        requestAnimationFrame(render);
 
-          if(renderCount % 2) {
-            scene.render(mouseMoveX, mouseMoveY);
-          } else {
-  //          if(previousX !== mouseMoveX || previousY !== mouseMoveY) {
-              scene.getObjectUnderPixel(mouseMoveX, mouseMoveY);
-  //          }
-            previousX = mouseMoveX;
-            previousY = mouseMoveY;
-          }
-          renderCount++;
+        if(renderCount % 2) {
+          scene.render(mouseMoveX, mouseMoveY);
+        } else {
+//          if(previousX !== mouseMoveX || previousY !== mouseMoveY) {
+            scene.getObjectUnderPixel(mouseMoveX, mouseMoveY);
+//          }
+          previousX = mouseMoveX;
+          previousY = mouseMoveY;
         }
+        renderCount++;
+      }
 
-        render();
-      }, 1000);
-    });
+      render();
+    }, 1000);
 
   </script>
-
 
 </body>
 </html>

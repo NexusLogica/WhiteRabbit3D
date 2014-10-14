@@ -23,7 +23,7 @@ Ngl.Scene = function() {
   this.worldTransform = mat4.create();
   this.cameraTransform = mat4.create();
   this.inverseCameraTransform = mat4.create();
-  mat4.translate(this.cameraTransform, this.cameraTransform, vec3.fromValues(0.0, 0.0, 0.15 ));
+  mat4.translate(this.cameraTransform, this.cameraTransform, vec3.fromValues(0.0, 0.0, 1.25 ));
 
   this.va = vec3.create();
   this.vb = vec3.create();
@@ -71,7 +71,7 @@ Ngl.Scene.prototype = {
     gl.clearDepth(1.0);
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
-    gl.viewport(0, 0, this.width, this.height);
+    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 
     this.initialTime = (new Date()).getTime();
 
@@ -81,6 +81,8 @@ Ngl.Scene.prototype = {
 
     this.projectionMatrix = mat4.create();
     mat4.frustum(this.projectionMatrix, -xHalf, xHalf, -yHalf, yHalf, this.nearFrustrum, this.farFrustrum);
+    // Alternatively...
+    // mat4.perspective(this.projectionMatrix, 2.0*this.verticalViewAngle*Math.PI/180.0, 1, this.nearFrustrum, this.farFrustrum);
 
     // Create the selection framebuffer's texture.
     this.selectionTexture = gl.createTexture();
@@ -117,7 +119,7 @@ Ngl.Scene.prototype = {
 
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     //  gl.bindFramebuffer(gl.FRAMEBUFFER, this.selectionFBO);
-    gl.viewport(0, 0, this.width, this.height);
+    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 
     gl.clearColor(0.0, 1.0, 0.5, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -149,7 +151,7 @@ Ngl.Scene.prototype = {
       this.renderForSelect = true;
 
       gl.bindFramebuffer(gl.FRAMEBUFFER, this.selectionFBO);
-      gl.viewport(0, 0, this.width, this.height);
+    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 
       gl.clearColor(0.0, 0.5+0.5*Math.sin(this.time/5000), 0.5+0.5*Math.cos(this.time/5000), 1.0);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -171,7 +173,7 @@ Ngl.Scene.prototype = {
 
       this.transformUpdated = false;
       gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, this.selectionPixel);
-      console.log('x,y = '+x+','+y+'   color='+this.selectionPixel[0]+' '+this.selectionPixel[1]+' '+this.selectionPixel[2]);
+//      console.log('x,y = '+x+','+y+'   color='+this.selectionPixel[0]+' '+this.selectionPixel[1]+' '+this.selectionPixel[2]);
     }
   }
 };

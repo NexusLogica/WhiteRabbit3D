@@ -29,6 +29,9 @@ Ngl.RectangularSurface.prototype = {
 
     var w2 = this.width/2.0;
     var h2 = this.height/2.0;
+    w2 *= 10.5;
+    h2 *= 10.5;
+    var d = 0.1*this.width;
     var array = new Float32Array([
         -w2, -h2, 0.0, 0.0,
          w2, -h2, 1.0, 0.0,
@@ -36,6 +39,15 @@ Ngl.RectangularSurface.prototype = {
         -w2,  h2, 0.0, 1.0,
          w2, -h2, 1.0, 0.0,
          w2,  h2, 1.0, 1.0]);
+
+/*    var array = new Float32Array([
+        -w2, -h2-d,
+         w2, -h2-d,
+        -w2,  h2+d,
+        -w2,  h2+d,
+         w2, -h2-d,
+         w2,  h2+d]);
+*/
     this.buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
     gl.bufferData(gl.ARRAY_BUFFER, array, gl.STATIC_DRAW);
@@ -44,8 +56,9 @@ Ngl.RectangularSurface.prototype = {
     this.selectColor = vec4.fromValues(0, 0, 1, 1);
 
     this.program = scene.textureShader.program;
+//    this.program = scene.simpleShader.program;
     this.positionLocation = gl.getAttribLocation(this.program, 'position');
-    this.projectionMatrixLocation = gl.getUniformLocation(this.program, 'projectionMatrix');
+    this.projectionMatrixLocation = gl.getUniformLocation(this.program, 'projectionViewMatrix');
     this.textureLocation = gl.getAttribLocation(this.program, 'texCoord');
   },
 
@@ -54,15 +67,23 @@ Ngl.RectangularSurface.prototype = {
 
     this.texture.bindTexture(gl);
 
+
+
+//    if(parent.transformUpdated || this.transformUpdated) {
+      mat4.multiply(this.worldTransform, parent.worldTransform,  this.transform);
+      mat4.multiply(this.projectionModelView, scene.projectionMatrix, this.worldTransform);
+//    }
+
     gl.useProgram(this.program);
     gl.uniformMatrix4fv(this.projectionMatrixLocation, gl.FALSE, this.projectionModelView);
-    gl.uniform4fv(this.surfaceColorLocation, scene.renderForSelect ? this.selectColor : this.color);
+//    gl.uniform4fv(this.surfaceColorLocation, scene.renderForSelect ? this.selectColor : this.color);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
 
     // Where the vertex data needs to go.
     gl.enableVertexAttribArray(this.positionLocation);
     gl.enableVertexAttribArray(this.textureLocation);
+//    gl.vertexAttribPointer(this.positionLocation, 2, gl.FLOAT, gl.FALSE, 0, 0);
     gl.vertexAttribPointer(this.positionLocation, 2, gl.FLOAT, gl.FALSE, 16, 0);
     gl.vertexAttribPointer(this.textureLocation,  2, gl.FLOAT, gl.FALSE, 16, 8);
 

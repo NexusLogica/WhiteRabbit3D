@@ -61,31 +61,48 @@ angular.module('wr3dApp').directive('backgroundVideo', [function() {
         autoPlay: true,
         showinfo: false,
         modestbranding: false,
-        playbackRate: 0.25,
-        loop:1,
+        playbackRate: 1.0,
+        loop:10,
         showControls: false,
         allowFullScreen: "false", // true by default, allow user to go full screen
         initialVideo: $scope.videoId, // "RgIxcrA7BfM" is water and drops - "oQTtZLtkVEc" are balls
         preferredQuality: "default",// preferred quality: default, small, medium, large, hd720
         onPlayerUnstarted: function() {
+          console.log('a');
         },
         onError: function() {
+          console.log('b');
         },
         onErrorNotFound: function() {
+          console.log('c');
         },
         onErrorNotEmbeddable: function() {
+          console.log('d');
         },
         onErrorInvalidParameter: function() {
+          console.log('e');
         },
         onPlay: function() {
+          console.log('f');
         },
-        onPause: function() {}, // after the pause method is called
+        onPause: function() {
+          console.log('g');
+        }, // after the pause method is called
         onStop: function() {
+          console.log('h');
         },
         onSeek: function(time){}, // after the video has been seeked to a defined point
         onMute: function(){}, // after the player is muted
         onUnMute: function(){} // after the player is unmuted
       });
+
+      setTimeout(function() {
+        $element.find('.player').tubeplayer('play');
+      }, 4000);
+
+      setTimeout(function() {
+        $element.find('.player').tubeplayer('stop');
+      }, 60000);
 
     }
   };
