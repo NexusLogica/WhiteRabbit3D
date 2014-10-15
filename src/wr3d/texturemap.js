@@ -24,6 +24,11 @@ Ngl.Texturemap.prototype = {
     if(this.canvasObject.hasCanvas()) {
       this.initialized = true;
 
+      this.width = this.canvasObject.width;
+      this.height = this.canvasObject.height;
+      this.texturemapWidth = this.canvasObject.texturemapWidth;
+      this.texturemapHeight = this.canvasObject.texturemapHeight;
+
       this.texture = gl.createTexture();
       gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
       gl.bindTexture(gl.TEXTURE_2D, this.texture);
@@ -32,7 +37,10 @@ Ngl.Texturemap.prototype = {
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
       gl.generateMipmap(gl.TEXTURE_2D);
       gl.bindTexture(gl.TEXTURE_2D, null);
+
+      return true;
     }
+    return false;
   },
 
   bindTexture: function(gl) {

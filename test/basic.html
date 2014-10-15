@@ -16,6 +16,7 @@
       height: 700px;
     }
     .canvas-2d {
+
       display: block;
       position:fixed;
       top:0px;
@@ -46,6 +47,7 @@
   <script id="texture-vertex-shader" type="x-shader/x-vertex">
     // A basic flat vertex shader, hello world'esque.
     uniform mat4 projectionViewMatrix;
+    uniform vec2 size;
     attribute vec2 position;
     attribute vec2 texCoord;
 
@@ -53,7 +55,7 @@
 
     void main() {
       texCoordVarying = texCoord;
-      vec4 sizedPosition = vec4(position[0], position[1], 0.0, 1.0);
+      vec4 sizedPosition = vec4(size[0]*position[0], size[1]*position[1], 0.0, 1.0);
       gl_Position = projectionViewMatrix*sizedPosition;
     }
   </script>
