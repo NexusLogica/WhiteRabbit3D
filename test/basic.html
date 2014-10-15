@@ -72,6 +72,26 @@
     }
   </script>
 
+  <script id="selection-texture-vertex-shader" type="x-shader/x-vertex">
+    // A basic flat vertex shader, hello world'esque.
+    uniform mat4 projectionViewMatrix;
+    attribute vec2 position;
+
+    void main() {
+      vec4 sizedPosition = vec4(position[0], position[1], 0.0, 1.0);
+      gl_Position = projectionViewMatrix*sizedPosition;
+    }
+  </script>
+
+  <script id="selection-texture-fragment-shader" type="x-shader/x-fragment">
+    // A basic flat fragment shader, hello world'esque.
+    uniform highp vec4 surfaceColor;
+
+    void main() {
+      gl_FragColor = surfaceColor;
+    }
+  </script>
+
 
 </head>
 <body>

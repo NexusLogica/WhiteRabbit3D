@@ -56,7 +56,7 @@ Ngl.RectangularSurface.prototype = {
     this.color = vec4.fromValues(1, 0, 0, 1);
     this.selectColor = vec4.fromValues(0, 0, 1, 1);
 
-    this.program = scene.textureShader.program;
+    this.program = scene.shaders['texture'].program;
     this.positionLocation = gl.getAttribLocation(this.program, 'position');
     this.sizeLocation = gl.getUniformLocation(this.program, 'size');
     this.projectionMatrixLocation = gl.getUniformLocation(this.program, 'projectionViewMatrix');

@@ -55,6 +55,10 @@ Ngl.Scene.prototype = {
     var gl = this.gl;
 
     // Load shaders
+    this.shaders = {};
+    this.addShader('flat');
+    this.addShader('texture');
+    this.addShader('selection-texture');
     this.simpleShader = {};
     this.simpleShader.vertex = createShaderFromScriptElement(gl, 'flat-vertex-shader');
     this.simpleShader.fragment = createShaderFromScriptElement(gl, 'flat-fragment-shader');
@@ -74,6 +78,8 @@ Ngl.Scene.prototype = {
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 
     this.initialTime = (new Date()).getTime();
+
+    this.createSelectionTexture();
 
     // Set up the camera.
     var yHalf = this.nearFrustrum*Math.tan(this.verticalViewAngle*Math.PI/180.0);
@@ -103,7 +109,7 @@ Ngl.Scene.prototype = {
     this.selectionPixel = new Uint8Array(4);
 
     if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE) {
-      throw new Error("gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE");
+      throw new Error('gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE');
     }
   },
 
@@ -151,7 +157,7 @@ Ngl.Scene.prototype = {
       this.renderForSelect = true;
 
       gl.bindFramebuffer(gl.FRAMEBUFFER, this.selectionFBO);
-    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+      gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 
       gl.clearColor(0.0, 0.5+0.5*Math.sin(this.time/5000), 0.5+0.5*Math.cos(this.time/5000), 1.0);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -175,5 +181,105 @@ Ngl.Scene.prototype = {
       gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, this.selectionPixel);
 //      console.log('x,y = '+x+','+y+'   color='+this.selectionPixel[0]+' '+this.selectionPixel[1]+' '+this.selectionPixel[2]);
     }
+  },
+
+  createSelectionTexture: function() {
+    var gl = this.gl;
+
+    var framebuffer = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+    framebuffer.width = 512;
+    framebuffer.height = 512;
+
+    this.selectionTexture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, this.selectionTexture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, framebuffer.width, framebuffer.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+    var renderbuffer = gl.createRenderbuffer();
+    gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer);
+    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, framebuffer.width, framebuffer.height);
+
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.selectionTexture, 0);
+    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, renderbuffer);
+
+    // Render
+    gl.viewport(0, 0, framebuffer.width, framebuffer.height);
+
+
+    // We are done. Clear the buffer info.
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  },
+
+  addShader: function(name) {
+    var shader = {};
+    shader.vertex   = this.compileShaderFromElement(name+'-vertex-shader');
+    shader.fragment = this.compileShaderFromElement(name+'-fragment-shader');
+    shader.program  = this.createProgram(shader.vertex, shader.fragment);
+    this.shaders[name] = shader;
+  },
+
+  createProgram: function(vertexShader, fragmentShader) {
+    var gl = this.gl;
+    var program = gl.createProgram();
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+
+    // Check the link status
+    var linked = gl.getProgramParameter(program, gl.LINK_STATUS);
+    if (!linked) {
+      var lastError = gl.getProgramInfoLog (program);
+      console.log('Error in program linking:' + lastError);
+
+      gl.deleteProgram(program);
+      return null;
+    }
+    return program;
+  },
+
+  compileShaderFromElement: function(scriptId) {
+    var shaderSource = '';
+    var shaderType;
+    var shaderScript = document.getElementById(scriptId);
+    if (!shaderScript) {
+      console.log('ERROR: Unknown script element ' + scriptId);
+      throw('Error: unknown script element ' + scriptId);
+    }
+    shaderSource = shaderScript.text;
+
+    if (shaderScript.type === 'x-shader/x-vertex') {
+      shaderType = this.gl.VERTEX_SHADER;
+    } else if (shaderScript.type === 'x-shader/x-fragment') {
+      shaderType = this.gl.FRAGMENT_SHADER;
+    } else if (shaderType !== this.gl.VERTEX_SHADER && shaderType !== this.gl.FRAGMENT_SHADER) {
+      console.log('ERROR: unknown shader type '+scriptId);
+      return null;
+    }
+
+    return this.compileShader(shaderSource, shaderType);
+  },
+
+  compileShader: function(shaderSource, shaderType) {
+    var gl = this.gl;
+    // Create the shader object
+    var shader = gl.createShader(shaderType);
+
+    // Load and compile the shader source
+    gl.shaderSource(shader, shaderSource);
+    gl.compileShader(shader);
+
+    // Check the compile status
+    var compiled = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+    if (!compiled) {
+      // Something went wrong during compilation; get the error
+      var lastError = gl.getShaderInfoLog(shader);
+      console.log('ERROR compiling shader "' + shader + '":' + lastError);
+      gl.deleteShader(shader);
+      return null;
+    }
+
+    return shader;
   }
 };
