@@ -16,7 +16,10 @@
       height: 700px;
     }
     .canvas-2d {
-      display: none;
+      display: block;
+      position:fixed;
+      top:0px;
+      left:0px;
     }
   </style>
 
@@ -36,8 +39,7 @@
     uniform highp vec4 surfaceColor;
 
     void main() {
-      //gl_FragColor = surfaceColor;
-      gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+      gl_FragColor = surfaceColor;
     }
   </script>
 
@@ -75,6 +77,7 @@
     <canvas class="canvas-3d" width="700" height="700"></canvas>
     <canvas class="canvas-2d" width="256" height="256"></canvas>
   </div>
+  <button class="simulate">Do click</button>
 
   <script src="../src/lib/bower_components/jquery/dist/jquery.js"></script>
   <script src="../src/lib/bower_components/lodash/dist/lodash.js"></script>
