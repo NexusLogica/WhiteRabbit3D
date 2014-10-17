@@ -36,6 +36,7 @@ Ngl.Scene = function() {
   this.selectProjectionMatrix = mat4.create();
   this.selectTextureWidth = 1;
   this.selectTextureHeight = 1;
+  this.selectionPixel = new Uint8Array(4);
 }
 
 Ngl.Scene.prototype = {
@@ -59,15 +60,6 @@ Ngl.Scene.prototype = {
     this.addShader('flat');
     this.addShader('texture');
     this.addShader('selection-texture');
-    this.simpleShader = {};
-    this.simpleShader.vertex = createShaderFromScriptElement(gl, 'flat-vertex-shader');
-    this.simpleShader.fragment = createShaderFromScriptElement(gl, 'flat-fragment-shader');
-    this.simpleShader.program = createProgram(gl, [this.simpleShader.vertex, this.simpleShader.fragment]);
-
-    this.textureShader = {};
-    this.textureShader.vertex = createShaderFromScriptElement(gl, 'texture-vertex-shader');
-    this.textureShader.fragment = createShaderFromScriptElement(gl, 'texture-fragment-shader');
-    this.textureShader.program = createProgram(gl, [this.textureShader.vertex, this.textureShader.fragment]);
 
     gl.cullFace(gl.BACK);
     gl.enable(gl.CULL_FACE);
@@ -91,7 +83,7 @@ Ngl.Scene.prototype = {
     // mat4.perspective(this.projectionMatrix, 2.0*this.verticalViewAngle*Math.PI/180.0, 1, this.nearFrustrum, this.farFrustrum);
 
     // Create the selection framebuffer's texture.
-    this.selectionTexture = gl.createTexture();
+/*    this.selectionTexture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D,  this.selectionTexture);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
@@ -104,9 +96,8 @@ Ngl.Scene.prototype = {
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.selectionFBO);
     gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.selectionTexture, 0);
     gl.bindTexture(gl.TEXTURE_2D, null);
-
+*/
     // Where to read the color into.
-    this.selectionPixel = new Uint8Array(4);
 
     if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE) {
       throw new Error('gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE');
@@ -185,32 +176,135 @@ Ngl.Scene.prototype = {
 
   createSelectionTexture: function() {
     var gl = this.gl;
+    var _this = this;
 
+    _this.selectionTexture = gl.createTexture();
     var framebuffer = gl.createFramebuffer();
     gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
     framebuffer.width = 512;
     framebuffer.height = 512;
 
-    this.selectionTexture = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, this.selectionTexture);
+    gl.bindTexture(gl.TEXTURE_2D, _this.selectionTexture);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, framebuffer.width, framebuffer.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
     var renderbuffer = gl.createRenderbuffer();
     gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer);
     gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, framebuffer.width, framebuffer.height);
 
-    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.selectionTexture, 0);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, _this.selectionTexture, 0);
     gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, renderbuffer);
 
     // Render
     gl.viewport(0, 0, framebuffer.width, framebuffer.height);
+    gl.clearColor(1.0, 0.0, 0.0, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.disable(gl.BLEND);
 
+    var verts = [
+      1,  1,
+     -1,  1,
+     -1, -1,
+      1,  1,
+     -1, -1,
+      1, -1
+    ];
+    var vertBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
+    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(0);
+
+    var program = this.shaders['selection-texture'].program;
+    gl.useProgram(program);
+
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+    gl.readPixels(1, 1, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, _this.selectionPixel);
+    console.log('x,y = '+1+','+1+'   color='+_this.selectionPixel[0]+' '+_this.selectionPixel[1]+' '+_this.selectionPixel[2]);
+
+        // We are done. Clear the buffer info.
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  },
+
+
+
+
+
+
+
+/*
+
+
+
+var verts = [
+      1,  1,
+     -1,  1,
+     -1, -1,
+      1,  1,
+     -1, -1,
+      1, -1
+];
+var vertBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, vertBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
+gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+gl.enableVertexAttribArray(0);
+
+var program = this.shaders['selection-texture'].program;
+gl.useProgram(program);
+
+// create an empty texture
+this.selectionTexture = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, this.selectionTexture);
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 512, 512, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
+gl.generateMipmap(gl.TEXTURE_2D);
+
+// Create a framebuffer and attach the texture.
+var fb = gl.createFramebuffer();
+fb.width = 512;
+fb.height = 512;
+gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.selectionTexture, 0);
+//    gl.viewport(0, 0, fb.width, fb.height);
+
+    var renderbuffer = gl.createRenderbuffer();
+    gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer);
+    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, fb.width, fb.height);
+
+    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, renderbuffer);
+
+
+// Render to the texture (using clear because it's simple)
+gl.clearColor(1, 1, 0, 1); // green;
+gl.clear(gl.COLOR_BUFFER_BIT);
+
+// Now draw with the texture to the canvas
+// NOTE: We clear the canvas to red so we'll know
+// we're drawing the texture and not seeing the clear
+// from above.
+gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+gl.clearColor(1, 0, 0, 1); // red
+gl.clear(gl.COLOR_BUFFER_BIT);
+gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+      gl.readPixels(1, 1, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, this.selectionPixel);
+      console.log('x,y = '+1+','+1+'   color='+this.selectionPixel[0]+' '+this.selectionPixel[1]+' '+this.selectionPixel[2]);
 
     // We are done. Clear the buffer info.
     gl.bindTexture(gl.TEXTURE_2D, null);
     gl.bindRenderbuffer(gl.RENDERBUFFER, null);
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
   },
+*/
 
   addShader: function(name) {
     var shader = {};
@@ -282,4 +376,10 @@ Ngl.Scene.prototype = {
 
     return shader;
   }
+};
+
+Ngl.powerOfTwo = function(d) {
+  var log2 = Math.log(2.0);
+  var power = Math.ceil(Math.log(d)/log2);
+  return Math.ceil(Math.pow(2.0, power)-0.5);
 };

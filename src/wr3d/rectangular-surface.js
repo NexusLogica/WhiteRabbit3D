@@ -27,19 +27,22 @@ Ngl.RectangularSurface.prototype = {
   initialize: function(gl, scene, parent) {
     Ngl.Dock.prototype.initialize.call(this, gl, scene, parent);
 
-    this.width = this.texture.width;
-    this.height = this.texture.height;
+    this.width = 512;//this.texture.width;
+    this.height = 512;//this.texture.height;
 
     var w2 = this.width/2.0;
     var h2 = this.height/2.0;
-    var scale = 0.004;
+   // var scale = 0.004;
+    var scale = 0.001;
     w2 *= scale;
     h2 *= scale;
     this.size = new Float32Array([w2, h2]);
 
-    var tmw = this.width/this.texture.texturemapWidth;
-    var tmh = 1.0-this.height/this.texture.texturemapHeight;
+    //var tmw = this.width/this.texture.texturemapWidth;
+    //var tmh = 1.0-this.height/this.texture.texturemapHeight;
 
+    var tmw = 1.0;
+    var tmh = 0.0;
     var d = 0.1*this.width;
     var array = new Float32Array([
         -1.0, -1.0, 0.0, tmh,
@@ -74,7 +77,12 @@ Ngl.RectangularSurface.prototype = {
 
     Ngl.Dock.prototype.preRender.call(this, gl, scene, parent);
 
-    this.texture.bindTexture(gl);
+    if(scene.selectionTexture) {
+      gl.activeTexture(gl.TEXTURE0+0);
+      gl.bindTexture(gl.TEXTURE_2D, scene.selectionTexture);
+    } else {
+      this.texture.bindTexture(gl);
+    }
 
 
 
