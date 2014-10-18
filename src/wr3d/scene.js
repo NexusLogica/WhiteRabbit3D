@@ -59,7 +59,7 @@ Ngl.Scene.prototype = {
     this.shaders = {};
     this.addShader('flat');
     this.addShader('texture');
-    this.addShader('selection-texture');
+    this.addShader('selection-texture-builder');
 
     gl.cullFace(gl.BACK);
     gl.enable(gl.CULL_FACE);
@@ -71,7 +71,8 @@ Ngl.Scene.prototype = {
 
     this.initialTime = (new Date()).getTime();
 
-    this.createSelectionTexture();
+    this.selectionRenderer = new Ngl.SelectionRenderer();
+    this.selectionRenderer.createSelectionTexture(gl, this, 512, 512);
 
     // Set up the camera.
     var yHalf = this.nearFrustrum*Math.tan(this.verticalViewAngle*Math.PI/180.0);

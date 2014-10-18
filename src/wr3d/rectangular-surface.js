@@ -77,9 +77,9 @@ Ngl.RectangularSurface.prototype = {
 
     Ngl.Dock.prototype.preRender.call(this, gl, scene, parent);
 
-    if(scene.selectionTexture) {
+    if(scene.selectionRenderer.selectionTexture) {
       gl.activeTexture(gl.TEXTURE0+0);
-      gl.bindTexture(gl.TEXTURE_2D, scene.selectionTexture);
+      gl.bindTexture(gl.TEXTURE_2D, scene.selectionRenderer.selectionTexture);
     } else {
       this.texture.bindTexture(gl);
     }

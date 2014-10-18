@@ -72,24 +72,38 @@
     }
   </script>
 
-  <script id="selection-texture-vertex-shader" type="x-shader/x-vertex">
-    attribute vec4 a_position;
-    varying vec2 v_texcoord;
+  <script id="selection-texture-builder-vertex-shader" type="x-shader/x-vertex">
+
+    precision highp float;
+    uniform float width;         // The width of the bitmap in pixels.
+    attribute vec2 position;
+    attribute vec2 increment;
+    varying vec2 xyCoordinate;
 
     void main() {
-      gl_Position = a_position;
-      v_texcoord = a_position.xy * 0.5 + 0.5;
+      gl_Position = vec4(position[0], position[1], 0.0, 1.0);
+      xyCoordinate = increment*width;
     }
+
   </script>
 
-  <script id="selection-texture-fragment-shader" type="x-shader/x-fragment">
-    precision mediump float;
-    varying vec2 v_texcoord;
-    uniform sampler2D u_sampler;
+  <script id="selection-texture-builder-fragment-shader" type="x-shader/x-fragment">
+
+    precision highp float;
+    uniform float width;
+    varying vec2 xyCoordinate;
+
     void main() {
-//        gl_FragColor = texture2D(u_sampler, v_texcoord);
-      gl_FragColor = vec4(v_texcoord[0], v_texcoord[1], 1.0, 1.0);
+      float l = xyCoordinate.y*width+xyCoordinate.x;
+      float r = floor(l*0.00001525878);          // divided by 256^2
+      float g = floor((l-r*65536.0)*0.00390625); // divided by 256
+      float b = l-r*65536.0-g*256.0;
+
+//      gl_FragColor = vec4(r, g, b, 1.0)/256.0;
+      gl_FragColor = vec4(r/256.0, g/256.0, b/256.0, 1.0);
+//      gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
     }
+
   </script>
 
 </head>
@@ -110,6 +124,7 @@
   <script src="../src/wr3d/rectangular-surface.js"></script>
   <script src="../src/wr3d/texturemap.js"></script>
   <script src="../src/wr3d/canvas.js"></script>
+  <script src="../src/wr3d/selection-renderer.js"></script>
 
   <script>
 

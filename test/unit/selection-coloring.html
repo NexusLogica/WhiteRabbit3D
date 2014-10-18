@@ -20,14 +20,23 @@
     var seed = 42;
     var rand = new Random(seed);
 
-    var width = 1024;
+    var width = 512;
     var height = 512;
     var selector = new Ngl.SelectionRenderer(width, height);
     var maxXY = width*height;
 
     var count = 1000;
 
-    for(var i=0; i<count; i++) {
+    var tests = [ [0, 0], [1, 0], [0, 1], [2, 0] ];
+    var i;
+    for(i=0; i<tests.length; i++) {
+      var ix = tests[i][0];
+      var iy = tests[i][1];
+      var rgb = selector.getIntColorFromXY(ix, iy);
+      console.log('x,y = '+ix+','+iy+'   color='+rgb.r+' '+rgb.g+' '+rgb.b);
+    }
+
+    for(i=0; i<count; i++) {
       var x = Math.floor(rand.random()*width);
       var y = Math.floor(rand.random()*height);
       if(x*y > maxXY) { continue; }

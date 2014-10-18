@@ -13,13 +13,92 @@ All Rights Reserved.
 'use strict';
 
 Ngl.SelectionRenderer = function() {
+  this.selectionTexture = null;
   this.width  = 1024;
   this.height = 1024;
+
   this.c0 = 256;
   this.c1 = 256*this.c0;
 };
 
 Ngl.SelectionRenderer.prototype = {
+
+  createSelectionTexture: function(gl, scene, width, height) {
+    this.width  = !_.isUndefined(width)  ? Ngl.powerOfTwo(width)  : this.width;
+    this.height = !_.isUndefined(height) ? Ngl.powerOfTwo(height) : this.height;
+
+    this.selectionTexture = gl.createTexture();
+    var framebuffer = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+    framebuffer.width  = this.width;
+    framebuffer.height = this.height;
+
+    gl.bindTexture(gl.TEXTURE_2D, this.selectionTexture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, framebuffer.width, framebuffer.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+    var renderbuffer = gl.createRenderbuffer();
+    gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer);
+    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, framebuffer.width, framebuffer.height);
+
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.selectionTexture, 0);
+    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, renderbuffer);
+
+    // Render
+    gl.viewport(0, 0, framebuffer.width, framebuffer.height);
+    gl.clearColor(0.0, 0.0, 1.0, 1.0);
+    /* jshint -W016 */
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    /* jshint +W016 */
+    gl.disable(gl.BLEND);
+
+    var program = scene.shaders['selection-texture-builder'].program;
+    gl.useProgram(program);
+    var positionLocation = gl.getAttribLocation(program, 'position');
+    var incrementLocation = gl.getAttribLocation(program, 'increment');
+    var widthLocation = gl.getUniformLocation(program, 'width');
+
+    var vertexData = [
+      1.0,  1.0, 1.0, 0.0,
+     -1.0,  1.0, 0.0, 0.0,
+     -1.0, -1.0, 0.0, 1.0,
+      1.0,  1.0, 1.0, 0.0,
+     -1.0, -1.0, 0.0, 1.0,
+      1.0, -1.0, 1.0, 1.0
+    ];
+
+    var vertexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexData), gl.STATIC_DRAW);
+
+    gl.enableVertexAttribArray(positionLocation);
+    gl.enableVertexAttribArray(incrementLocation);
+
+    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, gl.FALSE, 16, 0);
+    gl.vertexAttribPointer(incrementLocation,  2, gl.FLOAT, gl.FALSE, 16, 8);
+    gl.uniform1f(widthLocation, this.width);
+
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+    var selectionPixel = new Uint8Array(4);
+    var tests = [ [0, 0], [1, 0], [0, 1], [2, 0] ];
+    for(var i=0; i<tests.length; i++) {
+      var ix = tests[i][0];
+      var iy = tests[i][1];
+      gl.readPixels(ix, iy, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, selectionPixel);
+      console.log('x,y = '+ix+','+iy+'   color='+selectionPixel[0]+' '+selectionPixel[1]+' '+selectionPixel[2]);
+    }
+
+    // We are done. Clear the buffer info.
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  },
+
   setMaxSize: function(width, height) {
     this.width  = width;
     this.height = height;
