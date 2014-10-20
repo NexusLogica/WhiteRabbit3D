@@ -94,14 +94,26 @@
     varying vec2 xyCoordinate;
 
     void main() {
-      float l = xyCoordinate.y*width+xyCoordinate.x;
+      float l = (xyCoordinate.y-0.5)*width+(xyCoordinate.x-0.5);
+
       float r = floor(l*0.00001525878);          // divided by 256^2
       float g = floor((l-r*65536.0)*0.00390625); // divided by 256
-      float b = l-r*65536.0-g*256.0;
+      float b = floor(l-r*65536.0-g*256.0);
 
-//      gl_FragColor = vec4(r, g, b, 1.0)/256.0;
-      gl_FragColor = vec4(r/256.0, g/256.0, b/256.0, 1.0);
-//      gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+
+      float diff = (xyCoordinate.x-0.5)-floor(xyCoordinate.x);
+      float diffout = 0.0;
+      if(diff == 0.0) {
+        diffout = 1.0;
+      }
+      gl_FragColor = vec4(r/255.0, g/255.0, b/255.0, 1.0);
+//      gl_FragColor = vec4(diffout, g/256.0, b/256.0, 1.0);
+//if(xyCoordinate.y < -0.501) {
+//      gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+//}
+//else {
+//      gl_FragColor = vec4(l/256.0, xyCoordinate.x/256.0, xyCoordinate.y/256.0, 1.0);
+//}
     }
 
   </script>
@@ -116,6 +128,7 @@
 
   <script src="../src/lib/bower_components/jquery/dist/jquery.js"></script>
   <script src="../src/lib/bower_components/lodash/dist/lodash.js"></script>
+  <script src="../src/lib/random/random-0.26-debug.js"></script>
   <script src="../src/lib/bower_components/gl-matrix/dist/gl-matrix.js"></script>
   <script src="../src/lib/webgl-utils/webgl-utils.js"></script>
   <script src="../src/lib/bower_components/zebra/zebra.js"></script>

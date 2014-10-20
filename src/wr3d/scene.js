@@ -119,7 +119,7 @@ Ngl.Scene.prototype = {
     //  gl.bindFramebuffer(gl.FRAMEBUFFER, this.selectionFBO);
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 
-    gl.clearColor(0.0, 1.0, 0.5, 1.0);
+    gl.clearColor(1.0, 0.0, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.disable(gl.BLEND);
 

@@ -61,7 +61,7 @@ Ngl.SelectionRenderer.prototype = {
     var positionLocation = gl.getAttribLocation(program, 'position');
     var incrementLocation = gl.getAttribLocation(program, 'increment');
     var widthLocation = gl.getUniformLocation(program, 'width');
-
+/*
     var vertexData = [
       1.0,  1.0, 1.0, 0.0,
      -1.0,  1.0, 0.0, 0.0,
@@ -69,6 +69,15 @@ Ngl.SelectionRenderer.prototype = {
       1.0,  1.0, 1.0, 0.0,
      -1.0, -1.0, 0.0, 1.0,
       1.0, -1.0, 1.0, 1.0
+    ];
+*/
+    var vertexData = [
+      1.0,  1.0, 1.0, 1.0,
+     -1.0,  1.0, 0.0, 1.0,
+     -1.0, -1.0, 0.0, 0.0,
+      1.0,  1.0, 1.0, 1.0,
+     -1.0, -1.0, 0.0, 0.0,
+      1.0, -1.0, 1.0, 0.0
     ];
 
     var vertexBuffer = gl.createBuffer();
@@ -85,14 +94,71 @@ Ngl.SelectionRenderer.prototype = {
     gl.drawArrays(gl.TRIANGLES, 0, 6);
 
     var selectionPixel = new Uint8Array(4);
-    var tests = [ [0, 0], [1, 0], [0, 1], [2, 0] ];
-    for(var i=0; i<tests.length; i++) {
+    var i;
+/*
+    var tests = [ [0, 0], [1, 0], [2, 0], [3, 0], [0, 1], [1, 1], [2, 1], [3, 1] ];
+    for(i=0; i<tests.length; i++) {
       var ix = tests[i][0];
       var iy = tests[i][1];
       gl.readPixels(ix, iy, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, selectionPixel);
-      console.log('x,y = '+ix+','+iy+'   color='+selectionPixel[0]+' '+selectionPixel[1]+' '+selectionPixel[2]);
+/////////      console.log('x,y = '+ix+','+iy+'   color='+selectionPixel[0]+' '+selectionPixel[1]+' '+selectionPixel[2]);
+    }
+*/
+    var maxXY = this.width*this.height*1.0;
+
+    var x = 0;
+    var y = 0;
+    var r = 0;
+    var g = 0;
+    var b = 0;
+    for(i=0; i<maxXY; i++) {
+      gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, selectionPixel);
+      var rP = selectionPixel[0];
+      var gP = selectionPixel[1];
+      var bP = selectionPixel[2];
+      if ( r !== rP || g !== gP || b !== bP ) {
+        console.log('x,y = '+x+','+y+'   color='+selectionPixel[0]+' '+selectionPixel[1]+' '+selectionPixel[2]+' Expected color: '+r+','+g+','+b);
+      }
+
+      b++;
+      if(b > 255) {
+        b = 0;
+        g++;
+        if(g > 255) {
+          g = 0;
+          r++;
+        }
+      }
+
+      x++;
+      if(x >= this.width) {
+        x = 0;
+        y++;
+      }
     }
 
+
+/*
+
+    var seed = 42;
+    var rand = new Random(seed);
+
+    var count = this.height;
+    for(i=0; i<count; i++) {
+      var x = Math.floor(rand.random()*width);
+      var y = Math.floor(rand.random()*height);
+      if(x*y > maxXY) { continue; }
+
+      x = 0;
+      y = i;
+
+      gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, selectionPixel);
+      var xy = this.getXYFromIntColor(selectionPixel[0], selectionPixel[1], selectionPixel[2]);
+      if(xy.x !== x || xy.y !== y || true) {
+        console.log('x,y = '+x+','+y+'   color='+selectionPixel[0]+' '+selectionPixel[1]+' '+selectionPixel[2]+' XY from Color: '+xy.x+','+xy.y);
+      }
+    }
+*/
     // We are done. Clear the buffer info.
     gl.bindTexture(gl.TEXTURE_2D, null);
     gl.bindRenderbuffer(gl.RENDERBUFFER, null);

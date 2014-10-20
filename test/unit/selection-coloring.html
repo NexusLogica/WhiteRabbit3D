@@ -25,8 +25,6 @@
     var selector = new Ngl.SelectionRenderer(width, height);
     var maxXY = width*height;
 
-    var count = 1000;
-
     var tests = [ [0, 0], [1, 0], [0, 1], [2, 0] ];
     var i;
     for(i=0; i<tests.length; i++) {
@@ -36,6 +34,7 @@
       console.log('x,y = '+ix+','+iy+'   color='+rgb.r+' '+rgb.g+' '+rgb.b);
     }
 
+    var count = 1000;
     for(i=0; i<count; i++) {
       var x = Math.floor(rand.random()*width);
       var y = Math.floor(rand.random()*height);
