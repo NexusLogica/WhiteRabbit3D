@@ -59,11 +59,27 @@ Ngl.RectangularSurface.prototype = {
     this.color = vec4.fromValues(1, 0, 0, 1);
     this.selectColor = vec4.fromValues(0, 0, 1, 1);
 
-    this.program = scene.shaders['texture'].program;
+    // The main shader and its locations.
+    this.program = scene.shaders.texture.program;
     this.positionLocation = gl.getAttribLocation(this.program, 'position');
     this.sizeLocation = gl.getUniformLocation(this.program, 'size');
     this.projectionMatrixLocation = gl.getUniformLocation(this.program, 'projectionViewMatrix');
     this.textureLocation = gl.getAttribLocation(this.program, 'texCoord');
+
+    // The color select shader and its locations.
+    this.selectColorProgram = scene.shaders['texture-color-select'].program;
+    this.positionLocationCs = gl.getAttribLocation(this.selectColorProgram, 'position');
+    this.sizeLocationCs = gl.getUniformLocation(this.selectColorProgram, 'size');
+    this.projectionMatrixLocationCs = gl.getUniformLocation(this.selectColorProgram, 'projectionViewMatrix');
+    this.surfaceColorLocationCs = gl.getUniformLocation(this.selectColorProgram, 'surfaceColor');
+
+    // The color select shader and its locations.
+    this.selectTextureProgram = scene.shaders['texture-texture-select'].program;
+    this.positionLocationTs = gl.getAttribLocation(this.selectTextureProgram, 'position');
+    this.sizeLocationTs = gl.getUniformLocation(this.selectTextureProgram, 'size');
+    this.projectionMatrixLocationTs = gl.getUniformLocation(this.selectTextureProgram, 'projectionViewMatrix');
+    this.textureLocationTs = gl.getAttribLocation(this.selectTextureProgram, 'texCoord');
+
   },
 
   render: function(gl, scene, parent) {
@@ -77,35 +93,42 @@ Ngl.RectangularSurface.prototype = {
 
     Ngl.Dock.prototype.preRender.call(this, gl, scene, parent);
 
-    if(scene.selectionRenderer.selectionTexture) {
+    var renderType = '';
+    if(scene.renderForSelectColor) {
+      renderType = 'Cs';
+      gl.useProgram(this.selectColorProgram);
+      gl.uniform4fv(this.surfaceColorLocationCs, this.selectColor);
+
+    } else if(scene.renderForSelectTexture) {
+      renderType = 'Ts';
+
       gl.activeTexture(gl.TEXTURE0+0);
       gl.bindTexture(gl.TEXTURE_2D, scene.selectionRenderer.selectionTexture);
+      gl.useProgram(this.selectTextureProgram);
+
     } else {
       this.texture.bindTexture(gl);
+      gl.useProgram(this.program);
+
+      // Only update during regular render cycles.
+      if(parent.transformUpdated || this.transformUpdated) {
+        mat4.multiply(this.worldTransform, parent.worldTransform,  this.transform);
+        mat4.multiply(this.projectionModelView, scene.projectionMatrix, this.worldTransform);
+      }
     }
 
 
-
-//    if(parent.transformUpdated || this.transformUpdated) {
-      mat4.multiply(this.worldTransform, parent.worldTransform,  this.transform);
-      mat4.multiply(this.projectionModelView, scene.projectionMatrix, this.worldTransform);
-//    }
-
-    gl.useProgram(this.program);
-    gl.uniformMatrix4fv(this.projectionMatrixLocation, gl.FALSE, this.projectionModelView);
-    gl.uniform2fv(this.sizeLocation, this.size);
-//    gl.uniform4fv(this.surfaceColorLocation, scene.renderForSelect ? this.selectColor : this.color);
+    gl.uniformMatrix4fv(this['projectionMatrixLocation'+renderType], gl.FALSE, this.projectionModelView);
+    gl.uniform2fv(this['sizeLocation'+renderType], this.size);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
 
     // Where the vertex data needs to go.
-    gl.enableVertexAttribArray(this.positionLocation);
-    gl.enableVertexAttribArray(this.textureLocation);
+    gl.enableVertexAttribArray(this['positionLocation'+renderType]);
+    gl.enableVertexAttribArray(this['textureLocation'+renderType]);
 
-    gl.vertexAttribPointer(this.positionLocation, 2, gl.FLOAT, gl.FALSE, 16, 0);
-    gl.vertexAttribPointer(this.textureLocation,  2, gl.FLOAT, gl.FALSE, 16, 8);
-
-        gl.vertexAttribPointer(this.sizeLocation, 2, gl.FLOAT, gl.FALSE, 16, 0);
+    gl.vertexAttribPointer(this['positionLocation'+renderType], 2, gl.FLOAT, gl.FALSE, 16, 0);
+    gl.vertexAttribPointer(this['textureLocation'+renderType],  2, gl.FLOAT, gl.FALSE, 16, 8);
 
     gl.drawArrays(gl.TRIANGLES, 0, 6);
 
