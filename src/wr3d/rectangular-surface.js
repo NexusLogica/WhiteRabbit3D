@@ -71,6 +71,7 @@ Ngl.RectangularSurface.prototype = {
     this.positionLocationCs = gl.getAttribLocation(this.selectColorProgram, 'position');
     this.sizeLocationCs = gl.getUniformLocation(this.selectColorProgram, 'size');
     this.projectionMatrixLocationCs = gl.getUniformLocation(this.selectColorProgram, 'projectionViewMatrix');
+    this.textureLocationCs = gl.getAttribLocation(this.selectColorProgram, 'texCoord');
     this.surfaceColorLocationCs = gl.getUniformLocation(this.selectColorProgram, 'surfaceColor');
 
     // The color select shader and its locations.
@@ -104,6 +105,7 @@ Ngl.RectangularSurface.prototype = {
 
       gl.activeTexture(gl.TEXTURE0+0);
       gl.bindTexture(gl.TEXTURE_2D, scene.selectionRenderer.selectionTexture);
+
       gl.useProgram(this.selectTextureProgram);
 
     } else {

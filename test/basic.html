@@ -2,26 +2,45 @@
 <html>
 <head>
   <title>WhiteRabbit3D Basic Test</title>
+  <link rel="stylesheet" href="../src/lib/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="shortcut icon" href="images/wr3d.png" />
   <style>
     .canvas-container {
-      width: 700px;
+      width: 1000px;
       height: 500px;
       margin: 40px auto 0px auto;
-      background-color: gray;
     }
 
     .canvas-3d {
       width: 700px;
       height: 700px;
+      display: inline-block;
     }
+
     .canvas-2d {
 
-      display: block;
+      display: none;
       position:fixed;
       top:0px;
       left:0px;
     }
+
+    .control-container {
+      border: #d3d3d3 solid 1px;
+      margin-left: 10px;
+      padding: 20px;
+      vertical-align: top;
+      display: inline-block;
+    }
+
+    .control-container>div {
+      margin-top:20px;
+    }
+
+    .control-container>div:first-child {
+      margin-top:0px;
+    }
+
   </style>
 
   <script id="flat-vertex-shader" type="x-shader/x-vertex">
@@ -74,7 +93,8 @@
     uniform highp vec4 surfaceColor;
 
     void main() {
-      gl_FragColor = surfaceColor;
+//      gl_FragColor = surfaceColor;
+      gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
     }
   </script>
 
@@ -125,11 +145,24 @@
   <div class="canvas-container">
     <canvas class="canvas-3d" width="700" height="700"></canvas>
     <canvas class="canvas-2d" width="256" height="256"></canvas>
+    <div class="control-container">
+      <div>
+        <button class="show-canvas btn btn-primary">Canvas</button>
+        <button class="show-color btn btn-secondary">Color</button>
+        <button class="show-texture btn btn-secondary">Texture</button>
+      </div>
+      <div>
+        <button class="simulate btn btn-primary">Do click</button>
+      </div>
+    </div>
   </div>
-  <button class="simulate">Do click</button>
 
   <script src="../src/lib/bower_components/jquery/dist/jquery.js"></script>
   <script src="../src/lib/bower_components/lodash/dist/lodash.js"></script>
+  <script src="../src/lib/bower_components/angular/angular.js"></script>
+  <script src="../src/lib/bower_components/angular-route/angular-route.js"></script>
+  <script src="../src/lib/bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+  <script src="../src/lib/bower_components/q/q.js"></script>
   <script src="../src/lib/random/random-0.26-debug.js"></script>
   <script src="../src/lib/bower_components/gl-matrix/dist/gl-matrix.js"></script>
   <script src="../src/lib/webgl-utils/webgl-utils.js"></script>
@@ -184,6 +217,16 @@
 
       render();
     }, 1000);
+
+    $('.show-canvas').on('click', function() {
+      $('.canvas-3d').data('wr3dScene').setRenderMode('canvas');
+    });
+    $('.show-color').on('click', function() {
+      $('.canvas-3d').data('wr3dScene').setRenderMode('color');
+    });
+    $('.show-texture').on('click', function() {
+      $('.canvas-3d').data('wr3dScene').setRenderMode('texture');
+    });
 
   </script>
 

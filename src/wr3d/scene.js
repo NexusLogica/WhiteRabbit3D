@@ -52,6 +52,7 @@ Ngl.Scene.prototype = {
     this.selectTextureWidth = this.width;
     this.selectTextureHeight = this.height;
 
+    canvasElement.data('wr3dScene', this);
     this.gl = canvasElement.get(0).getContext('experimental-webgl', { preserveDrawingBuffer: true } );
     var gl = this.gl;
 
@@ -112,9 +113,6 @@ Ngl.Scene.prototype = {
   render: function(x, y) {
 
     var gl = this.gl;
-//    this.renderForSelect = false;
-    this.renderForSelect = true;
-    this.renderForSelectColor = true;
 
     this.time = (new Date()).getTime() - this.initialTime;
 
@@ -180,8 +178,27 @@ Ngl.Scene.prototype = {
   },
 
   addWrObject: function(wrObject) {
-
     this.wrObjects.push(wrObject);
+  },
+
+  setRenderMode: function(mode) {
+    switch(mode) {
+      case 'canvas':
+        this.renderForSelect = false;
+        this.renderForSelectColor = false;
+        this.renderForSelectTexture = false;
+        break;
+      case 'color':
+        this.renderForSelect = true;
+        this.renderForSelectColor = true;
+        this.renderForSelectTexture = false;
+        break;
+      case 'texture':
+        this.renderForSelect = true;
+        this.renderForSelectColor = false;
+        this.renderForSelectTexture = true;
+        break;
+    }
   },
 
   addShader: function(name) {
@@ -202,7 +219,7 @@ Ngl.Scene.prototype = {
     if($('#'+name+'-texture-select-fragment-shader').length) {
       var textureShader = {};
       textureShader.vertex = shader.vertex;
-      textureShader.fragment = this.compileShaderFromElement(name+'-color-select-fragment-shader');
+      textureShader.fragment = this.compileShaderFromElement(name+'-texture-select-fragment-shader');
       textureShader.program  = this.createProgram(textureShader.vertex, textureShader.fragment);
       this.shaders[name+'-texture-select'] = textureShader;
     }
