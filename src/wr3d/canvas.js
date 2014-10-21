@@ -60,7 +60,9 @@ Ngl.Canvas.prototype = {
       bag.load(json);
 
       setTimeout(function() {
-        _this.canvas.root.setSize(parsedJson['ngl.width'], parsedJson['ngl.height']);
+        var w = parsedJson['ngl.width'];
+        var h = parsedJson['ngl.height'];
+        _this.canvas.root.setSize(w, h);
         setTimeout(function() {
           var button = _this.canvas.root.find('zebra.ui.Button');
           button.bind(function() {
@@ -109,7 +111,7 @@ function dispatchMouseDown(x, y) {
 }
 
 $('.simulate').click(function() {
-  dispatchMouseDown(145+window.pageXOffset, 180+window.pageYOffset);
+  dispatchMouseDown(145+window.pageXOffset, 230+window.pageYOffset);
 });
 
 $('.canvas-2d').on('click', function() {

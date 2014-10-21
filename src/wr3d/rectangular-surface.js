@@ -27,9 +27,11 @@ Ngl.RectangularSurface.prototype = {
   initialize: function(gl, scene, parent) {
     Ngl.Dock.prototype.initialize.call(this, gl, scene, parent);
 
-    this.width = 512;//this.texture.width;
-    this.height = 512;//this.texture.height;
+    // The 'this.texture.width' is the displayable pixel width, not the texture's full width.
+    this.width = this.texture.width;
+    this.height = this.texture.height;
 
+    // Size of the 3D polygons.
     var w2 = this.width/2.0;
     var h2 = this.height/2.0;
    // var scale = 0.004;
@@ -38,11 +40,15 @@ Ngl.RectangularSurface.prototype = {
     h2 *= scale;
     this.size = new Float32Array([w2, h2]);
 
-    //var tmw = this.width/this.texture.texturemapWidth;
-    //var tmh = 1.0-this.height/this.texture.texturemapHeight;
+    // Texture coordinates.
+    var scaleX = scene.selectionRenderer.width/this.texture.texturemapWidth;
+    var scaleY = this.texture.texturemapHeight/scene.selectionRenderer.height;
+    this.textureScale = new Float32Array([1.0, 1.0]);
+    this.selectionTextureScale = new Float32Array([scaleX, scaleY]);
 
-    var tmw = 1.0;
-    var tmh = 0.0;
+    var tmw = this.width/this.texture.texturemapWidth;
+    var tmh = 1-this.height/this.texture.texturemapHeight;
+
     var d = 0.1*this.width;
     var array = new Float32Array([
         -1.0, -1.0, 0.0, tmh,
@@ -65,6 +71,7 @@ Ngl.RectangularSurface.prototype = {
     this.sizeLocation = gl.getUniformLocation(this.program, 'size');
     this.projectionMatrixLocation = gl.getUniformLocation(this.program, 'projectionViewMatrix');
     this.textureLocation = gl.getAttribLocation(this.program, 'texCoord');
+    this.textureScaleLocation = gl.getUniformLocation(this.program, 'textureScale');
 
     // The color select shader and its locations.
     this.selectColorProgram = scene.shaders['texture-color-select'].program;
@@ -73,6 +80,7 @@ Ngl.RectangularSurface.prototype = {
     this.projectionMatrixLocationCs = gl.getUniformLocation(this.selectColorProgram, 'projectionViewMatrix');
     this.textureLocationCs = gl.getAttribLocation(this.selectColorProgram, 'texCoord');
     this.surfaceColorLocationCs = gl.getUniformLocation(this.selectColorProgram, 'surfaceColor');
+    this.textureScaleLocationCs = gl.getUniformLocation(this.selectColorProgram, 'textureScale');
 
     // The color select shader and its locations.
     this.selectTextureProgram = scene.shaders['texture-texture-select'].program;
@@ -80,7 +88,7 @@ Ngl.RectangularSurface.prototype = {
     this.sizeLocationTs = gl.getUniformLocation(this.selectTextureProgram, 'size');
     this.projectionMatrixLocationTs = gl.getUniformLocation(this.selectTextureProgram, 'projectionViewMatrix');
     this.textureLocationTs = gl.getAttribLocation(this.selectTextureProgram, 'texCoord');
-
+    this.textureScaleLocationTs = gl.getUniformLocation(this.selectTextureProgram, 'textureScale');
   },
 
   render: function(gl, scene, parent) {
@@ -122,6 +130,7 @@ Ngl.RectangularSurface.prototype = {
 
     gl.uniformMatrix4fv(this['projectionMatrixLocation'+renderType], gl.FALSE, this.projectionModelView);
     gl.uniform2fv(this['sizeLocation'+renderType], this.size);
+    gl.uniform2fv(this['textureScaleLocation'+renderType], renderType === 'Ts' ? this.selectionTextureScale : this.textureScale);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
 

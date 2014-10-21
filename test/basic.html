@@ -19,10 +19,11 @@
 
     .canvas-2d {
 
-      display: none;
+      xdisplay: none;
+/*
       position:fixed;
       top:0px;
-      left:0px;
+      left:0px; */
     }
 
     .control-container {
@@ -67,13 +68,16 @@
     // A basic flat vertex shader, hello world'esque.
     uniform mat4 projectionViewMatrix;
     uniform vec2 size;
+    uniform vec2 textureScale;
     attribute vec2 position;
     attribute vec2 texCoord;
 
     varying vec2 texCoordVarying;
 
     void main() {
-      texCoordVarying = texCoord;
+      texCoordVarying.x = texCoord.x*textureScale.x;
+      texCoordVarying.y = 1.0-(1.0-texCoord.y)*textureScale.y;
+
       vec4 sizedPosition = vec4(size[0]*position[0], size[1]*position[1], 0.0, 1.0);
       gl_Position = projectionViewMatrix*sizedPosition;
     }
@@ -106,6 +110,7 @@
       gl_FragColor = vec4(texture2D(mainTexture, texCoordVarying));
     }
   </script>
+
 
   <script id="selection-texture-builder-vertex-shader" type="x-shader/x-vertex">
 
@@ -144,7 +149,6 @@
 <body>
   <div class="canvas-container">
     <canvas class="canvas-3d" width="700" height="700"></canvas>
-    <canvas class="canvas-2d" width="256" height="256"></canvas>
     <div class="control-container">
       <div>
         <button class="show-canvas btn btn-primary">Canvas</button>
@@ -155,6 +159,7 @@
         <button class="simulate btn btn-primary">Do click</button>
       </div>
     </div>
+    <canvas class="canvas-2d" width="256" height="256"></canvas>
   </div>
 
   <script src="../src/lib/bower_components/jquery/dist/jquery.js"></script>
