@@ -26,6 +26,7 @@ Ngl.RectangularSurface.prototype = {
 
   initialize: function(gl, scene, parent) {
     Ngl.Dock.prototype.initialize.call(this, gl, scene, parent);
+    scene.addWrObject(this);
 
     // The 'this.texture.width' is the displayable pixel width, not the texture's full width.
     this.width = this.texture.width;

@@ -61,7 +61,7 @@ Ngl.SelectionRenderer.prototype = {
     var positionLocation = gl.getAttribLocation(program, 'position');
     var incrementLocation = gl.getAttribLocation(program, 'increment');
     var widthLocation = gl.getUniformLocation(program, 'width');
-
+/*
     var vertexData = [
       1.0,  1.0, 1.0, 1.0,
      -1.0,  1.0, 0.0, 1.0,
@@ -69,6 +69,15 @@ Ngl.SelectionRenderer.prototype = {
       1.0,  1.0, 1.0, 1.0,
      -1.0, -1.0, 0.0, 0.0,
       1.0, -1.0, 1.0, 0.0
+    ];
+*/
+    var vertexData = [
+      1.0,  1.0, 1.0, 0.0,
+     -1.0,  1.0, 0.0, 0.0,
+     -1.0, -1.0, 0.0, 1.0,
+      1.0,  1.0, 1.0, 0.0,
+     -1.0, -1.0, 0.0, 1.0,
+      1.0, -1.0, 1.0, 1.0
     ];
 
     var vertexBuffer = gl.createBuffer();
@@ -124,7 +133,6 @@ Ngl.SelectionRenderer.prototype = {
 //      console.log('x,y = '+x+','+y+'   color='+this.selectionPixel[0]+' '+this.selectionPixel[1]+' '+this.selectionPixel[2]);
   },
 
-
   validationFunction: function(gl, width, height) {
     var selectionPixel = new Uint8Array(4);
     var i;
@@ -141,27 +149,19 @@ Ngl.SelectionRenderer.prototype = {
 
     var x = 0;
     var y = 0;
-    var r = 0;
-    var g = 0;
-    var b = 0;
+    var color = new Ngl.IntegerColor();
+    var maxLogEntries = 100;
+    var logEntries = 0;
     for(i=0; i<maxXY; i++) {
-      gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, selectionPixel);
-      var rP = selectionPixel[0];
-      var gP = selectionPixel[1];
-      var bP = selectionPixel[2];
-      if ( r !== rP || g !== gP || b !== bP ) {
-        console.log('x,y = '+x+','+y+'   color='+selectionPixel[0]+' '+selectionPixel[1]+' '+selectionPixel[2]+' Expected color: '+r+','+g+','+b);
+      gl.readPixels(x, height-y-1, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, selectionPixel);
+      var readColor = new Ngl.IntegerColor(selectionPixel[0], selectionPixel[1], selectionPixel[2]);
+      if(!color.isEqual(readColor)) {
+        console.log('x,y = '+x+','+y+'   color='+readColor.toString()+' Expected color: '+color.toString());
+        logEntries++;
+        if(logEntries > maxLogEntries) { break; }
       }
 
-      b++;
-      if(b > 255) {
-        b = 0;
-        g++;
-        if(g > 255) {
-          g = 0;
-          r++;
-        }
-      }
+      color.increment();
 
       x++;
       if(x >= width) {

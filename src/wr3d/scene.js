@@ -37,6 +37,9 @@ Ngl.Scene = function() {
   this.selectTextureWidth = 1;
   this.selectTextureHeight = 1;
   this.selectionPixel = new Uint8Array(4);
+
+  this.wrObjects = [];
+  this.wrNextColor = { r: 0, g: 0, b: 0 };
 }
 
 Ngl.Scene.prototype = {
@@ -73,7 +76,8 @@ Ngl.Scene.prototype = {
     this.initialTime = (new Date()).getTime();
 
     this.selectionRenderer = new Ngl.SelectionRenderer();
-    this.selectionRenderer.createSelectionTexture(gl, this, 512, 512);
+//    this.selectionRenderer.createSelectionTexture(gl, this, 512, 512); // To test  append: , this.selectionRenderer.validationFunction);
+    this.selectionRenderer.createSelectionTexture(gl, this, 512, 512, this.selectionRenderer.validationFunction);
 
     // Set up the camera.
     var yHalf = this.nearFrustrum*Math.tan(this.verticalViewAngle*Math.PI/180.0);
@@ -139,6 +143,12 @@ Ngl.Scene.prototype = {
     }
 
     this.transformUpdated = false;
+    if(this.renderForSelect && this.renderForSelectTexture) {
+      gl.readPixels(x, this.height-y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, this.selectionPixel);
+      var pixel = this.selectionRenderer.getXYFromIntColor(this.selectionPixel[0], this.selectionPixel[1], this.selectionPixel[2]);
+      this.hitTest = pixel;
+      this.hitTestColor = { r: this.selectionPixel[0], g: this.selectionPixel[1], b: this.selectionPixel[2] };
+    }
   //  gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, this.selectionPixel);
   //  console.log('color='+this.selectionPixel[0]+' '+this.selectionPixel[1]+' '+this.selectionPixel[2]);
   },
@@ -179,6 +189,8 @@ Ngl.Scene.prototype = {
 
   addWrObject: function(wrObject) {
     this.wrObjects.push(wrObject);
+    wrObject.selectColor = vec4.fromValues(this.wrNextColor.r/255.0, this.wrNextColor.g/255.0, this.wrNextColor.b/255.0, 1.0);
+
   },
 
   setRenderMode: function(mode) {
@@ -294,4 +306,32 @@ Ngl.powerOfTwo = function(d) {
   var log2 = Math.log(2.0);
   var power = Math.ceil(Math.log(d)/log2);
   return Math.ceil(Math.pow(2.0, power)-0.5);
+};
+
+// *** Color utilities ***
+
+Ngl.IntegerColor = function(r, g, b) {
+  this.r = _.isUndefined(r) ? 0 : r;
+  this.g = _.isUndefined(g) ? 0 : g;
+  this.b = _.isUndefined(b) ? 0 : b ;
+};
+
+Ngl.IntegerColor.prototype.increment = function() {
+  this.b++;
+  if(this.b > 255) {
+    this.b = 0;
+    this.g++;
+    if(this.g > 255) {
+      this.g = 0;
+      this.r++;
+    }
+  }
+};
+
+Ngl.IntegerColor.prototype.isEqual = function(c) {
+  return (c.r === this.r && c.g === this.g && c.b === this.b);
+};
+
+Ngl.IntegerColor.prototype.toString = function() {
+  return this.r+','+this.g+','+this.b;
 };

@@ -42,6 +42,10 @@
       margin-top:0px;
     }
 
+    .coordinate-container>div, .color-container>div {
+      display: inline-block;
+    }
+
   </style>
 
   <script id="flat-vertex-shader" type="x-shader/x-vertex">
@@ -158,6 +162,17 @@
       <div>
         <button class="simulate btn btn-primary">Do click</button>
       </div>
+      <div class="coordinate-container">
+        <div>Coordinate:</div>
+        <div class="coord coord-x">X</div>
+        <div class="coord coord-y">Y</div>
+      </div>
+      <div class="color-container">
+        <div>Color:</div>
+        <div class="color color-r"></div>
+        <div class="color color-g"></div>
+        <div class="color color-b"></div>
+      </div>
     </div>
     <canvas class="canvas-2d" width="256" height="256"></canvas>
   </div>
@@ -219,6 +234,24 @@
         }
         renderCount++;
       }
+
+      function convert(integer) {
+        var str = Number(integer).toString(16);
+        return str.length == 1 ? "0" + str : str;
+      };
+
+      setInterval(function() {
+        if(scene.renderForSelect) {
+          $('.coord-x').text(scene.hitTest.x);
+          $('.coord-y').text(scene.hitTest.y);
+          $('.color-r').text(convert(scene.hitTestColor.r));
+          $('.color-g').text(convert(scene.hitTestColor.g));
+          $('.color-b').text(convert(scene.hitTestColor.b));
+        } else {
+          $('.coord').text('');
+          $('.color').text('');
+        }
+      }, 50);
 
       render();
     }, 1000);
