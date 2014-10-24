@@ -14,6 +14,7 @@ All Rights Reserved.
 
 Ngl.SelectionRenderer = function() {
   this.selectionTexture = null;
+  this.selectionPixel = new Uint8Array(4);
   this.width  = 1024;
   this.height = 1024;
 
@@ -61,16 +62,7 @@ Ngl.SelectionRenderer.prototype = {
     var positionLocation = gl.getAttribLocation(program, 'position');
     var incrementLocation = gl.getAttribLocation(program, 'increment');
     var widthLocation = gl.getUniformLocation(program, 'width');
-/*
-    var vertexData = [
-      1.0,  1.0, 1.0, 1.0,
-     -1.0,  1.0, 0.0, 1.0,
-     -1.0, -1.0, 0.0, 0.0,
-      1.0,  1.0, 1.0, 1.0,
-     -1.0, -1.0, 0.0, 0.0,
-      1.0, -1.0, 1.0, 0.0
-    ];
-*/
+
     var vertexData = [
       1.0,  1.0, 1.0, 0.0,
      -1.0,  1.0, 0.0, 0.0,
@@ -103,12 +95,23 @@ Ngl.SelectionRenderer.prototype = {
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
   },
 
-  getObjectUnderPixel: function(gl, scene, x, y, callback) {
+  getObjectUnderPixel: function(gl, scene, x, y) {
 
     if(x < 0 || y < 0 || x >= scene.width || y >= scene.height) {
-      callback(false);
-      return;
+      return { x: x, y: y, obj: null };
     }
+
+    var wrObj = this.findObject(gl, scene, x, y);
+
+    if(wrObj) {
+      var pixel = this.findPixelOnObject(gl, scene, x, y, wrObj);
+      return { x: x, y: y, obj: wrObj, canvasX: pixel.x, canvasY: pixel.y };
+    }
+
+    return { x: x, y: y, obj: null };
+  },
+
+  findObject: function(gl, scene, x, y) {
 
     scene.renderForSelect = true;
     scene.renderForSelectColor = true;
@@ -118,19 +121,48 @@ Ngl.SelectionRenderer.prototype = {
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 
     gl.clearColor(1.0, 1.0, 1.0, 1.0);
+    /* jshint -W016 */
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    /* jshint +W016 */
     gl.disable(gl.BLEND);
 
     // NOTE: We draw using the last rendered transforms for all WR objects.
-
     for(var i = 0; i<scene.wrObjects.length; i++) {
-      scene.wrObjects[i].render(gl, this, this);
+      scene.wrObjects[i].render(gl, scene);
     }
 
-    this.transformUpdated = false;
-    gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, this.selectionPixel);
-    callback(true, x, y);
-//      console.log('x,y = '+x+','+y+'   color='+this.selectionPixel[0]+' '+this.selectionPixel[1]+' '+this.selectionPixel[2]);
+    gl.readPixels(x, scene.height-y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, this.selectionPixel);
+    var color = new Ngl.IntegerColor(this.selectionPixel[0], this.selectionPixel[1], this.selectionPixel[2]);
+    var obj = scene.wrObjectsByColorHash[color.toString()];
+    if(obj) {
+      Ngl.Log('Found '+obj.name);
+    }
+    return obj;
+
+//      Ngl.Log('x,y = '+x+','+y+'   color='+this.selectionPixel[0]+' '+this.selectionPixel[1]+' '+this.selectionPixel[2]);
+  },
+
+  findPixelOnObject: function(gl, scene, x, y, wrObj) {
+    scene.renderForSelect = true;
+    scene.renderForSelectColor = false;
+    scene.renderForSelectTexture = true;
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, this.selectionFBO);
+    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+
+    gl.clearColor(1.0, 1.0, 1.0, 1.0);
+    /* jshint -W016 */
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    /* jshint +W016 */
+    gl.disable(gl.BLEND);
+
+    wrObj.render(gl, scene);
+
+    gl.readPixels(x, scene.height-y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, this.selectionPixel);
+    var color = new Ngl.IntegerColor(this.selectionPixel[0], this.selectionPixel[1], this.selectionPixel[2]);
+    var pixel = this.getXYFromIntColor(color.r, color.g, color.b);
+    Ngl.Log('Pixel '+pixel.x+','+pixel.y);
+    return pixel;
   },
 
   validationFunction: function(gl, width, height) {
@@ -144,7 +176,7 @@ Ngl.SelectionRenderer.prototype = {
 //      var ix = tests[i][0];
 //      var iy = tests[i][1];
 //      gl.readPixels(ix, iy, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, selectionPixel);
-//      console.log('x,y = '+ix+','+iy+'   color='+selectionPixel[0]+' '+selectionPixel[1]+' '+selectionPixel[2]);
+//      Ngl.Log('x,y = '+ix+','+iy+'   color='+selectionPixel[0]+' '+selectionPixel[1]+' '+selectionPixel[2]);
 //    }
 
     var x = 0;
@@ -156,7 +188,7 @@ Ngl.SelectionRenderer.prototype = {
       gl.readPixels(x, height-y-1, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, selectionPixel);
       var readColor = new Ngl.IntegerColor(selectionPixel[0], selectionPixel[1], selectionPixel[2]);
       if(!color.isEqual(readColor)) {
-        console.log('x,y = '+x+','+y+'   color='+readColor.toString()+' Expected color: '+color.toString());
+        Ngl.Log('x,y = '+x+','+y+'   color='+readColor.toString()+' Expected color: '+color.toString());
         logEntries++;
         if(logEntries > maxLogEntries) { break; }
       }
@@ -185,7 +217,7 @@ Ngl.SelectionRenderer.prototype = {
 //      gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, selectionPixel);
 //      var xy = this.getXYFromIntColor(selectionPixel[0], selectionPixel[1], selectionPixel[2]);
 //      if(xy.x !== x || xy.y !== y || true) {
-//        console.log('x,y = '+x+','+y+'   color='+selectionPixel[0]+' '+selectionPixel[1]+' '+selectionPixel[2]+' XY from Color: '+xy.x+','+xy.y);
+//        Ngl.Log('x,y = '+x+','+y+'   color='+selectionPixel[0]+' '+selectionPixel[1]+' '+selectionPixel[2]+' XY from Color: '+xy.x+','+xy.y);
 //      }
 //    }
 

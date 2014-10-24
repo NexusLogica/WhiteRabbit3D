@@ -66,7 +66,7 @@ Ngl.Canvas.prototype = {
         setTimeout(function() {
           var button = _this.canvas.root.find('zebra.ui.Button');
           button.bind(function() {
-            console.log("MOUSE");
+            Ngl.Log("MOUSE");
           });
           _this.canvasInitialized = true;
         }, 100);
@@ -77,6 +77,31 @@ Ngl.Canvas.prototype = {
   setTexturemapObject: function(textmap) {
     this.texturemapObject = textmap;
   },
+
+  onEvent: function(event) {
+    var pageXY = this.getPageXyPosition(event);
+    switch(event.type) {
+      case 'click':
+      case 'mouseup':
+      case 'mousedown':
+        var ec = jQuery.Event( event.type, { pageX: pageXY.x, pageY: pageXY.y, button: 0 } );
+        this.canvasElement.trigger(ec);
+        break;
+    }
+  },
+
+  getPageXyPosition: function(event) {
+    var x = event.canvasX;
+    var y = event.canvasY;
+    var element = this.canvasElement.get(0);
+    while(element) {
+        x += (element.offsetLeft - element.scrollLeft + element.clientLeft);
+        y += (element.offsetTop - element.scrollTop + element.clientTop);
+        element = element.offsetParent;
+    }
+    return { x: x, y: y };
+  },
+
 
   powerOfTwo: function(d) {
     var log2 = Math.log(2.0);
@@ -109,20 +134,21 @@ function dispatchMouseDown(x, y) {
     }, 5);
   }, 5);
 }
-
+/*
 $('.simulate').click(function() {
   dispatchMouseDown(145+window.pageXOffset, 230+window.pageYOffset);
 });
 
 $('.canvas-2d').on('click', function() {
-  console.log('CANVAS CLICKED');
+  Ngl.Log('CANVAS CLICKED');
 });
 
 $('.canvas-2d').on('mousedown', function() {
-  console.log('CANVAS MOUSEDOWN');
+  Ngl.Log('CANVAS MOUSEDOWN');
 });
 
 
 $('.canvas-2d').on('mouseup', function() {
-  console.log('CANVAS MOUSEUP');
+  Ngl.Log('CANVAS MOUSEUP');
 });
+*/

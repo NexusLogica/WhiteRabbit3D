@@ -17,6 +17,7 @@ Ngl.RectangularSurface = function(width, height, texture) {
   this.width = width;
   this.height = height;
   this.texture = texture;
+  this.selectColor = vec4.fromValues(1, 1, 1, 1);
 };
 
 Ngl.RectangularSurface.prototype = Object.create(Ngl.Dock.prototype);
@@ -24,8 +25,8 @@ Ngl.RectangularSurface.prototype = Object.create(Ngl.Dock.prototype);
 Ngl.RectangularSurface.prototype = {
   constructor: Ngl.RectangularSurface,
 
-  initialize: function(gl, scene, parent) {
-    Ngl.Dock.prototype.initialize.call(this, gl, scene, parent);
+  initialize: function(gl, scene) {
+    Ngl.Dock.prototype.initialize.call(this, gl, scene);
     scene.addWrObject(this);
 
     // The 'this.texture.width' is the displayable pixel width, not the texture's full width.
@@ -64,7 +65,6 @@ Ngl.RectangularSurface.prototype = {
     gl.bufferData(gl.ARRAY_BUFFER, array, gl.STATIC_DRAW);
 
     this.color = vec4.fromValues(1, 0, 0, 1);
-    this.selectColor = vec4.fromValues(0, 0, 1, 1);
 
     // The main shader and its locations.
     this.program = scene.shaders.texture.program;
@@ -92,16 +92,16 @@ Ngl.RectangularSurface.prototype = {
     this.textureScaleLocationTs = gl.getUniformLocation(this.selectTextureProgram, 'textureScale');
   },
 
-  render: function(gl, scene, parent) {
+  render: function(gl, scene) {
     if(!this.initialized) {
       if(this.texture.initialize(gl)) {
-        this.initialize(gl, scene, parent);
+        this.initialize(gl, scene);
       } else {
         return;
       }
     }
 
-    Ngl.Dock.prototype.preRender.call(this, gl, scene, parent);
+    Ngl.Dock.prototype.preRender.call(this, gl, scene);
 
     var renderType = '';
     if(scene.renderForSelectColor) {
@@ -122,8 +122,8 @@ Ngl.RectangularSurface.prototype = {
       gl.useProgram(this.program);
 
       // Only update during regular render cycles.
-      if(parent.transformUpdated || this.transformUpdated) {
-        mat4.multiply(this.worldTransform, parent.worldTransform,  this.transform);
+      if(this.parent.transformUpdated || this.transformUpdated) {
+        mat4.multiply(this.worldTransform, this.parent.worldTransform,  this.transform);
         mat4.multiply(this.projectionModelView, scene.projectionMatrix, this.worldTransform);
       }
     }
@@ -144,6 +144,12 @@ Ngl.RectangularSurface.prototype = {
 
     gl.drawArrays(gl.TRIANGLES, 0, 6);
 
-    Ngl.Dock.prototype.postRender.call(this, gl, scene, parent);
+    Ngl.Dock.prototype.postRender.call(this, gl, scene);
+  },
+
+  onEvent: function(event) {
+    if(this.texture.canvasObject) {
+      this.texture.canvasObject.onEvent(event);
+    }
   }
 };

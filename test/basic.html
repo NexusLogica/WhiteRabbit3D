@@ -19,11 +19,10 @@
 
     .canvas-2d {
 
-      xdisplay: none;
-/*
+      display: none;
       position:fixed;
       top:0px;
-      left:0px; */
+      left:0px;
     }
 
     .control-container {
@@ -101,8 +100,7 @@
     uniform highp vec4 surfaceColor;
 
     void main() {
-//      gl_FragColor = surfaceColor;
-      gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+      gl_FragColor = surfaceColor;
     }
   </script>
 
@@ -209,6 +207,7 @@
       var texture = new Ngl.Texturemap(textureCanvas);
 
       var surface = new Ngl.RectangularSurface(0.05, 0.05, texture);
+      surface.name = 'Main';
       scene.add(surface);
 
       var mouseMoveX = -1; mouseMoveY = -1, previousX = -1, previousY = -1;
@@ -251,6 +250,7 @@
           $('.coord').text('');
           $('.color').text('');
         }
+        scene.doSelect = true;
       }, 50);
 
       render();

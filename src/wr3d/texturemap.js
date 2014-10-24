@@ -12,12 +12,10 @@ All Rights Reserved.
 */
 'use strict';
 
-var Ngl = Ngl || {};
-
 Ngl.Texturemap = function(canvasObject) {
   this.canvasObject = canvasObject;
   this.initialized = false;
-}
+};
 
 Ngl.Texturemap.prototype = {
   initialize: function(gl) {

@@ -37,16 +37,20 @@ Ngl.Scene = function() {
   this.selectTextureWidth = 1;
   this.selectTextureHeight = 1;
   this.selectionPixel = new Uint8Array(4);
+  this.doSelect = false;
 
   this.wrObjects = [];
-  this.wrNextColor = { r: 0, g: 0, b: 0 };
-}
+  this.wrObjectsByColorHash = {};
+  this.wrNextColor = new Ngl.IntegerColor();
+
+  this.mouseEvents = [];
+};
 
 Ngl.Scene.prototype = {
   initialize: function(canvas) {
-    var canvasElement = $(canvas);
-    this.width  = canvasElement.width();
-    this.height = canvasElement.height();
+    this.canvasElement = $(canvas);
+    this.width  = this.canvasElement.width();
+    this.height = this.canvasElement.height();
 
     this.nearFrustrum = 0.1;
     this.farFrustrum = 10000.0;
@@ -55,8 +59,8 @@ Ngl.Scene.prototype = {
     this.selectTextureWidth = this.width;
     this.selectTextureHeight = this.height;
 
-    canvasElement.data('wr3dScene', this);
-    this.gl = canvasElement.get(0).getContext('experimental-webgl', { preserveDrawingBuffer: true } );
+    this.canvasElement.data('wr3dScene', this);
+    this.gl = this.canvasElement.get(0).getContext('experimental-webgl', { preserveDrawingBuffer: true } );
     var gl = this.gl;
 
     // Load shaders
@@ -76,8 +80,7 @@ Ngl.Scene.prototype = {
     this.initialTime = (new Date()).getTime();
 
     this.selectionRenderer = new Ngl.SelectionRenderer();
-//    this.selectionRenderer.createSelectionTexture(gl, this, 512, 512); // To test  append: , this.selectionRenderer.validationFunction);
-    this.selectionRenderer.createSelectionTexture(gl, this, 512, 512, this.selectionRenderer.validationFunction);
+    this.selectionRenderer.createSelectionTexture(gl, this, 512, 512); // To test  append: , this.selectionRenderer.validationFunction);
 
     // Set up the camera.
     var yHalf = this.nearFrustrum*Math.tan(this.verticalViewAngle*Math.PI/180.0);
@@ -108,24 +111,53 @@ Ngl.Scene.prototype = {
     if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE) {
       throw new Error('gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE');
     }
+
+    this.createEventHandlers();
+  },
+
+  createEventHandlers: function() {
+    var _this = this;
+    this.canvasElement.on('click mouseup mousedown', function(event) {
+      var cp = _.cloneDeep(event);
+      _this.mouseEvents.push(event);
+    });
   },
 
   add: function(obj) {
     this.children.push(obj);
+    obj.parent = this;
   },
 
-  render: function(x, y) {
+  render: function() {
 
     var gl = this.gl;
+
+    while(this.mouseEvents.length) {
+      var event = this.mouseEvents.shift();
+      var _this = this;
+      var selectionResult = this.selectionRenderer.getObjectUnderPixel(gl, this, event.offsetX, event.offsetY);
+      if(selectionResult.obj) {
+        event.canvasX = selectionResult.canvasX;
+        event.canvasY = selectionResult.canvasY;
+        setTimeout(function() {
+          selectionResult.obj.onEvent(event);
+        }, 0);
+      }
+    }
+
+    this.renderForSelect = false;
+    this.renderForSelectColor = false;
+    this.renderForSelectTexture = false;
 
     this.time = (new Date()).getTime() - this.initialTime;
 
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-    //  gl.bindFramebuffer(gl.FRAMEBUFFER, this.selectionFBO);
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 
     gl.clearColor(1.0, 0.0, 0.0, 1.0);
+    /* jshint -W016 */
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    /* jshint +W016 */
     gl.disable(gl.BLEND);
 
     if(this.cameraTransformUpdated) {
@@ -143,54 +175,21 @@ Ngl.Scene.prototype = {
     }
 
     this.transformUpdated = false;
-    if(this.renderForSelect && this.renderForSelectTexture) {
-      gl.readPixels(x, this.height-y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, this.selectionPixel);
-      var pixel = this.selectionRenderer.getXYFromIntColor(this.selectionPixel[0], this.selectionPixel[1], this.selectionPixel[2]);
-      this.hitTest = pixel;
-      this.hitTestColor = { r: this.selectionPixel[0], g: this.selectionPixel[1], b: this.selectionPixel[2] };
-    }
-  //  gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, this.selectionPixel);
-  //  console.log('color='+this.selectionPixel[0]+' '+this.selectionPixel[1]+' '+this.selectionPixel[2]);
   },
 
-  getObjectUnderPixel: function(x, y, callback) {
-
-    if(x >= 0 && y >= 0 && x <= this.width && y <= this.height) {
-      var gl = this.gl;
-      this.renderForSelect = true;
-
-      gl.bindFramebuffer(gl.FRAMEBUFFER, this.selectionFBO);
-      gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-
-      gl.clearColor(0.0, 0.5+0.5*Math.sin(this.time/5000), 0.5+0.5*Math.cos(this.time/5000), 1.0);
-      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-      gl.disable(gl.BLEND);
-
-      if(this.cameraTransformUpdated) {
-        this.cameraTransformUpdated = false;
-        this.transformUpdated = true;
-        mat4.invert(this.inverseCameraTransform, this.cameraTransform);
-      }
-
-      if(this.transformUpdated) {
-        mat4.multiply(this.worldTransform, this.inverseCameraTransform, this.transform);
-      }
-
-      for(var i = 0; i<this.children.length; i++) {
-        this.children[i].render(gl, this, this);
-      }
-
-      this.transformUpdated = false;
-      gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, this.selectionPixel);
-      callback(true, x, y);
-//      console.log('x,y = '+x+','+y+'   color='+this.selectionPixel[0]+' '+this.selectionPixel[1]+' '+this.selectionPixel[2]);
-    }
+  setSelectionCallback: function(callback) {
+    this.selectionCallback = callback;
   },
 
   addWrObject: function(wrObject) {
     this.wrObjects.push(wrObject);
-    wrObject.selectColor = vec4.fromValues(this.wrNextColor.r/255.0, this.wrNextColor.g/255.0, this.wrNextColor.b/255.0, 1.0);
+    wrObject.selectColor = this.wrNextColor.toFloatVector();
+    this.wrObjectsByColorHash[this.wrNextColor.toString()] = wrObject;
+    this.wrNextColor.increment();
+  },
 
+  doSelectOnNextRender: function() {
+    this.doSelect = true;
   },
 
   setRenderMode: function(mode) {
@@ -249,7 +248,7 @@ Ngl.Scene.prototype = {
     var linked = gl.getProgramParameter(program, gl.LINK_STATUS);
     if (!linked) {
       var lastError = gl.getProgramInfoLog (program);
-      console.log('Error in program linking:' + lastError);
+      Ngl.Log('Error in program linking:' + lastError);
 
       gl.deleteProgram(program);
       return null;
@@ -262,7 +261,7 @@ Ngl.Scene.prototype = {
     var shaderType;
     var shaderScript = document.getElementById(scriptId);
     if (!shaderScript) {
-      console.log('ERROR: Unknown script element ' + scriptId);
+      Ngl.Log('ERROR: Unknown script element ' + scriptId);
       throw('Error: unknown script element ' + scriptId);
     }
     shaderSource = shaderScript.text;
@@ -272,7 +271,7 @@ Ngl.Scene.prototype = {
     } else if (shaderScript.type === 'x-shader/x-fragment') {
       shaderType = this.gl.FRAGMENT_SHADER;
     } else if (shaderType !== this.gl.VERTEX_SHADER && shaderType !== this.gl.FRAGMENT_SHADER) {
-      console.log('ERROR: unknown shader type '+scriptId);
+      Ngl.Log('ERROR: unknown shader type '+scriptId);
       return null;
     }
 
@@ -293,7 +292,7 @@ Ngl.Scene.prototype = {
     if (!compiled) {
       // Something went wrong during compilation; get the error
       var lastError = gl.getShaderInfoLog(shader);
-      console.log('ERROR compiling shader "' + shader + '":' + lastError);
+      Ngl.Log('ERROR compiling shader "' + shader + '":' + lastError);
       gl.deleteShader(shader);
       return null;
     }
@@ -332,6 +331,14 @@ Ngl.IntegerColor.prototype.isEqual = function(c) {
   return (c.r === this.r && c.g === this.g && c.b === this.b);
 };
 
+Ngl.IntegerColor.prototype.toFloatVector = function() {
+  return vec4.fromValues(this.r*0.00392156862, this.g*0.00392156862,this.b*0.00392156862, 1.0);
+};
+
 Ngl.IntegerColor.prototype.toString = function() {
   return this.r+','+this.g+','+this.b;
+};
+
+Ngl.Log = function(msg) {
+  window.console.log(msg);
 };
