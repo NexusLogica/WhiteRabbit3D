@@ -135,6 +135,10 @@ Ngl.Scene.prototype = {
 
     while(this.mouseEvents.length) {
       var event = this.mouseEvents.shift();
+      if(_.isUndefined(event.offsetX)) {
+        event.offsetX  = event.clientX - $(event.target).offset().left;
+        event.offsetY  = event.clientY - $(event.target).offset().top;
+      }
       var _this = this;
       console.log("LOOP: "+event.type);
       var selectionResult = this.selectionRenderer.getObjectUnderPixel(gl, this, event.offsetX, event.offsetY);

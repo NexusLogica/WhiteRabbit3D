@@ -53,7 +53,6 @@ Ngl.Texturemap.prototype = {
 
       var region = this.canvasObject.getUpdateRegion();
       if(region) {
-        console.log("********************asdf");
         gl.texSubImage2D(gl.TEXTURE_2D, 0, region.x, region.y, gl.RGBA, gl.UNSIGNED_BYTE, this.canvasObject.getCanvasElement().get(0));
         gl.generateMipmap(gl.TEXTURE_2D);
       }
