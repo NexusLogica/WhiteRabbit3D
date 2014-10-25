@@ -134,9 +134,6 @@ Ngl.SelectionRenderer.prototype = {
     gl.readPixels(x, scene.height-y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, this.selectionPixel);
     var color = new Ngl.IntegerColor(this.selectionPixel[0], this.selectionPixel[1], this.selectionPixel[2]);
     var obj = scene.wrObjectsByColorHash[color.toString()];
-    if(obj) {
-      Ngl.Log('Found '+obj.name);
-    }
     return obj;
 
 //      Ngl.Log('x,y = '+x+','+y+'   color='+this.selectionPixel[0]+' '+this.selectionPixel[1]+' '+this.selectionPixel[2]);
@@ -161,7 +158,6 @@ Ngl.SelectionRenderer.prototype = {
     gl.readPixels(x, scene.height-y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, this.selectionPixel);
     var color = new Ngl.IntegerColor(this.selectionPixel[0], this.selectionPixel[1], this.selectionPixel[2]);
     var pixel = this.getXYFromIntColor(color.r, color.g, color.b);
-    Ngl.Log('Pixel '+pixel.x+','+pixel.y);
     return pixel;
   },
 

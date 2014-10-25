@@ -117,8 +117,7 @@ Ngl.Scene.prototype = {
 
   createEventHandlers: function() {
     var _this = this;
-    this.canvasElement.on('mouseup mousedown', function(event) {
-      console.log(event.type);
+    this.canvasElement.on('mouseup mousedown mousemove mouseover mouseout', function(event) {
       var cp = _.cloneDeep(event);
       _this.mouseEvents.push(event);
     });
@@ -140,13 +139,14 @@ Ngl.Scene.prototype = {
         event.offsetY  = event.clientY - $(event.target).offset().top;
       }
       var _this = this;
-      console.log("LOOP: "+event.type);
       var selectionResult = this.selectionRenderer.getObjectUnderPixel(gl, this, event.offsetX, event.offsetY);
       if(selectionResult.obj) {
-        event.canvasX = selectionResult.canvasX;
-        event.canvasY = selectionResult.canvasY;
+        var _event = _.cloneDeep(event);
+        var _obj = selectionResult.obj;
+        _event.canvasX = selectionResult.canvasX;
+        _event.canvasY = selectionResult.canvasY;
         setTimeout(function() {
-          selectionResult.obj.onEvent(event);
+          _obj.onEvent(_event);
         }, 0);
       }
     }

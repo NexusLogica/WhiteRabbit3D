@@ -12014,14 +12014,12 @@ pkg.zCanvas = Class(pkg.Panel, [
 
             this.canvas.onmousedown = function(e) {
 
-                console.log('Zebkit: mousedown');
                 $this.$mousePressed(1, e, e.button === 0 ? ME.LEFT_BUTTON
                                                         : (e.button == 2 ? ME.RIGHT_BUTTON : 0));
                 e.stopPropagation();
             };
 
             this.canvas.onmouseup = function(e) {
-                console.log('Zebkit: mouseup');
                 $cleanDragFix();
                 $this.$mouseReleased(1, e);
                 e.stopPropagation();

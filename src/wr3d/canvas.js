@@ -82,7 +82,6 @@ Ngl.Canvas.prototype = {
 
   getUpdateRegion: function() {
     if(zebra.ui.paintManager.canvasNeedsCopy) {
-      console.log("REPAINT REQUIRED");
       zebra.ui.paintManager.canvasNeedsCopy = false;
 
       return { x: 0, y: 0, width: this.canvasWidth, height: this.canvasHeight };
@@ -91,12 +90,14 @@ Ngl.Canvas.prototype = {
   },
 
   onEvent: function(event) {
-    console.log("EVENT: "+event.type);
     var pageXY = this.getPageXyPosition(event);
     switch(event.type) {
       // Don't pass clicks to Zebkit.
       case 'mousedown':
       case 'mouseup':
+      case 'mousemove':
+      case 'mouseout':
+      case 'mouseover':
         var ec = jQuery.Event( event.type, { pageX: pageXY.x, pageY: pageXY.y, button: 0 } );
         this.canvasElement.trigger(ec);
         break;
