@@ -26,53 +26,38 @@ Ngl.Canvas.prototype = {
     var _this = this;
     zebra()["zebra.json"] = "../src/lib/zebra/zebra.json";
     zebra.ready(function() {
+      if(_this.layoutJsonUrl) {
+        var ajaxData = { type: 'GET', url: _this.layoutJsonUrl, dataType: 'json' };
+        $.ajax(ajaxData).then(
+          function(data, textStatus, jqXHR) {
+            _this.canvasWidth = data['ngl.width'];
+            _this.canvasHeight = data['ngl.height'];
 
-      var json = '{'+
-        '  "ngl.width": 300,'+
-        '  "ngl.height": 200,'+
-        '  "padding": 4,'+
-        '  "layout": { "$zebra.layout.BorderLayout":[ 4, 4] },'+
-        '  "border": "plain",'+
-        '  "kids": {'+
-        '    "TOP": {'+
-        '      "$zebra.ui.BoldLabel": "Simple application",'+
-        '      "padding":4,'+
-        '      "background": "lightGray"'+
-        '    },'+
-        '    "CENTER": {'+
-        '      "$zebra.ui.TextArea": ""'+
-        '    },'+
-        '    "BOTTOM": {'+
-        '      "$zebra.ui.Button": "Clear"'+
-        '    }'+
-        '  }'+
-        '}';
+            _this.texturemapWidth = _this.powerOfTwo(_this.canvasWidth);
+            _this.texturemapHeight = _this.powerOfTwo(_this.canvasHeight);
 
-      var parsedJson = JSON.parse(json);
-      _this.canvasWidth = parsedJson['ngl.width'];
-      _this.canvasHeight = parsedJson['ngl.height'];
+            _this.canvas = new zebra.ui.zCanvas(_this.canvasElement.get(0), _this.texturemapWidth, _this.texturemapHeight);
+            _this.canvasElement.width(_this.texturemapWidth).height(_this.texturemapHeight);
 
-      _this.texturemapWidth = _this.powerOfTwo(_this.canvasWidth);
-      _this.texturemapHeight = _this.powerOfTwo(_this.canvasHeight);
+            var bag = new zebra.util.Bag(_this.canvas.root);
+            bag.load(JSON.stringify(data));
 
-      _this.canvas = new zebra.ui.zCanvas(_this.canvasElement.get(0), _this.texturemapWidth, _this.texturemapHeight);
-      _this.canvasElement.width(_this.texturemapWidth).height(_this.texturemapHeight);
-
-      var bag = new zebra.util.Bag(_this.canvas.root);
-      bag.load(json);
-
-      setTimeout(function() {
-        var w = parsedJson['ngl.width'];
-        var h = parsedJson['ngl.height'];
-        _this.canvas.root.setSize(_this.canvasWidth, _this.canvasHeight);
-        setTimeout(function() {
-          var button = _this.canvas.root.find('zebra.ui.Button');
-          button.bind(function() {
-            Ngl.Log("MOUSE");
-          });
-          _this.canvasInitialized = true;
-        }, 100);
-      }, 100);
+            setTimeout(function() {
+              _this.canvas.root.setSize(_this.canvasWidth, _this.canvasHeight);
+              setTimeout(function() {
+                var button = _this.canvas.root.find('zebra.ui.Button');
+                button.bind(function() {
+                  Ngl.Log("MOUSE");
+                });
+                _this.canvasInitialized = true;
+              }, 100);
+            }, 100);
+          },
+          function(jqXHR, textStatus, httpStatusCodeDescription) {
+            Ngl.Log('LOAD ERROR: Unable to load '+_this.layoutJsonUrl+' : '+textStatus+' : '+jqXHR.status+':'+httpStatusCodeDescription);
+          }
+        );
+      }
     });
   },
 
