@@ -43,12 +43,14 @@ Ngl.RectangularSurface.prototype = {
     this.size = new Float32Array([w2, h2]);
 
     // Texture coordinates.
-    var scaleX = scene.selectionRenderer.width/this.texture.texturemapWidth;
+//    var scaleX = scene.selectionRenderer.width/this.texture.texturemapWidth;
+    var scaleX = this.width/scene.selectionRenderer.width;
     var scaleY = this.texture.texturemapHeight/scene.selectionRenderer.height;
-    this.textureScale = new Float32Array([1.0, 1.0]);
+//    this.textureScale = new Float32Array([1.0, 1.0]);
+    this.textureScale = new Float32Array([this.width/this.texture.texturemapWidth, 1.0]);
     this.selectionTextureScale = new Float32Array([scaleX, scaleY]);
 
-    var tmw = this.width/this.texture.texturemapWidth;
+    var tmw = 1.0;//this.width/this.texture.texturemapWidth;
     var tmh = 1-this.height/this.texture.texturemapHeight;
 
     var d = 0.1*this.width;

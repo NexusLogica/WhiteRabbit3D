@@ -24,7 +24,7 @@ Ngl.Canvas.prototype = {
 
   build: function() {
     var _this = this;
-    zebra()["zebra.json"] = "../src/lib/bower_components/zebra/zebra.json";
+    zebra()["zebra.json"] = "../src/lib/zebra/zebra.json";
     zebra.ready(function() {
 
       var json = '{'+
@@ -49,9 +49,11 @@ Ngl.Canvas.prototype = {
         '}';
 
       var parsedJson = JSON.parse(json);
+      _this.canvasWidth = parsedJson['ngl.width'];
+      _this.canvasHeight = parsedJson['ngl.height'];
 
-      _this.texturemapWidth = _this.powerOfTwo(parsedJson['ngl.width']);
-      _this.texturemapHeight = _this.powerOfTwo(parsedJson['ngl.height']);
+      _this.texturemapWidth = _this.powerOfTwo(_this.canvasWidth);
+      _this.texturemapHeight = _this.powerOfTwo(_this.canvasHeight);
 
       _this.canvas = new zebra.ui.zCanvas(_this.canvasElement.get(0), _this.texturemapWidth, _this.texturemapHeight);
       _this.canvasElement.width(_this.texturemapWidth).height(_this.texturemapHeight);
@@ -62,7 +64,7 @@ Ngl.Canvas.prototype = {
       setTimeout(function() {
         var w = parsedJson['ngl.width'];
         var h = parsedJson['ngl.height'];
-        _this.canvas.root.setSize(w, h);
+        _this.canvas.root.setSize(_this.canvasWidth, _this.canvasHeight);
         setTimeout(function() {
           var button = _this.canvas.root.find('zebra.ui.Button');
           button.bind(function() {
@@ -78,12 +80,23 @@ Ngl.Canvas.prototype = {
     this.texturemapObject = textmap;
   },
 
+  getUpdateRegion: function() {
+    if(zebra.ui.paintManager.canvasNeedsCopy) {
+      console.log("REPAINT REQUIRED");
+      zebra.ui.paintManager.canvasNeedsCopy = false;
+
+      return { x: 0, y: 0, width: this.canvasWidth, height: this.canvasHeight };
+    }
+    return null;
+  },
+
   onEvent: function(event) {
+    console.log("EVENT: "+event.type);
     var pageXY = this.getPageXyPosition(event);
     switch(event.type) {
-      case 'click':
-      case 'mouseup':
+      // Don't pass clicks to Zebkit.
       case 'mousedown':
+      case 'mouseup':
         var ec = jQuery.Event( event.type, { pageX: pageXY.x, pageY: pageXY.y, button: 0 } );
         this.canvasElement.trigger(ec);
         break;

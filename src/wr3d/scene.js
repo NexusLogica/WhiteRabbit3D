@@ -71,7 +71,7 @@ Ngl.Scene.prototype = {
 
     gl.cullFace(gl.BACK);
     gl.enable(gl.CULL_FACE);
-    gl.clearColor(0.0, 0.0, 1.0, 1.0);
+    gl.clearColor(0.1, 0.1, 0.1, 1.0);
     gl.clearDepth(1.0);
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
@@ -117,7 +117,8 @@ Ngl.Scene.prototype = {
 
   createEventHandlers: function() {
     var _this = this;
-    this.canvasElement.on('click mouseup mousedown', function(event) {
+    this.canvasElement.on('mouseup mousedown', function(event) {
+      console.log(event.type);
       var cp = _.cloneDeep(event);
       _this.mouseEvents.push(event);
     });
@@ -135,6 +136,7 @@ Ngl.Scene.prototype = {
     while(this.mouseEvents.length) {
       var event = this.mouseEvents.shift();
       var _this = this;
+      console.log("LOOP: "+event.type);
       var selectionResult = this.selectionRenderer.getObjectUnderPixel(gl, this, event.offsetX, event.offsetY);
       if(selectionResult.obj) {
         event.canvasX = selectionResult.canvasX;
@@ -154,7 +156,7 @@ Ngl.Scene.prototype = {
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 
-    gl.clearColor(1.0, 0.0, 0.0, 1.0);
+    gl.clearColor(0.95, 0.95, 0.95, 1.0);
     /* jshint -W016 */
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     /* jshint +W016 */

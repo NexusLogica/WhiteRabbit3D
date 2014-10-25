@@ -1,0 +1,13 @@
+{
+  "name": "zebra",
+  "homepage": "https://github.com/barmalei/zebra",
+  "_release": "4a1785ad28",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "4a1785ad28e380b6368b6b9a5e6290569dce1bdc"
+  },
+  "_source": "git://github.com/barmalei/zebra.git",
+  "_target": "*",
+  "_originalSource": "git://github.com/barmalei/zebra"
+}

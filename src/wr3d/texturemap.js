@@ -50,6 +50,13 @@ Ngl.Texturemap.prototype = {
     if(this.texture) {
       gl.activeTexture(gl.TEXTURE0+0);
       gl.bindTexture(gl.TEXTURE_2D, this.texture);
+
+      var region = this.canvasObject.getUpdateRegion();
+      if(region) {
+        console.log("********************asdf");
+        gl.texSubImage2D(gl.TEXTURE_2D, 0, region.x, region.y, gl.RGBA, gl.UNSIGNED_BYTE, this.canvasObject.getCanvasElement().get(0));
+        gl.generateMipmap(gl.TEXTURE_2D);
+      }
     }
   }
 };

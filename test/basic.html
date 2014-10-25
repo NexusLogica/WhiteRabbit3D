@@ -15,14 +15,15 @@
       width: 700px;
       height: 700px;
       display: inline-block;
+      z-index: 10;
     }
 
     .canvas-2d {
-
-      display: none;
+      opacity: 0;
       position:fixed;
       top:0px;
       left:0px;
+      z-index: 0;
     }
 
     .control-container {
@@ -150,6 +151,7 @@
 </head>
 <body>
   <div class="canvas-container">
+    <canvas class="canvas-2d" width="256" height="256"></canvas>
     <canvas class="canvas-3d" width="700" height="700"></canvas>
     <div class="control-container">
       <div>
@@ -172,7 +174,6 @@
         <div class="color color-b"></div>
       </div>
     </div>
-    <canvas class="canvas-2d" width="256" height="256"></canvas>
   </div>
 
   <script src="../src/lib/bower_components/jquery/dist/jquery.js"></script>
@@ -184,7 +185,7 @@
   <script src="../src/lib/random/random-0.26-debug.js"></script>
   <script src="../src/lib/bower_components/gl-matrix/dist/gl-matrix.js"></script>
   <script src="../src/lib/webgl-utils/webgl-utils.js"></script>
-  <script src="../src/lib/bower_components/zebra/zebra.js"></script>
+  <script src="../src/lib/zebra/zebra.js"></script>
   <script src="../src/wr3d/scene.js"></script>
   <script src="../src/wr3d/dock.js"></script>
   <script src="../src/wr3d/rectangular-surface.js"></script>
