@@ -33,7 +33,7 @@ Ngl.Dock.prototype = {
 
     if(this.parent.transformUpdated || this.transformUpdated) {
       mat4.multiply(this.worldTransform, this.parent.worldTransform,  this.transform);
-      mat4.multiply(this.projectionModelView, scene.projectionMatrix, this.worldTransform);
+      mat4.multiply(this.projectionModelView, scene.camera.projectionMatrix, this.worldTransform);
     }
 
   },

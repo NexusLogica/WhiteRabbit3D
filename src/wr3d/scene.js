@@ -17,22 +17,10 @@ var Ngl = Ngl || {};
 Ngl.Scene = function() {
   this.children = [];
   this.transformUpdated = true;
-  this.cameraTransformUpdated = true;
 
   this.transform = mat4.create();
   this.worldTransform = mat4.create();
-  this.cameraTransform = mat4.create();
-  this.inverseCameraTransform = mat4.create();
-  mat4.translate(this.cameraTransform, this.cameraTransform, vec3.fromValues(0.0, 0.0, 1.25 ));
 
-  this.va = vec3.create();
-  this.vb = vec3.create();
-  this.vc = vec3.create();
-  this.vr = vec3.create();
-  this.vu = vec3.create();
-  this.vn = vec3.create();
-  this.m  = mat4.create();
-  this.projectionMatrix = mat4.create();
   this.selectProjectionMatrix = mat4.create();
   this.selectTextureWidth = 1;
   this.selectTextureHeight = 1;
@@ -43,6 +31,8 @@ Ngl.Scene = function() {
   this.wrObjectsByColorHash = {};
   this.wrNextColor = new Ngl.IntegerColor();
 
+  this.camera = new Ngl.Camera();
+
   this.mouseEvents = [];
 };
 
@@ -52,16 +42,14 @@ Ngl.Scene.prototype = {
     this.width  = this.canvasElement.width();
     this.height = this.canvasElement.height();
 
-    this.nearFrustrum = 0.1;
-    this.farFrustrum = 10000.0;
-    this.verticalViewAngle = 30.0; // degrees
-
     this.selectTextureWidth = this.width;
     this.selectTextureHeight = this.height;
 
     this.canvasElement.data('wr3dScene', this);
     this.gl = this.canvasElement.get(0).getContext('experimental-webgl', { preserveDrawingBuffer: true } );
     var gl = this.gl;
+
+    this.camera.initialize(gl, canvas);
 
     // Load shaders
     this.shaders = {};
@@ -81,32 +69,6 @@ Ngl.Scene.prototype = {
 
     this.selectionRenderer = new Ngl.SelectionRenderer();
     this.selectionRenderer.createSelectionTexture(gl, this, 512, 512); // To test  append: , this.selectionRenderer.validationFunction);
-
-    // Set up the camera.
-    var yHalf = this.nearFrustrum*Math.tan(this.verticalViewAngle*Math.PI/180.0);
-    var xHalf = yHalf*this.width/this.height;
-
-    this.projectionMatrix = mat4.create();
-    mat4.frustum(this.projectionMatrix, -xHalf, xHalf, -yHalf, yHalf, this.nearFrustrum, this.farFrustrum);
-    // Alternatively...
-    // mat4.perspective(this.projectionMatrix, 2.0*this.verticalViewAngle*Math.PI/180.0, 1, this.nearFrustrum, this.farFrustrum);
-
-    // Create the selection framebuffer's texture.
-/*    this.selectionTexture = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D,  this.selectionTexture);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, this.selectTextureWidth, this.selectTextureHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-
-    // Selection frame buffer object.
-    this.selectionFBO = gl.createFramebuffer();
-    gl.bindFramebuffer(gl.FRAMEBUFFER, this.selectionFBO);
-    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.selectionTexture, 0);
-    gl.bindTexture(gl.TEXTURE_2D, null);
-*/
-    // Where to read the color into.
 
     if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE) {
       throw new Error('gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE');
@@ -166,14 +128,13 @@ Ngl.Scene.prototype = {
     /* jshint +W016 */
     gl.disable(gl.BLEND);
 
-    if(this.cameraTransformUpdated) {
-      this.cameraTransformUpdated = false;
+    if(this.camera.cameraTransformUpdated) {
+      this.camera.cameraTransformUpdated = false;
       this.transformUpdated = true;
-      mat4.invert(this.inverseCameraTransform, this.cameraTransform);
     }
 
     if(this.transformUpdated) {
-      mat4.multiply(this.worldTransform, this.inverseCameraTransform, this.transform);
+      mat4.multiply(this.worldTransform, this.camera.inverseCameraTransform, this.transform);
     }
 
     for(var i = 0; i<this.children.length; i++) {

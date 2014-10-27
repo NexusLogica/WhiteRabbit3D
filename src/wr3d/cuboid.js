@@ -49,7 +49,7 @@ Ngl.Cuboid.prototype = {
   render: function(gl, scene, parent) {
     if(parent.transformUpdated || this.transformUpdated) {
       mat4.multiply(this.worldTransform, parent.worldTransform,  this.transform);
-      mat4.multiply(this.projectionModelView, scene.projectionMatrix, this.worldTransform);
+      mat4.multiply(this.projectionModelView, scene.camera.projectionMatrix, this.worldTransform);
     }
 
     gl.useProgram(this.program);
