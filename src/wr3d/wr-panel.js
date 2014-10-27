@@ -1,10 +1,10 @@
 /**********************************************************************
 
-File     : wr-surface.js
+File     : wr-panel.js
 Project  : N Simulator Library
-Purpose  : Source file for a rectangular surface.
+Purpose  : Source file for a WhiteRabbit panel object.
 Revisions: Original definition by Lawrence Gunn.
-           2014/09/23
+           2014/10/26
 
 Copyright (c) 2014 by Lawrence Gunn
 All Rights Reserved.
@@ -12,30 +12,43 @@ All Rights Reserved.
 */
 'use strict';
 
-Ngl.RectangularSurface = function(width, height, texture) {
+Ngl.WrPanel = function(data) {
   Ngl.WrDock.call(this);
-  this.width = width;
-  this.height = height;
-  this.texture = texture;
-  this.selectColor = vec4.fromValues(1, 1, 1, 1);
+  this.configuration = _.cloneDeep(data);
+  this.canvasInitialized = false;
 };
 
-Ngl.RectangularSurface.prototype = Object.create(Ngl.Dock.prototype);
+Ngl.WrPanel.prototype = Object.create(Ngl.WrDock.prototype);
 
-Ngl.RectangularSurface.prototype = {
-  constructor: Ngl.RectangularSurface,
+Ngl.WrPanel.prototype = {
+  constructor: Ngl.WrPanel,
 
   initialize: function(gl, scene) {
-    Ngl.Dock.prototype.initialize.call(this, gl, scene);
+    Ngl.WrDock.prototype.initialize.call(this, gl, scene);
     scene.addWrObject(this);
 
+    var _this = this;
+
+    if(this.configuration.canvasUrl) {
+      this.canvas = new Ngl.Canvas(this.configuration.canvasUrl);
+      this.canvas.load(gl, this.configuration.canvasUrl).then(function() {
+          _this.finalizeInitialization(gl, scene);
+        }, function() {
+          Ngl.Log('ERROR: Panel '+_this.configuration.name+' could not load canvas configuration: '+_this.configuration.canvasUrl);
+        }
+      );
+    }
+  },
+
+  finalizeInitialization: function(gl, scene) {
+
     // The 'this.texture.width' is the displayable pixel width, not the texture's full width.
-    this.width = this.texture.width;
-    this.height = this.texture.height;
+    var width = this.canvas.canvasWidth;
+    var height = this.canvas.canvasHeight;
 
     // Size of the 3D polygons.
-    var w2 = this.width/2.0;
-    var h2 = this.height/2.0;
+    var w2 = width/2.0;
+    var h2 = height/2.0;
    // var scale = 0.004;
     var scale = 0.002;
     w2 *= scale;
@@ -43,17 +56,17 @@ Ngl.RectangularSurface.prototype = {
     this.size = new Float32Array([w2, h2]);
 
     // Texture coordinates.
-//    var scaleX = scene.selectionRenderer.width/this.texture.texturemapWidth;
-    var scaleX = this.width/scene.selectionRenderer.width;
-    var scaleY = this.texture.texturemapHeight/scene.selectionRenderer.height;
+//    var scaleX = scene.selectionRenderer.width/this.canvas.texturemapWidth;
+    var scaleX = width/scene.selectionRenderer.width;
+    var scaleY = this.canvas.texturemapHeight/scene.selectionRenderer.height;
 //    this.textureScale = new Float32Array([1.0, 1.0]);
-    this.textureScale = new Float32Array([this.width/this.texture.texturemapWidth, 1.0]);
+    this.textureScale = new Float32Array([width/this.canvas.texturemapWidth, 1.0]);
     this.selectionTextureScale = new Float32Array([scaleX, scaleY]);
 
-    var tmw = 1.0;//this.width/this.texture.texturemapWidth;
-    var tmh = 1-this.height/this.texture.texturemapHeight;
+    var tmw = 1.0;//this.width/this.canvas.texturemapWidth;
+    var tmh = 1-height/this.canvas.texturemapHeight;
 
-    var d = 0.1*this.width;
+    var d = 0.1*width;
     var array = new Float32Array([
         -1.0, -1.0, 0.0, tmh,
          1.0, -1.0, tmw, tmh,
@@ -92,12 +105,15 @@ Ngl.RectangularSurface.prototype = {
     this.projectionMatrixLocationTs = gl.getUniformLocation(this.selectTextureProgram, 'projectionViewMatrix');
     this.textureLocationTs = gl.getAttribLocation(this.selectTextureProgram, 'texCoord');
     this.textureScaleLocationTs = gl.getUniformLocation(this.selectTextureProgram, 'textureScale');
+
+    this.canvasInitialized = true;
   },
 
   render: function(gl, scene) {
-    if(!this.initialized) {
-      if(this.texture.initialize(gl)) {
+    if(!this.canvasInitialized) {
+      if(!this.initialized) {
         this.initialize(gl, scene);
+        if(!this.canvasInitialized) { return; }
       } else {
         return;
       }
@@ -120,7 +136,7 @@ Ngl.RectangularSurface.prototype = {
       gl.useProgram(this.selectTextureProgram);
 
     } else {
-      this.texture.bindTexture(gl);
+      this.canvas.bindTexturemap(gl);
       gl.useProgram(this.program);
 
       // Only update during regular render cycles.
@@ -150,8 +166,8 @@ Ngl.RectangularSurface.prototype = {
   },
 
   onEvent: function(event) {
-    if(this.texture.canvasObject) {
-      this.texture.canvasObject.onEvent(event);
+    if(this.canvasInitialized) {
+      this.canvas.onEvent(event);
     }
   }
 };

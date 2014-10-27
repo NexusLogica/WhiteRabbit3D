@@ -2,7 +2,8 @@
 <html>
 <head>
   <title>WhiteRabbit3D Basic Test</title>
-  <link rel="stylesheet" href="../src/lib/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../src/lib/bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+  <link rel="-wr3d-stylesheet-3d" href="../src/components/canvas-test/canvas-test.css"/>
   <link rel="shortcut icon" href="images/wr3d.png" />
   <style>
     .canvas-container {
@@ -193,18 +194,21 @@
   <script src="../src/lib/bower_components/q/q.js"></script>
   <script src="../src/lib/random/random-0.26-debug.js"></script>
   <script src="../src/lib/bower_components/gl-matrix/dist/gl-matrix.js"></script>
+  <script src="../src/lib/bower_components/cssjson/cssjson.js"></script>
   <script src="../src/lib/webgl-utils/webgl-utils.js"></script>
   <script src="../src/lib/zebra/zebra.js"></script>
   <script src="../src/wr3d/scene.js"></script>
   <script src="../src/wr3d/dock.js"></script>
+  <script src="../src/wr3d/wr-dock.js"></script>
+  <script src="../src/wr3d/wr-panel.js"></script>
   <script src="../src/wr3d/rectangular-surface.js"></script>
   <script src="../src/wr3d/texturemap.js"></script>
   <script src="../src/wr3d/canvas.js"></script>
   <script src="../src/wr3d/selection-renderer.js"></script>
 
-  <script>
+  <script src="../src/components/canvas-test/canvas-test.js"></script>
 
-    var canvasHtml = '../src/components/canvasTest/canvasTest.json';
+  <script>
 
     setTimeout(function() {
       var canvas = $('.canvas-3d');
@@ -212,13 +216,17 @@
       canvas.data('scene', scene);
       scene.initialize(canvas);
 
-      var textureCanvas = new Ngl.Canvas('.canvas-2d', canvasHtml, 300, 200);
-      textureCanvas.build();
-      var texture = new Ngl.Texturemap(textureCanvas);
-
-      var surface = new Ngl.RectangularSurface(0.05, 0.05, texture);
-      surface.name = 'Main';
-      scene.add(surface);
+      var panel = new Ngl.WrPanel({
+        name:         'Main',
+        position3d:   'translate(0px, 0px, 0px)',
+        size3d:       '(300px, 200px)',
+        canvasUrl:    '../src/components/canvas-test/canvas-test.json',
+        controller:   '../src/components/canvas-test/canvas-test.js',
+        display3d:    'surface',
+        surface3d:    'flat',
+        origin3d:     'center'
+      });
+      scene.add(panel);
 
       var mouseMoveX = -1; mouseMoveY = -1, previousX = -1, previousY = -1;
       $(document).mousemove(function(event) {
@@ -243,25 +251,6 @@
         }
         renderCount++;
       }
-
-      function convert(integer) {
-        var str = Number(integer).toString(16);
-        return str.length == 1 ? "0" + str : str;
-      };
-
-      setInterval(function() {
-        if(scene.renderForSelect) {
-          $('.coord-x').text(scene.hitTest.x);
-          $('.coord-y').text(scene.hitTest.y);
-          $('.color-r').text(convert(scene.hitTestColor.r));
-          $('.color-g').text(convert(scene.hitTestColor.g));
-          $('.color-b').text(convert(scene.hitTestColor.b));
-        } else {
-          $('.coord').text('');
-          $('.color').text('');
-        }
-        scene.doSelect = true;
-      }, 50);
 
       render();
     }, 1000);
