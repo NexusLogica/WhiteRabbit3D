@@ -144,7 +144,7 @@
         "white"      : "#FFFFFF",
         "black"      : "#000000",
         "fontColor"  : "#808080",
-        "background" :  { "$Gradient": [ "white", "#F0F0F0", 32 ] },
+        "background" : "rgba(0, 0, 0, 0)",
         "borderColor": "#AAAAAA",
         "gray1"      : "#A1A1A1",
         "gray2"      : "#AAAAAA",
@@ -178,11 +178,11 @@
 
     "zCanvas": {
         "//"    :  "IT IS IMPORTANT TO HAVE CANVAS CSS PADDING = 0 TO FIX IE9 PROBLEM",
-        "background": "white",
+        "background": "rgba(255, 255, 255, 0)",
         "layout": { "$zebra.layout.StackLayout":[] },
         
         "styles": {
-            "background-color"           : "@palette.background",
+            "background-color"           : "rgba(255, 255, 255, 0)",
             "outline"                    : "none",
             "padding"                    : "0px",
             "-webkit-user-select"        : "none",
@@ -251,7 +251,7 @@
 
         "border": { 
             "focuson"  : { "$Border" : [ "#66CCFF", 2, 3 ] },
-            "focusoff" : { "$Border" : [ "#C5C5C5", 1, 3 ] }
+            "focusoff" : { "$Border" : [ "rgba(255,255,255,0)", 2, 3 ] }
         },
 
         "focusMarkerView" : null,

@@ -50,7 +50,18 @@ Ngl.Canvas.prototype = {
             bag.load(JSON.stringify(data));
 
             setTimeout(function() {
+
+              // Kind of ugly, but Zebkit has troubles clearing the background. So clear it totally prior to the resize.
+              var ctx = _this.canvasElement.get(0).getContext("2d");
+              var op = ctx.globalCompositeOperation;
+              ctx.globalCompositeOperation = 'copy';
+              ctx.fillStyle = 'rgba(0, 0, 0, 0.0)';
+              ctx.fillRect(0, 0, _this.texturemapWidth, _this.texturemapHeight);
+              ctx.globalCompositeOperation = op;
+
+              // Nice if this could be done in the JSON.
               _this.canvas.root.setSize(_this.canvasWidth, _this.canvasHeight);
+
               setTimeout(function() {
                 _this.createTexturemap(gl);
                 deferred.resolve();

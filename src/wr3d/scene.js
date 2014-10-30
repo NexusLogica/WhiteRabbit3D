@@ -121,11 +121,13 @@ Ngl.Scene.prototype.render = function() {
   gl.bindFramebuffer(gl.FRAMEBUFFER, null);
   gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 
-  gl.clearColor(0.95, 0.95, 0.95, 1.0);
+  gl.clearColor(0.0, 0.0, 0.0, 1.0);
   /* jshint -W016 */
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   /* jshint +W016 */
   gl.disable(gl.BLEND);
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
   if(this.camera.cameraTransformUpdated) {
     this.camera.cameraTransformUpdated = false;

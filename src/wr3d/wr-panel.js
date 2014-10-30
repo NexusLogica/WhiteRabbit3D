@@ -50,34 +50,24 @@ Ngl.WrPanel.prototype.finalizeInitialization = function(gl, scene) {
   // Size of the 3D polygons.
   var w2 = this.width/2.0;
   var h2 = this.height/2.0;
- // var scale = 0.004;
-  var scale = 0.002;
   w2 *= this.totalScaling;
   h2 *= this.totalScaling;
   this.size = new Float32Array([w2, h2]);
 
   // Texture coordinates.
-//    var scaleX = scene.selectionRenderer.width/this.canvas.texturemapWidth;
   var scaleX = this.width/scene.selectionRenderer.width;
   var scaleY = this.canvas.texturemapHeight/scene.selectionRenderer.height;
-//    this.textureScale = new Float32Array([1.0, 1.0]);
   this.textureScale = new Float32Array([this.width/this.canvas.texturemapWidth, 1.0]);
   this.selectionTextureScale = new Float32Array([scaleX, scaleY]);
 
-  var tmw = 1.0;//this.width/this.canvas.texturemapWidth;
-  var tmh = 1-this.height/this.canvas.texturemapHeight;
+  var vertTexCoord = 1.0;
+  var horizTexCoord = 1-this.height/this.canvas.texturemapHeight;
 
-  var array = new Float32Array([
-      -1.0, -1.0, 0.0, tmh,
-       1.0, -1.0, tmw, tmh,
-      -1.0,  1.0, 0.0, 1.0,
-      -1.0,  1.0, 0.0, 1.0,
-       1.0, -1.0, tmw, tmh,
-       1.0,  1.0, tmw, 1.0]);
+  var mesh = this.createMesh(horizTexCoord, vertTexCoord);
 
   this.buffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
-  gl.bufferData(gl.ARRAY_BUFFER, array, gl.STATIC_DRAW);
+  gl.bufferData(gl.ARRAY_BUFFER, mesh, gl.STATIC_DRAW);
 
   this.color = vec4.fromValues(1, 0, 0, 1);
 
@@ -158,7 +148,6 @@ Ngl.WrPanel.prototype.render = function(gl, scene) {
     }
   }
 
-
   gl.uniformMatrix4fv(this['projectionMatrixLocation'+renderType], gl.FALSE, this.projectionModelView);
   gl.uniform2fv(this['sizeLocation'+renderType], this.size);
   gl.uniform2fv(this['textureScaleLocation'+renderType], renderType === 'Ts' ? this.selectionTextureScale : this.textureScale);
@@ -175,6 +164,18 @@ Ngl.WrPanel.prototype.render = function(gl, scene) {
   gl.drawArrays(gl.TRIANGLES, 0, 6);
 
   Ngl.WrDock.prototype.postRender.call(this, gl, scene);
+};
+
+Ngl.WrPanel.prototype.createMesh = function(horizTexCoord, vertTexCoord) {
+
+  var mesh = new Float32Array([
+    -1.0, -1.0, 0.0,          horizTexCoord,
+     1.0, -1.0, vertTexCoord, horizTexCoord,
+    -1.0,  1.0, 0.0,          1.0,
+    -1.0,  1.0, 0.0,          1.0,
+     1.0, -1.0, vertTexCoord, horizTexCoord,
+     1.0,  1.0, vertTexCoord, 1.0]);
+  return mesh;
 };
 
 Ngl.WrPanel.prototype.onEvent = function(event) {

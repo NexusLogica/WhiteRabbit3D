@@ -14,7 +14,7 @@
       "$zebra.ui.TextArea": ""
     },
     "BOTTOM": {
-      "$zebra.ui.Button": "Clffear"
+      "$zebra.ui.Button": "Clear"
     }
   }
 }
