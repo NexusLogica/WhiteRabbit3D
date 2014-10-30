@@ -36,24 +36,19 @@ Ngl.Camera = function() {
   this.selectProjectionMatrix = mat4.create();
 };
 
-Ngl.Camera.prototype = {
-  initialize: function(gl, canvas) {
-    this.width  = gl.drawingBufferWidth;    // width in pixels
-    this.height = gl.drawingBufferHeight;   // height in pixels
+Ngl.Camera.prototype.initialize = function(gl, canvas) {
+  this.width  = gl.drawingBufferWidth;    // width in pixels
+  this.height = gl.drawingBufferHeight;   // height in pixels
 
-    // Set up the camera.
-    var yHalf = this.nearFrustrum*Math.tan(this.verticalViewAngle*Math.PI/180.0);
-    var xHalf = yHalf*this.width/this.height;
+  // Set up the camera.
+  var yHalf = this.nearFrustrum*Math.tan(this.verticalViewAngle*Math.PI/180.0);
+  var xHalf = yHalf*this.width/this.height;
 
-    this.projectionMatrix = mat4.create();
-    mat4.frustum(this.projectionMatrix, -xHalf, xHalf, -yHalf, yHalf, this.nearFrustrum, this.farFrustrum);
-    // Alternatively...
-    // mat4.perspective(this.projectionMatrix, 2.0*this.verticalViewAngle*Math.PI/180.0, 1, this.nearFrustrum, this.farFrustrum);
-  },
+  this.projectionMatrix = mat4.create();
+  mat4.perspective(this.projectionMatrix, this.verticalViewAngle*Math.PI/180.0, this.width/this.height, this.nearFrustrum, this.farFrustrum);
+};
 
-  getPixelSizeAtCameraZ: function(cameraZ) {
-    var sinViewAngle = 2.0*Math.tan(0.5*0.01745329251*this.verticalViewAngle);
-    var screenHeight = cameraZ*sinViewAngle;
-    return screenHeight/this.height;
-  }
+Ngl.Camera.prototype.getPixelSizeAtCameraZ = function(cameraZ) {
+  var widthAtFrustrum = 2.0*Math.tan(0.5*0.01745329251*this.verticalViewAngle);
+  return cameraZ*widthAtFrustrum/this.height;
 };
