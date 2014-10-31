@@ -63,11 +63,16 @@ Ngl.WrPanel.prototype.finalizeInitialization = function(gl, scene) {
   var vertTexCoord = 1.0;
   var horizTexCoord = 1-this.height/this.canvas.texturemapHeight;
 
-  var mesh = this.createMesh(horizTexCoord, vertTexCoord);
+  var meshData = this.createMesh(2, 2, horizTexCoord, vertTexCoord);
+  this.numIndices = meshData.numIndices;
 
-  this.buffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
-  gl.bufferData(gl.ARRAY_BUFFER, mesh, gl.STATIC_DRAW);
+  this.vertexArrayBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexArrayBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, meshData.vertexData, gl.STATIC_DRAW);
+
+  this.indexBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, meshData.indexData, gl.STATIC_DRAW);
 
   this.color = vec4.fromValues(1, 0, 0, 1);
 
@@ -152,7 +157,7 @@ Ngl.WrPanel.prototype.render = function(gl, scene) {
   gl.uniform2fv(this['sizeLocation'+renderType], this.size);
   gl.uniform2fv(this['textureScaleLocation'+renderType], renderType === 'Ts' ? this.selectionTextureScale : this.textureScale);
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexArrayBuffer);
 
   // Where the vertex data needs to go.
   gl.enableVertexAttribArray(this['positionLocation'+renderType]);
@@ -161,21 +166,42 @@ Ngl.WrPanel.prototype.render = function(gl, scene) {
   gl.vertexAttribPointer(this['positionLocation'+renderType], 2, gl.FLOAT, gl.FALSE, 16, 0);
   gl.vertexAttribPointer(this['textureLocation'+renderType],  2, gl.FLOAT, gl.FALSE, 16, 8);
 
-  gl.drawArrays(gl.TRIANGLES, 0, 6);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+
+  gl.drawElements(gl.TRIANGLES, this.numIndices, gl.UNSIGNED_SHORT, 0);
 
   Ngl.WrDock.prototype.postRender.call(this, gl, scene);
 };
 
-Ngl.WrPanel.prototype.createMesh = function(horizTexCoord, vertTexCoord) {
+Ngl.WrPanel.prototype.createMesh = function(numRows, numCols, horizTexCoord, vertTexCoord) {
 
-  var mesh = new Float32Array([
+  var vertexData = new Float32Array([
+    -1.0,  1.0, 0.0,          1.0,
+     1.0,  1.0, vertTexCoord, 1.0,
     -1.0, -1.0, 0.0,          horizTexCoord,
-     1.0, -1.0, vertTexCoord, horizTexCoord,
-    -1.0,  1.0, 0.0,          1.0,
-    -1.0,  1.0, 0.0,          1.0,
-     1.0, -1.0, vertTexCoord, horizTexCoord,
-     1.0,  1.0, vertTexCoord, 1.0]);
-  return mesh;
+     1.0, -1.0, vertTexCoord, horizTexCoord]);
+
+  var numIndices = numRows*(numCols+1);
+  var indexData = new Uint16Array(numIndices);
+
+  var i = 0;
+  for(var iY = 0; iY < numRows-1; iY++) {
+    var iTop = iY*numCols;
+    var iBottom = (iY+1)*numCols;
+    for(var iX = 0; iX < numCols-1; iX++) {
+      indexData[i] = iTop;      i++;
+      indexData[i] = iBottom;   i++;
+      indexData[i] = iBottom+1; i++;
+
+      indexData[i] = iBottom+1; i++;
+      indexData[i] = iTop+1;    i++;
+      indexData[i] = iTop;      i++;
+
+      iTop++;
+      iBottom++;
+    }
+  }
+  return { vertexData: vertexData, indexData: indexData, numIndices: numIndices };
 };
 
 Ngl.WrPanel.prototype.onEvent = function(event) {
