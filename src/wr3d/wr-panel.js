@@ -52,7 +52,7 @@ Ngl.WrPanel.prototype.finalizeInitialization = function(gl, scene) {
   var h2 = this.height/2.0;
   w2 *= this.totalScaling;
   h2 *= this.totalScaling;
-  this.size = new Float32Array([w2, h2]);
+  this.size = new Float32Array([w2, h2, 0.0]);
 
   // Texture coordinates.
   var scaleX = this.width/scene.selectionRenderer.width;
@@ -60,8 +60,8 @@ Ngl.WrPanel.prototype.finalizeInitialization = function(gl, scene) {
   this.textureScale = new Float32Array([this.width/this.canvas.texturemapWidth, 1.0]);
   this.selectionTextureScale = new Float32Array([scaleX, scaleY]);
 
-  var vertTexCoord = 1.0;
-  var horizTexCoord = 1-this.height/this.canvas.texturemapHeight;
+  var horizTexCoord = 1.0;
+  var vertTexCoord = 1-this.height/this.canvas.texturemapHeight;
 
   var meshData = this.createMesh(2, 2, horizTexCoord, vertTexCoord);
   this.numIndices = meshData.numIndices;
@@ -154,7 +154,7 @@ Ngl.WrPanel.prototype.render = function(gl, scene) {
   }
 
   gl.uniformMatrix4fv(this['projectionMatrixLocation'+renderType], gl.FALSE, this.projectionModelView);
-  gl.uniform2fv(this['sizeLocation'+renderType], this.size);
+  gl.uniform3fv(this['sizeLocation'+renderType], this.size);
   gl.uniform2fv(this['textureScaleLocation'+renderType], renderType === 'Ts' ? this.selectionTextureScale : this.textureScale);
 
   gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexArrayBuffer);
@@ -163,8 +163,9 @@ Ngl.WrPanel.prototype.render = function(gl, scene) {
   gl.enableVertexAttribArray(this['positionLocation'+renderType]);
   gl.enableVertexAttribArray(this['textureLocation'+renderType]);
 
-  gl.vertexAttribPointer(this['positionLocation'+renderType], 2, gl.FLOAT, gl.FALSE, 16, 0);
-  gl.vertexAttribPointer(this['textureLocation'+renderType],  2, gl.FLOAT, gl.FALSE, 16, 8);
+  gl.vertexAttribPointer(this['positionLocation'+renderType], 3, gl.FLOAT, gl.FALSE, 32, 0);
+//  gl.vertexAttribPointer(this['normalLocation'+renderType],  3, gl.FLOAT, gl.FALSE, 32, 12);
+  gl.vertexAttribPointer(this['textureLocation'+renderType],  2, gl.FLOAT, gl.FALSE, 32, 24);
 
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
 
@@ -173,18 +174,62 @@ Ngl.WrPanel.prototype.render = function(gl, scene) {
   Ngl.WrDock.prototype.postRender.call(this, gl, scene);
 };
 
+/***
+ * Create a rectangular mesh that has horizontally numRows of vertices and vertically numCols of vertices
+ * @param numRows {Integer} The number of rows of vertices, so there will be numRows-1 of rectangular polygons.
+ * @param numCols {Integer} The number of columns of vertices, so there will be numCols-1 of rectangular polygons.
+ * @param horizTexCoord
+ * @param vertTexCoord
+ * @returns {{vertexData: Float32Array, indexData: Uint16Array, numIndices: number}}
+ */
 Ngl.WrPanel.prototype.createMesh = function(numRows, numCols, horizTexCoord, vertTexCoord) {
 
-  var vertexData = new Float32Array([
-    -1.0,  1.0, 0.0,          1.0,
-     1.0,  1.0, vertTexCoord, 1.0,
-    -1.0, -1.0, 0.0,          horizTexCoord,
-     1.0, -1.0, vertTexCoord, horizTexCoord]);
+  var vertexData = new Float32Array(numRows*numCols*(3+3+2));
+  var i = 0;
+
+  var tmStartX = 0.0;
+  var tmEndX = horizTexCoord;
+  var tmStartY = 1.0;
+  var tmEndY = vertTexCoord;
+
+  var tmIncX = (tmEndX-tmStartX)/(numCols-1);
+  var tmIncY = (tmEndY-tmStartY)/(numRows-1);
+  var tmY = tmStartY;
+
+  var y = 1.0;
+  var xInc = 2.0/(numCols-1);
+  var yInc = -2.0/(numRows-1);
+  for(var j = 0; j < numRows; j++) {
+    var tmX = tmStartX;
+    var x = -1.0;
+
+    for(var k = 0; k < numCols; k++) {
+
+      // Position
+      vertexData[i] = x;     i++;
+      vertexData[i] = y;     i++;
+      vertexData[i] = 0.0;   i++;
+
+      // Normal
+      vertexData[i] = 0.0;   i++;
+      vertexData[i] = 0.0;   i++;
+      vertexData[i] = 1.0;   i++;
+
+      // Texture coords
+      vertexData[i] = tmX;   i++;
+      vertexData[i] = tmY;   i++;
+
+      tmX += tmIncX;
+      x += xInc;
+    }
+    tmY += tmIncY;
+    y += yInc;
+  }
 
   var numIndices = numRows*(numCols+1);
   var indexData = new Uint16Array(numIndices);
 
-  var i = 0;
+  i = 0;
   for(var iY = 0; iY < numRows-1; iY++) {
     var iTop = iY*numCols;
     var iBottom = (iY+1)*numCols;
