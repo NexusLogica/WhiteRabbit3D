@@ -27,6 +27,7 @@ Ngl.WrDock.prototype = Object.create(Ngl.Dock.prototype);
 Ngl.WrDock.prototype.initialize = function(gl, scene) {
   Ngl.Dock.prototype.initialize.call(this, gl, scene);
   this.initialized = true;
+  this.name = this.configuration.name;
   this.scaling3d = _.isUndefined(this.configuration.scaling3d) ? Ngl.Scaling.parent : Ngl.Scaling[this.configuration.scaling3d.toLowerCase()];
   this.recalculatePosition = true;
   this.wrScaleFactor = 1.0;

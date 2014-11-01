@@ -10298,7 +10298,7 @@ pkg.PaintManager = Class(pkg.Manager, [
                                     }
 
                                     $this.paint(context, canvas);
-                                    $this.canvasNeedsCopy = true;
+                                    canvas.canvasNeedsCopy = true;
 
                                     canvas.$da.width = -1; //!!!
                                 }

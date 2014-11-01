@@ -71,6 +71,7 @@
     uniform mat4 projectionViewMatrix;
     uniform vec3 size;
     uniform vec2 textureScale;
+    uniform ivec4 instructions;
     attribute vec3 position;
     attribute vec2 texCoord;
 
@@ -81,6 +82,8 @@
       texCoordVarying.y = 1.0-(1.0-texCoord.y)*textureScale.y;
 
       vec4 sizedPosition = vec4(size[0]*position[0], size[1]*position[1], position[2], 1.0);
+
+
       gl_Position = projectionViewMatrix*sizedPosition;
     }
   </script>
@@ -205,6 +208,20 @@
       var scene = new Ngl.Scene();
       canvas.data('scene', scene);
       scene.initialize(canvas);
+
+      var curvedPanel = new Ngl.WrPanel({
+        name:         'Curved',
+        position3d:   'translate(0px, 0px, 0px)',
+        size3d:       '(400px, 75px)',
+        canvasUrl:    '../src/components/circular-test/circular-test.json',
+        controller:   '../src/components/circular-test/circular-test.js',
+        display3d:    'surface',
+        scaling3d:    'screen',
+        magnification3d: 1.0,
+        surface3d:    'curved',
+        origin3d:     'center'
+      });
+      scene.add(curvedPanel);
 
       var panel = new Ngl.WrPanel({
         name:         'Main',

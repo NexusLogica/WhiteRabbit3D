@@ -105,6 +105,7 @@ Ngl.SelectionRenderer.prototype = {
 
     if(wrObj) {
       var pixel = this.findPixelOnObject(gl, scene, x, y, wrObj);
+//      Ngl.Log('Found '+wrObj.name+' at '+pixel.x+','+pixel.y);
       return { x: x, y: y, obj: wrObj, canvasX: pixel.x, canvasY: pixel.y };
     }
 

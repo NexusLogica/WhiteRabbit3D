@@ -1,6 +1,6 @@
 {
-  "ngl.width": 300,
-  "ngl.height": 200,
+  "ngl.width": 400,
+  "ngl.height": 100,
   "padding": 4,
   "layout": { "$zebra.layout.BorderLayout":[ 4, 4] },
   "border": "plain",

@@ -12,8 +12,9 @@ All Rights Reserved.
 */
 'use strict';
 
-Ngl.Canvas = function(layoutJsonUrl) {
+Ngl.Canvas = function(layoutJsonUrl, panel) {
   this.canvasInitialized = false;
+  this.panel = panel;
 };
 
 Ngl.Canvas.nextCanvasElementNum = 0;
@@ -34,13 +35,16 @@ Ngl.Canvas.prototype = {
 
             _this.canvasWidth = data['ngl.width'];
             _this.canvasHeight = data['ngl.height'];
+//            _this.canvasTop = data.hasOwnProperty('ngl.canvasTop') ? data['ngl.canvasTop'] : _this.texturemapHeight+2;
 
             _this.texturemapWidth = _this.powerOfTwo(_this.canvasWidth);
             _this.texturemapHeight = _this.powerOfTwo(_this.canvasHeight);
 
+            _this.canvasTop = _this.texturemapHeight+2;
+
             _this.canvasElement = $('<canvas/>', {
               class: 'white-rabbit-internal-canvas-'+Ngl.Canvas.nextCanvasElementNum,
-              style: 'position:fixed; top:-'+(_this.texturemapHeight+2)+'px; left:0px;'}).appendTo('body');
+              style: 'position:fixed; top:-'+_this.canvasTop+'px; left:0px;'}).appendTo('body');
             Ngl.Canvas.nextCanvasElementNum++;
 
             _this.canvas = new zebra.ui.zCanvas(_this.canvasElement.get(0), _this.texturemapWidth, _this.texturemapHeight);
@@ -103,9 +107,8 @@ Ngl.Canvas.prototype = {
   },
 
   getUpdateRegion: function() {
-    if(zebra.ui.paintManager.canvasNeedsCopy) {
-      zebra.ui.paintManager.canvasNeedsCopy = false;
-
+    if(this.canvas.canvasNeedsCopy) {
+      this.canvas.canvasNeedsCopy = false;
       return { x: 0, y: 0, width: this.canvasWidth, height: this.canvasHeight };
     }
     return null;

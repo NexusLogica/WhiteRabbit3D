@@ -29,7 +29,7 @@ Ngl.WrPanel.prototype.initialize = function(gl, scene) {
   var _this = this;
 
   if(this.configuration.canvasUrl) {
-    this.canvas = new Ngl.Canvas(this.configuration.canvasUrl);
+    this.canvas = new Ngl.Canvas(this.configuration.canvasUrl, this);
     this.canvas.load(gl, this.configuration.canvasUrl).then(function() {
         _this.finalizeInitialization(gl, scene);
       }, function() {
@@ -53,6 +53,10 @@ Ngl.WrPanel.prototype.finalizeInitialization = function(gl, scene) {
   w2 *= this.totalScaling;
   h2 *= this.totalScaling;
   this.size = new Float32Array([w2, h2, 0.0]);
+
+  this.instructionLength = 4;
+  this.instructions = new Int32Array(this.instructionLength);
+  for(var i=0; i<this.instructionLength; i++) { this.instructions[i] = 0.0; }
 
   // Texture coordinates.
   var scaleX = this.width/scene.selectionRenderer.width;
@@ -83,6 +87,7 @@ Ngl.WrPanel.prototype.finalizeInitialization = function(gl, scene) {
   this.projectionMatrixLocation = gl.getUniformLocation(this.program, 'projectionViewMatrix');
   this.textureLocation = gl.getAttribLocation(this.program, 'texCoord');
   this.textureScaleLocation = gl.getUniformLocation(this.program, 'textureScale');
+  this.instructionLocation = gl.getUniformLocation(this.program, 'instructions');
 
   // The color select shader and its locations.
   this.selectColorProgram = scene.shaders['texture-color-select'].program;
@@ -92,6 +97,7 @@ Ngl.WrPanel.prototype.finalizeInitialization = function(gl, scene) {
   this.textureLocationCs = gl.getAttribLocation(this.selectColorProgram, 'texCoord');
   this.surfaceColorLocationCs = gl.getUniformLocation(this.selectColorProgram, 'surfaceColor');
   this.textureScaleLocationCs = gl.getUniformLocation(this.selectColorProgram, 'textureScale');
+  this.instructionLocationCs = gl.getUniformLocation(this.selectColorProgram, 'instructions');
 
   // The color select shader and its locations.
   this.selectTextureProgram = scene.shaders['texture-texture-select'].program;
@@ -100,6 +106,7 @@ Ngl.WrPanel.prototype.finalizeInitialization = function(gl, scene) {
   this.projectionMatrixLocationTs = gl.getUniformLocation(this.selectTextureProgram, 'projectionViewMatrix');
   this.textureLocationTs = gl.getAttribLocation(this.selectTextureProgram, 'texCoord');
   this.textureScaleLocationTs = gl.getUniformLocation(this.selectTextureProgram, 'textureScale');
+  this.instructionLocationTs = gl.getUniformLocation(this.selectTextureProgram, 'instructions');
 
   this.canvasInitialized = true;
 };
@@ -156,6 +163,7 @@ Ngl.WrPanel.prototype.render = function(gl, scene) {
   gl.uniformMatrix4fv(this['projectionMatrixLocation'+renderType], gl.FALSE, this.projectionModelView);
   gl.uniform3fv(this['sizeLocation'+renderType], this.size);
   gl.uniform2fv(this['textureScaleLocation'+renderType], renderType === 'Ts' ? this.selectionTextureScale : this.textureScale);
+  gl.uniform4iv(this['instructionLocation'+renderType], this.instructions);
 
   gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexArrayBuffer);
 
