@@ -1,0 +1,26 @@
+/**********************************************************************
+
+File     : canvas-test.css
+Project  : N Simulator Library
+Purpose  : CSS file for a test component.
+Revisions: Original definition by Lawrence Gunn.
+           2014/10/25
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+
+.center-dock {
+  -wr3d-position-3d: translate(0px, 0px, 0px);
+  -wr3d-display-3d: dock;
+}
+
+.canvas-test {
+  -wr3d-position-3d: translate(10px, 1px, 0px) rotateY(20deg);
+  -wr3d-canvas-size-3d: 300px 200px;
+  -wr3d-display-3d: surface;
+  -wr3d-surface-3d: flat;
+  -wr3d-origin-3d: center;
+  -wr3d-attach-to: sel(".center-dock");
+}
