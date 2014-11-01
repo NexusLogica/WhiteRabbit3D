@@ -48,8 +48,8 @@ Ngl.WrPanel.prototype.finalizeInitialization = function(gl, scene) {
   this.calculatePositioning(gl, scene);
 
   // Size of the 3D polygons.
-  var w2 = this.width/2.0;
-  var h2 = this.height/2.0;
+  var w2 = this.width;
+  var h2 = this.height;
   w2 *= this.totalScaling;
   h2 *= this.totalScaling;
   this.size = new Float32Array([w2, h2, 0.0]);
@@ -105,11 +105,11 @@ Ngl.WrPanel.prototype.finalizeInitialization = function(gl, scene) {
 };
 
 Ngl.WrPanel.prototype.onPositioningRecalculated = function() {
-  var w2 = this.width*0.5;
-  var h2 = this.height*0.5;
+  var w2 = this.width;
+  var h2 = this.height;
   w2 *= this.totalScaling;
   h2 *= this.totalScaling;
-  this.size = new Float32Array([w2, h2]);
+  this.size = new Float32Array([w2, h2, 0.0]);
 };
 
 Ngl.WrPanel.prototype.render = function(gl, scene) {
@@ -196,12 +196,12 @@ Ngl.WrPanel.prototype.createMesh = function(numRows, numCols, horizTexCoord, ver
   var tmIncY = (tmEndY-tmStartY)/(numRows-1);
   var tmY = tmStartY;
 
-  var y = 1.0;
-  var xInc = 2.0/(numCols-1);
-  var yInc = -2.0/(numRows-1);
+  var y = 0.0;
+  var xInc = 1.0/(numCols-1);
+  var yInc = -1.0/(numRows-1);
   for(var j = 0; j < numRows; j++) {
     var tmX = tmStartX;
-    var x = -1.0;
+    var x = 0.0;
 
     for(var k = 0; k < numCols; k++) {
 
