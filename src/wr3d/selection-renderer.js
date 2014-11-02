@@ -105,7 +105,7 @@ Ngl.SelectionRenderer.prototype = {
 
     if(wrObj) {
       var pixel = this.findPixelOnObject(gl, scene, x, y, wrObj);
-//      Ngl.Log('Found '+wrObj.name+' at '+pixel.x+','+pixel.y);
+//      Ngl.log('Found '+wrObj.name+' at '+pixel.x+','+pixel.y);
       return { x: x, y: y, obj: wrObj, canvasX: pixel.x, canvasY: pixel.y };
     }
 
@@ -137,7 +137,7 @@ Ngl.SelectionRenderer.prototype = {
     var obj = scene.wrObjectsByColorHash[color.toString()];
     return obj;
 
-//      Ngl.Log('x,y = '+x+','+y+'   color='+this.selectionPixel[0]+' '+this.selectionPixel[1]+' '+this.selectionPixel[2]);
+//      Ngl.log('x,y = '+x+','+y+'   color='+this.selectionPixel[0]+' '+this.selectionPixel[1]+' '+this.selectionPixel[2]);
   },
 
   findPixelOnObject: function(gl, scene, x, y, wrObj) {
@@ -173,7 +173,7 @@ Ngl.SelectionRenderer.prototype = {
 //      var ix = tests[i][0];
 //      var iy = tests[i][1];
 //      gl.readPixels(ix, iy, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, selectionPixel);
-//      Ngl.Log('x,y = '+ix+','+iy+'   color='+selectionPixel[0]+' '+selectionPixel[1]+' '+selectionPixel[2]);
+//      Ngl.log('x,y = '+ix+','+iy+'   color='+selectionPixel[0]+' '+selectionPixel[1]+' '+selectionPixel[2]);
 //    }
 
     var x = 0;
@@ -185,7 +185,7 @@ Ngl.SelectionRenderer.prototype = {
       gl.readPixels(x, height-y-1, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, selectionPixel);
       var readColor = new Ngl.IntegerColor(selectionPixel[0], selectionPixel[1], selectionPixel[2]);
       if(!color.isEqual(readColor)) {
-        Ngl.Log('x,y = '+x+','+y+'   color='+readColor.toString()+' Expected color: '+color.toString());
+        Ngl.log('x,y = '+x+','+y+'   color='+readColor.toString()+' Expected color: '+color.toString());
         logEntries++;
         if(logEntries > maxLogEntries) { break; }
       }
@@ -214,7 +214,7 @@ Ngl.SelectionRenderer.prototype = {
 //      gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, selectionPixel);
 //      var xy = this.getXYFromIntColor(selectionPixel[0], selectionPixel[1], selectionPixel[2]);
 //      if(xy.x !== x || xy.y !== y || true) {
-//        Ngl.Log('x,y = '+x+','+y+'   color='+selectionPixel[0]+' '+selectionPixel[1]+' '+selectionPixel[2]+' XY from Color: '+xy.x+','+xy.y);
+//        Ngl.log('x,y = '+x+','+y+'   color='+selectionPixel[0]+' '+selectionPixel[1]+' '+selectionPixel[2]+' XY from Color: '+xy.x+','+xy.y);
 //      }
 //    }
 

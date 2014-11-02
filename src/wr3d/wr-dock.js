@@ -48,10 +48,20 @@ Ngl.WrDock.prototype.preRender = function(gl, scene) {
 Ngl.WrDock.prototype.calculatePositioning = function(gl, scene) {
   if(this.recalculatePosition) {
     this.updateTransform(scene);
+    var cameraZ = Math.abs(this.worldTransform[14]);
+    var pixelSizeAtOrigin = scene.camera.getPixelSizeAtCameraZ(cameraZ);
+
+    var translate = Ngl.pointFromPropString(this.configuration.position3d, 'translate');
+    if(translate) {
+      vec3.scale(translate, translate, pixelSizeAtOrigin);
+      this.transform[12] = translate[0];
+      this.transform[13] = translate[1];
+      this.transform[14] = translate[2];
+      this.transformUpdated = true;
+    }
 
     if(this.scaling3d === Ngl.Scaling.screen) {
-      var cameraZ = Math.abs(this.worldTransform[14]);
-      this.wrScaleFactor = scene.camera.getPixelSizeAtCameraZ(cameraZ);
+      this.wrScaleFactor = pixelSizeAtOrigin;
       this.totalScaling = this.wrScaleFactor*this.magnification;
     }
     this.onPositioningRecalculated();

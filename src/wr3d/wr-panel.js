@@ -33,7 +33,7 @@ Ngl.WrPanel.prototype.initialize = function(gl, scene) {
     this.canvas.load(gl, this.configuration.canvasUrl).then(function() {
         _this.finalizeInitialization(gl, scene);
       }, function() {
-        Ngl.Log('ERROR: Panel '+_this.configuration.name+' could not load canvas configuration: '+_this.configuration.canvasUrl);
+        Ngl.log('ERROR: Panel '+_this.configuration.name+' could not load canvas configuration: '+_this.configuration.canvasUrl);
       }
     );
   }

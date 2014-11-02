@@ -73,7 +73,7 @@ Ngl.Canvas.prototype = {
             }, 100);
           },
           function(jqXHR, textStatus, httpStatusCodeDescription) {
-            Ngl.Log('LOAD ERROR: Unable to load '+_this.layoutJsonUrl+' : '+textStatus+' : '+jqXHR.status+':'+httpStatusCodeDescription);
+            Ngl.log('LOAD ERROR: Unable to load '+_this.layoutJsonUrl+' : '+textStatus+' : '+jqXHR.status+':'+httpStatusCodeDescription);
             deferred.reject();
           }
         );

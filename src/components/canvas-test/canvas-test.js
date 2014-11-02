@@ -20,7 +20,7 @@ WR3D.CanvasTest = function($scene) {
     link: function($scope, $canvas) {
       var button = $canvas.find('zebra.ui.Button');
       button.bind(function() {
-        Ngl.Log("MOUSE");
+        Ngl.log("MOUSE");
       });
     }
   };

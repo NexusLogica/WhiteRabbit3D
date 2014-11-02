@@ -215,7 +215,7 @@ Ngl.Scene.prototype.createProgram = function(vertexShader, fragmentShader) {
   var linked = gl.getProgramParameter(program, gl.LINK_STATUS);
   if (!linked) {
     var lastError = gl.getProgramInfoLog (program);
-    Ngl.Log('Error in program linking:' + lastError);
+    Ngl.log('Error in program linking:' + lastError);
 
     gl.deleteProgram(program);
     return null;
@@ -228,7 +228,7 @@ Ngl.Scene.prototype.compileShaderFromElement = function(scriptId) {
   var shaderType;
   var shaderScript = document.getElementById(scriptId);
   if (!shaderScript) {
-    Ngl.Log('ERROR: Unknown script element ' + scriptId);
+    Ngl.log('ERROR: Unknown script element ' + scriptId);
     throw('Error: unknown script element ' + scriptId);
   }
   shaderSource = shaderScript.text;
@@ -238,7 +238,7 @@ Ngl.Scene.prototype.compileShaderFromElement = function(scriptId) {
   } else if (shaderScript.type === 'x-shader/x-fragment') {
     shaderType = this.gl.FRAGMENT_SHADER;
   } else if (shaderType !== this.gl.VERTEX_SHADER && shaderType !== this.gl.FRAGMENT_SHADER) {
-    Ngl.Log('ERROR: unknown shader type '+scriptId);
+    Ngl.log('ERROR: unknown shader type '+scriptId);
     return null;
   }
 
@@ -259,7 +259,7 @@ Ngl.Scene.prototype.compileShader = function(shaderSource, shaderType) {
   if (!compiled) {
     // Something went wrong during compilation; get the error
     var lastError = gl.getShaderInfoLog(shader);
-    Ngl.Log('ERROR compiling shader "' + shader + '":' + lastError);
+    Ngl.log('ERROR compiling shader "' + shader + '":' + lastError);
     gl.deleteShader(shader);
     return null;
   }
@@ -271,6 +271,24 @@ Ngl.powerOfTwo = function(d) {
   var log2 = Math.log(2.0);
   var power = Math.ceil(Math.log(d)/log2);
   return Math.ceil(Math.pow(2.0, power)-0.5);
+};
+
+Ngl.pointFromPropString = function(properties, propName) {
+  if(_.isEmpty(properties)) { return null; }
+
+  var index = properties.lastIndexOf(propName);
+  if(index < 0) { return null; }
+
+  var iStart = properties.indexOf('(', index);
+  var iEnd = properties.indexOf(')', iStart);
+  var values = properties.substring(iStart+1, iEnd).split(',');
+  var point = new Float32Array([0.0, 0.0, 0.0]);
+  for(var i=0; i<3; i++) {
+    if(!_.isUndefined(values[i])) {
+      point[i] = parseFloat(values[i]);
+    }
+  }
+  return point;
 };
 
 // *** Color utilities ***
@@ -307,6 +325,6 @@ Ngl.IntegerColor.prototype.toString = function() {
 
 Ngl.Scaling = { 'unscaled': 0, 'parent': 1, 'screen': 2 };
 
-Ngl.Log = function(msg) {
+Ngl.log = function(msg) {
   window.console.log(msg);
 };
