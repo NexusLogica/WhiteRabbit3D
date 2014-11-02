@@ -78,37 +78,32 @@ Ngl.WrPanel.prototype.finalizeInitialization = function(gl, scene) {
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, meshData.indexData, gl.STATIC_DRAW);
 
-  this.color = vec4.fromValues(1, 0, 0, 1);
+  this.surfaceColor = vec4.fromValues(0.0, 0.0, 0.0, 1.0);
 
-  // The main shader and its locations.
-  this.program = scene.shaders.texture.program;
-  this.positionLocation = gl.getAttribLocation(this.program, 'position');
-  this.sizeLocation = gl.getUniformLocation(this.program, 'size');
-  this.projectionMatrixLocation = gl.getUniformLocation(this.program, 'projectionViewMatrix');
-  this.textureLocation = gl.getAttribLocation(this.program, 'texCoord');
-  this.textureScaleLocation = gl.getUniformLocation(this.program, 'textureScale');
-  this.instructionLocation = gl.getUniformLocation(this.program, 'instructions');
+  // Load the shaders and find the locations.
+  this.programs = {
+      normal:   { progName: 'texture', ext: 'Nrm' },
+      colorSel: { progName: 'texture-color-select', ext: 'Cs' },
+      texSel:   { progName: 'texture-texture-select', ext: 'Ts' }};
 
-  // The color select shader and its locations.
-  this.selectColorProgram = scene.shaders['texture-color-select'].program;
-  this.positionLocationCs = gl.getAttribLocation(this.selectColorProgram, 'position');
-  this.sizeLocationCs = gl.getUniformLocation(this.selectColorProgram, 'size');
-  this.projectionMatrixLocationCs = gl.getUniformLocation(this.selectColorProgram, 'projectionViewMatrix');
-  this.textureLocationCs = gl.getAttribLocation(this.selectColorProgram, 'texCoord');
-  this.surfaceColorLocationCs = gl.getUniformLocation(this.selectColorProgram, 'surfaceColor');
-  this.textureScaleLocationCs = gl.getUniformLocation(this.selectColorProgram, 'textureScale');
-  this.instructionLocationCs = gl.getUniformLocation(this.selectColorProgram, 'instructions');
+  // As the location information is different for each program, do this in a loop with the programs information.
+  _.forEach(this.programs, function(prog) {
+    var program = scene.shaders[prog.progName].program;
+    this['program'+prog.ext] = program;
 
-  // The color select shader and its locations.
-  this.selectTextureProgram = scene.shaders['texture-texture-select'].program;
-  this.positionLocationTs = gl.getAttribLocation(this.selectTextureProgram, 'position');
-  this.sizeLocationTs = gl.getUniformLocation(this.selectTextureProgram, 'size');
-  this.projectionMatrixLocationTs = gl.getUniformLocation(this.selectTextureProgram, 'projectionViewMatrix');
-  this.textureLocationTs = gl.getAttribLocation(this.selectTextureProgram, 'texCoord');
-  this.textureScaleLocationTs = gl.getUniformLocation(this.selectTextureProgram, 'textureScale');
-  this.instructionLocationTs = gl.getUniformLocation(this.selectTextureProgram, 'instructions');
+    this['positionLocation'+prog.ext] = gl.getAttribLocation(program, 'position');
+    this['sizeLocation'+prog.ext] = gl.getUniformLocation(program, 'size');
+    this['projectionMatrixLocation'+prog.ext] = gl.getUniformLocation(program, 'projectionViewMatrix');
+    this['textureLocation'+prog.ext] = gl.getAttribLocation(program, 'texCoord');
+    this['textureScaleLocation'+prog.ext] = gl.getUniformLocation(program, 'textureScale');
+    this['instructionLocation'+prog.ext] = gl.getUniformLocation(program, 'instructions');
+    this['pixelSizeLocation'+prog.ext] = gl.getUniformLocation(program, 'pixelSize');
+    this['surfaceColorLocation'+prog.ext] = gl.getUniformLocation(program, 'surfaceColor');
+  }, this);
 
   this.canvasInitialized = true;
+
+  this.setupVertexShaderWarping();
 };
 
 Ngl.WrPanel.prototype.onPositioningRecalculated = function() {
@@ -138,8 +133,6 @@ Ngl.WrPanel.prototype.render = function(gl, scene) {
   var renderType = '';
   if(scene.renderForSelectColor) {
     renderType = 'Cs';
-    gl.useProgram(this.selectColorProgram);
-    gl.uniform4fv(this.surfaceColorLocationCs, this.selectColor);
 
   } else if(scene.renderForSelectTexture) {
     renderType = 'Ts';
@@ -147,11 +140,10 @@ Ngl.WrPanel.prototype.render = function(gl, scene) {
     gl.activeTexture(gl.TEXTURE0+0);
     gl.bindTexture(gl.TEXTURE_2D, scene.selectionRenderer.selectionTexture);
 
-    gl.useProgram(this.selectTextureProgram);
 
   } else {
     this.canvas.bindTexturemap(gl);
-    gl.useProgram(this.program);
+    renderType = 'Nrm';
 
     // Only update during regular render cycles.
     if(this.parent.transformUpdated || this.transformUpdated) {
@@ -160,10 +152,14 @@ Ngl.WrPanel.prototype.render = function(gl, scene) {
     }
   }
 
+  gl.useProgram(this['program'+renderType]);
+
   gl.uniformMatrix4fv(this['projectionMatrixLocation'+renderType], gl.FALSE, this.projectionModelView);
   gl.uniform3fv(this['sizeLocation'+renderType], this.size);
   gl.uniform2fv(this['textureScaleLocation'+renderType], renderType === 'Ts' ? this.selectionTextureScale : this.textureScale);
   gl.uniform4iv(this['instructionLocation'+renderType], this.instructions);
+  gl.uniform1f(this['pixelSizeLocation'+renderType], this.pixelSize);
+  gl.uniform4fv(this['surfaceColorLocation'+renderType], renderType === 'Cs' ? this.selectColor : this.surfaceColor);
 
   gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexArrayBuffer);
 
@@ -255,6 +251,20 @@ Ngl.WrPanel.prototype.createMesh = function(numRows, numCols, horizTexCoord, ver
     }
   }
   return { vertexData: vertexData, indexData: indexData, numIndices: numIndices };
+};
+
+Ngl.WrPanel.prototype.setupVertexShaderWarping = function() {
+  if(!this.configuration.hasOwnProperty('surfaceProperties3d')) { return; }
+  this.surfaceProperties = JSON.parse(this.configuration.surfaceProperties3d);
+  for(var i=0; i<this.surfaceProperties.length; i++) {
+    var props = this.surfaceProperties[i];
+    switch(props.type) {
+      case 'circular': {
+        this.instructions[i] = 1;
+      }
+    }
+  }
+
 };
 
 Ngl.WrPanel.prototype.onEvent = function(event) {

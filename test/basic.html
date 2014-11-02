@@ -68,14 +68,27 @@
 
   <script id="texture-vertex-shader" type="x-shader/x-vertex">
     // A basic flat vertex shader, hello world'esque.
+//    struct warpData {
+//
+//    }
     uniform mat4 projectionViewMatrix;
     uniform vec3 size;
     uniform vec2 textureScale;
+    uniform float pixelSize;
     uniform ivec4 instructions;
     attribute vec3 position;
     attribute vec2 texCoord;
 
     varying vec2 texCoordVarying;
+
+    vec4 circularWarp(vec4 pos) {
+      float x = pos.x;
+      float y = pos.y+300.0*pixelSize;
+
+      // Offset x upward
+      vec4 retval = vec4(x, y, pos[2], 1.0);
+      return retval;
+    }
 
     void main() {
       texCoordVarying.x = texCoord.x*textureScale.x;
@@ -83,9 +96,18 @@
 
       vec4 sizedPosition = vec4(size[0]*position[0], size[1]*position[1], position[2], 1.0);
 
+      for(int i=0; i<4; i++) {
+        if(instructions[i] == 0) {
+          break;
+        } else if(instructions[i] == 1) {
+          sizedPosition = circularWarp(sizedPosition);
+        }
+      }
+
 
       gl_Position = projectionViewMatrix*sizedPosition;
     }
+
   </script>
 
   <script id="texture-fragment-shader" type="x-shader/x-fragment">
@@ -211,13 +233,14 @@
 
       var curvedPanel = new Ngl.WrPanel({
         name:         'Curved',
-        position3d:   'translate(-200px, 140px, 0px)',
+        position3d:   'translate(0px, 0px, 0px)',
         size3d:       '(400px, 75px)',
         canvasUrl:    '../src/components/circular-test/circular-test.json',
         controller:   '../src/components/circular-test/circular-test.js',
         display3d:    'surface',
         scaling3d:    'screen',
         magnification3d: 1.0,
+        surfaceProperties3d: '[{ "type": "circular", "radius": "300px" }]',
         surface3d:    'curved',
         origin3d:     'center'
       });

@@ -20,6 +20,7 @@ Ngl.WrDock = function(position, size) {
   this.transform = mat4.create();
   this.worldTransform = mat4.create();
   this.projectionModelView = mat4.create();
+  this.pixelSize = 1.0;
 };
 
 Ngl.WrDock.prototype = Object.create(Ngl.Dock.prototype);
@@ -49,11 +50,11 @@ Ngl.WrDock.prototype.calculatePositioning = function(gl, scene) {
   if(this.recalculatePosition) {
     this.updateTransform(scene);
     var cameraZ = Math.abs(this.worldTransform[14]);
-    var pixelSizeAtOrigin = scene.camera.getPixelSizeAtCameraZ(cameraZ);
+    this.pixelSize = scene.camera.getPixelSizeAtCameraZ(cameraZ);
 
     var translate = Ngl.pointFromPropString(this.configuration.position3d, 'translate');
     if(translate) {
-      vec3.scale(translate, translate, pixelSizeAtOrigin);
+      vec3.scale(translate, translate, this.pixelSize);
       this.transform[12] = translate[0];
       this.transform[13] = translate[1];
       this.transform[14] = translate[2];
@@ -61,7 +62,7 @@ Ngl.WrDock.prototype.calculatePositioning = function(gl, scene) {
     }
 
     if(this.scaling3d === Ngl.Scaling.screen) {
-      this.wrScaleFactor = pixelSizeAtOrigin;
+      this.wrScaleFactor = this.pixelSize;
       this.totalScaling = this.wrScaleFactor*this.magnification;
     }
     this.onPositioningRecalculated();
