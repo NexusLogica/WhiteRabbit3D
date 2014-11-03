@@ -67,7 +67,7 @@ Ngl.WrPanel.prototype.finalizeInitialization = function(gl, scene) {
   var horizTexCoord = 1.0;
   var vertTexCoord = 1-this.height/this.canvas.texturemapHeight;
 
-  var meshData = this.createMesh(2, 2, horizTexCoord, vertTexCoord);
+  var meshData = this.createMesh(10, 10, horizTexCoord, vertTexCoord);
   this.numIndices = meshData.numIndices;
 
   this.vertexArrayBuffer = gl.createBuffer();
@@ -230,7 +230,7 @@ Ngl.WrPanel.prototype.createMesh = function(numRows, numCols, horizTexCoord, ver
     y += yInc;
   }
 
-  var numIndices = numRows*(numCols+1);
+  var numIndices = (numRows-1)*(numCols+1)*6;
   var indexData = new Uint16Array(numIndices);
 
   i = 0;

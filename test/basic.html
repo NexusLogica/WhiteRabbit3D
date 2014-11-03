@@ -71,6 +71,7 @@
 //    struct warpData {
 //
 //    }
+    const float NXGR_PI = 3.141592653589;
     uniform mat4 projectionViewMatrix;
     uniform vec3 size;
     uniform vec2 textureScale;
@@ -82,8 +83,16 @@
     varying vec2 texCoordVarying;
 
     vec4 circularWarp(vec4 pos) {
-      float x = pos.x;
-      float y = pos.y+300.0*pixelSize;
+      float radiusOuter = 300.0;
+      float radius = radiusOuter-pos.y/pixelSize;
+      float xPixels = pos.x/pixelSize;
+
+      float angle = xPixels/radius;
+      float x = radius*cos(angle)*pixelSize;
+      float y = radius*sin(angle)*pixelSize;
+
+      // Calculate the radius
+      // y = radiusOuter*pow(NXGR_E, -NXGR_PI*pixelCoord*totalAngleDegrees/(180.0f*canvasWidth));
 
       // Offset x upward
       vec4 retval = vec4(x, y, pos[2], 1.0);
