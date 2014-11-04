@@ -70,6 +70,8 @@
     const int MAX_SURFACES = 4;
     struct surfaceData {
       mat4 floatData;
+      mat4 transformBefore;
+      mat4 transformAfter;
       ivec4 integerData;
     };
     uniform surfaceData surfaceDataArray[MAX_SURFACES];
@@ -87,27 +89,23 @@
     varying vec2 texCoordVarying;
     varying highp float testValue;
 
-    vec4 circularWarp(int dataIndex, vec4 pos) {
+    vec4 circularWarp(int dataIndex, vec4 posIn) {
+      vec4 pos = surfaceDataArray[dataIndex].transformBefore*posIn;
+
       // surface data:
       //   0,0: outer radius - radius in pixels.
-      //   1,0: offset x after - offset the position in the x direction, in pixels.
-      //   2,0: offset y after - offset for y
-      //   3,0: offset z after - offset for z
       float radiusOuter = surfaceDataArray[dataIndex].floatData[0][0];
-      float offsetAfterX = surfaceDataArray[dataIndex].floatData[0][1];
-      float offsetAfterY = surfaceDataArray[dataIndex].floatData[0][2];
-      float offsetAfterZ = surfaceDataArray[dataIndex].floatData[0][3];
 
       float radius = radiusOuter+pos.y/pixelSize;
       float xPixels = pos.x/pixelSize;
 
       float angle = -xPixels/radiusOuter+90.0/180.0*NXGR_PI;
       radius = radiusOuter*pow(NXGR_E, -(radiusOuter-radius)/radiusOuter);
-      float x = (radius*cos(angle)+offsetAfterX)*pixelSize;
-      float y = (radius*sin(angle)+offsetAfterY)*pixelSize;
-      float z = pos[2]+offsetAfterZ*pixelSize;
+      float x = radius*cos(angle)*pixelSize;
+      float y = radius*sin(angle)*pixelSize;
+      float z = pos[2]; //////////////////////+offsetAfterZ*pixelSize;
 
-      return vec4(x, y, z, 1.0);
+      return surfaceDataArray[dataIndex].transformAfter*vec4(x, y, z, 1.0);
     }
 
     void main() {

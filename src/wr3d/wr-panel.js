@@ -105,6 +105,8 @@ Ngl.WrPanel.prototype.finalizeInitialization = function(gl, scene) {
     for(var i=0; i<Ngl.MAX_NUM_SURFACES; i++) {
       this['surfaceLocations'+prog.ext].push({
         mat: gl.getUniformLocation(program, 'surfaceDataArray['+i+'].floatData'),
+        before: gl.getUniformLocation(program, 'surfaceDataArray['+i+'].transformBefore'),
+        after: gl.getUniformLocation(program, 'surfaceDataArray['+i+'].transformAfter'),
         ivec: gl.getUniformLocation(program, 'surfaceDataArray['+i+'].integerData')
       });
     }

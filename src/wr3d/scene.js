@@ -324,8 +324,17 @@ Ngl.IntegerColor.prototype.toString = function() {
   return this.r+','+this.g+','+this.b;
 };
 
+// *** Constants and enumerations ***
+
 Ngl.Scaling = { 'unscaled': 0, 'parent': 1, 'screen': 2 };
+
 Ngl.MAX_NUM_SURFACES = 4;
+
+// *** Utility functions ***
+
+Ngl.radians = function(degrees) {
+  return 0.01745329251994*degrees;
+};
 
 Ngl.log = function(msg) {
   window.console.log(msg);
