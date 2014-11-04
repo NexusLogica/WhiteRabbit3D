@@ -99,6 +99,15 @@ Ngl.WrPanel.prototype.finalizeInitialization = function(gl, scene) {
     this['instructionLocation'+prog.ext] = gl.getUniformLocation(program, 'instructions');
     this['pixelSizeLocation'+prog.ext] = gl.getUniformLocation(program, 'pixelSize');
     this['surfaceColorLocation'+prog.ext] = gl.getUniformLocation(program, 'surfaceColor');
+
+    this['surfaceLocations'+prog.ext] = [];
+
+    for(var i=0; i<Ngl.MAX_NUM_SURFACES; i++) {
+      this['surfaceLocations'+prog.ext].push({
+        mat: gl.getUniformLocation(program, 'surfaceDataArray['+i+'].floatData'),
+        ivec: gl.getUniformLocation(program, 'surfaceDataArray['+i+'].integerData')
+      });
+    }
   }, this);
 
   this.canvasInitialized = true;
@@ -160,6 +169,12 @@ Ngl.WrPanel.prototype.render = function(gl, scene) {
   gl.uniform4iv(this['instructionLocation'+renderType], this.instructions);
   gl.uniform1f(this['pixelSizeLocation'+renderType], this.pixelSize);
   gl.uniform4fv(this['surfaceColorLocation'+renderType], renderType === 'Cs' ? this.selectColor : this.surfaceColor);
+
+  // Attach surface data to the shader.
+  var surfaceLocation = this['surfaceLocations'+renderType];
+  for(var i=0; i<this.surfaces.length; i++) {
+    this.surfaces[i].attachToShader(gl, scene, surfaceLocation[i]);
+  }
 
   gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexArrayBuffer);
 

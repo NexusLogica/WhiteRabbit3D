@@ -13,6 +13,7 @@ All Rights Reserved.
 'use strict';
 
 var Ngl = Ngl || {};
+Ngl.Surface = Ngl.Surface || {};
 
 Ngl.Scene = function() {
   this.children = [];
@@ -324,6 +325,7 @@ Ngl.IntegerColor.prototype.toString = function() {
 };
 
 Ngl.Scaling = { 'unscaled': 0, 'parent': 1, 'screen': 2 };
+Ngl.MAX_NUM_SURFACES = 4;
 
 Ngl.log = function(msg) {
   window.console.log(msg);

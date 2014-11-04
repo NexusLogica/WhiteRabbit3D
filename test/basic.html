@@ -67,10 +67,13 @@
   </script>
 
   <script id="texture-vertex-shader" type="x-shader/x-vertex">
-    // A basic flat vertex shader, hello world'esque.
-//    struct warpData {
-//
-//    }
+    const int MAX_SURFACES = 4;
+    struct surfaceData {
+      mat4 floatData;
+      ivec4 integerData;
+    };
+    uniform surfaceData surfaceDataArray[MAX_SURFACES];
+
     const float NXGR_PI = 3.141592653589;
     const float NXGR_E  = 2.718281828459;
     uniform mat4 projectionViewMatrix;
@@ -84,23 +87,27 @@
     varying vec2 texCoordVarying;
     varying highp float testValue;
 
-    vec4 circularWarp(vec4 pos) {
-      float radiusOuter = 300.0;
+    vec4 circularWarp(int dataIndex, vec4 pos) {
+      // surface data:
+      //   0,0: outer radius - radius in pixels.
+      //   1,0: offset x after - offset the position in the x direction, in pixels.
+      //   2,0: offset y after - offset for y
+      //   3,0: offset z after - offset for z
+      float radiusOuter = surfaceDataArray[dataIndex].floatData[0][0];
+      float offsetAfterX = surfaceDataArray[dataIndex].floatData[0][1];
+      float offsetAfterY = surfaceDataArray[dataIndex].floatData[0][2];
+      float offsetAfterZ = surfaceDataArray[dataIndex].floatData[0][3];
+
       float radius = radiusOuter+pos.y/pixelSize;
-//      testValue = radius2/512.0;
       float xPixels = pos.x/pixelSize;
 
       float angle = -xPixels/radiusOuter+90.0/180.0*NXGR_PI;
       radius = radiusOuter*pow(NXGR_E, -(radiusOuter-radius)/radiusOuter);
-      float x = radius*cos(angle)*pixelSize;
-      float y = radius*sin(angle)*pixelSize;
+      float x = (radius*cos(angle)+offsetAfterX)*pixelSize;
+      float y = (radius*sin(angle)+offsetAfterY)*pixelSize;
+      float z = pos[2]+offsetAfterZ*pixelSize;
 
-      // Calculate the radius
-      // y = radiusOuter*pow(NXGR_E, -NXGR_PI*pixelCoord*totalAngleDegrees/(180.0f*canvasWidth));
-
-      // Offset x upward
-      vec4 retval = vec4(x, y, pos[2], 1.0);
-      return retval;
+      return vec4(x, y, z, 1.0);
     }
 
     void main() {
@@ -114,7 +121,7 @@
         if(instructions[i] == 0) {
           break;
         } else if(instructions[i] == 1) {
-          sizedPosition = circularWarp(sizedPosition);
+          sizedPosition = circularWarp(i, sizedPosition);
         }
       }
 
@@ -239,6 +246,7 @@
   <script src="../src/wr3d/texturemap.js"></script>
   <script src="../src/wr3d/canvas.js"></script>
   <script src="../src/wr3d/selection-renderer.js"></script>
+  <script src="../src/wr3d/surfaces/circular.js"></script>
 
   <script src="../src/components/canvas-test/canvas-test.js"></script>
 

@@ -14,13 +14,8 @@ All Rights Reserved.
 
 Ngl.WrDock = function(position, size) {
   Ngl.Dock.call(this);
-  this.initialized = false;
-  this.children = [];
-  this.transformUpdated = true;
-  this.transform = mat4.create();
-  this.worldTransform = mat4.create();
-  this.projectionModelView = mat4.create();
   this.pixelSize = 1.0;
+  this.surfaces = [];
 };
 
 Ngl.WrDock.prototype = Object.create(Ngl.Dock.prototype);
@@ -34,6 +29,9 @@ Ngl.WrDock.prototype.initialize = function(gl, scene) {
   this.wrScaleFactor = 1.0;
   this.magnification = _.isUndefined(this.configuration.magnification3d) ? 1.0 : this.configuration.magnification3d;
   this.totalScaling = 1.0;
+
+  var circular = new Ngl.Surface.Circular();
+  this.surfaces.push(circular);
 };
 
 Ngl.WrDock.prototype.preRender = function(gl, scene) {
