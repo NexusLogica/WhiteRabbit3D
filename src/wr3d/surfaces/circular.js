@@ -21,8 +21,8 @@ Ngl.Surface.Circular = function() {
 
   this.ivec = new Int32Array(4);
 
-  mat4.rotateZ(this.before, this.before, Ngl.radians(30.0));
-  mat4.rotateZ(this.after, this.after, Ngl.radians(30.0));
+  mat4.rotateZ(this.before, this.before, Ngl.radians(0.0));
+  mat4.rotateZ(this.after, this.after, Ngl.radians(0.0));
 };
 
 Ngl.Surface.Circular.prototype.configure = function(panel) {
