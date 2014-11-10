@@ -13,7 +13,7 @@ All Rights Reserved.
 'use strict';
 
 Ngl.Surface.Circular = function() {
-  this.radiusOuter = 250.0;
+//  this.radiusOuter = 250.0;
   this.mat  = new Float32Array(16);
   this.before = mat4.create();
   this.after = mat4.create();
@@ -21,12 +21,13 @@ Ngl.Surface.Circular = function() {
 
   this.ivec = new Int32Array(4);
 
-  mat4.rotateZ(this.before, this.before, Ngl.radians(30.0));
-  mat4.rotateZ(this.after, this.after, Ngl.radians(30.0));
+  mat4.rotateZ(this.before, this.before, Ngl.radians(0.0));
+  mat4.rotateZ(this.after, this.after, Ngl.radians(0.0));
 };
 
-Ngl.Surface.Circular.prototype.configure = function(panel) {
-
+Ngl.Surface.Circular.prototype.configure = function(dock) {
+  this.radiusOuter = parseFloat(dock.configuration.radius3d);
+  this.mat[0] = this.radiusOuter;
 };
 
 Ngl.Surface.Circular.prototype.attachToShader = function(gl, scene, locations) {

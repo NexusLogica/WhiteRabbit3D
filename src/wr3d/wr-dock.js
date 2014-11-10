@@ -32,6 +32,7 @@ Ngl.WrDock.prototype.initialize = function(gl, scene) {
 
   var circular = new Ngl.Surface.Circular();
   this.surfaces.push(circular);
+  circular.configure(this);
 };
 
 Ngl.WrDock.prototype.preRender = function(gl, scene) {

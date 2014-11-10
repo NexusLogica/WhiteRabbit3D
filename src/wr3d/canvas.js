@@ -12,7 +12,8 @@ All Rights Reserved.
 */
 'use strict';
 
-Ngl.Canvas = function(layoutJsonUrl, panel) {
+Ngl.Canvas = function(configuration, panel) {
+  this.configuration = configuration;
   this.canvasInitialized = false;
   this.panel = panel;
 };
@@ -21,17 +22,32 @@ Ngl.Canvas.nextCanvasElementNum = 0;
 
 Ngl.Canvas.prototype = {
 
-  load: function(gl, layoutJsonUrl) {
+  load: function(gl) {
     var _this = this;
-    html2canvas(document.getElementById('html2canvas-test'), {
-      background: undefined,
-      onrendered: function(canvas) {
-        var element = document.getElementById('html2canvas-canvas');
-        element.appendChild(canvas);
-        _this.createTexturemap(gl, canvas);
-      }
-    });
+    var deferred = $.Deferred();
 
+    if(this.configuration.sourceElement) {
+      var element = $(this.configuration.sourceElement);
+      this.canvasWidth = element.width();
+      this.canvasHeight = element.height();
+      this.texturemapWidth = _this.powerOfTwo(_this.canvasWidth);
+      this.texturemapHeight = _this.powerOfTwo(_this.canvasHeight);
+      this.canvasTop = _this.texturemapHeight+2;
+
+      html2canvas(element.get(0), {
+        //background: undefined,
+        onrendered: function(canvas) {
+          var element = $('.html2canvas-canvas').get(0);
+          element.appendChild(canvas);
+          _this.createTexturemap(gl, canvas);
+          deferred.resolve();
+        },
+        onclone: function(element) {
+//          $(element).find('.html2canvas-container').css('background-color', 'green').css('top', '0px');
+        }
+      });
+    }
+/*
     //this.createHtmlCanvas(gl);
     this.layoutJsonUrl = layoutJsonUrl;
     var deferred = $.Deferred();
@@ -89,6 +105,7 @@ Ngl.Canvas.prototype = {
         );
       }
     });
+*/
     return deferred;
   },
 
@@ -121,10 +138,12 @@ Ngl.Canvas.prototype = {
   },
 
   getUpdateRegion: function() {
+/*
     if(this.canvas.canvasNeedsCopy) {
       this.canvas.canvasNeedsCopy = false;
       return { x: 0, y: 0, width: this.canvasWidth, height: this.canvasHeight };
     }
+*/
     return null;
   },
 

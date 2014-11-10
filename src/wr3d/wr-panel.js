@@ -29,8 +29,8 @@ Ngl.WrPanel.prototype.initialize = function(gl, scene) {
   var _this = this;
 
   if(this.configuration.canvasUrl) {
-    this.canvas = new Ngl.Canvas(this.configuration.canvasUrl, this);
-    this.canvas.load(gl, this.configuration.canvasUrl).then(function() {
+    this.canvas = new Ngl.Canvas(this.configuration, this);
+    this.canvas.load(gl).then(function() {
         _this.finalizeInitialization(gl, scene);
       }, function() {
         Ngl.log('ERROR: Panel '+_this.configuration.name+' could not load canvas configuration: '+_this.configuration.canvasUrl);
@@ -67,7 +67,7 @@ Ngl.WrPanel.prototype.finalizeInitialization = function(gl, scene) {
   var horizTexCoord = 1.0;
   var vertTexCoord = 1-this.height/this.canvas.texturemapHeight;
 
-  var meshData = this.createMesh(20, 5, horizTexCoord, vertTexCoord);
+  var meshData = this.createMesh(40, 10, horizTexCoord, vertTexCoord);
   this.numIndices = meshData.numIndices;
 
   this.vertexArrayBuffer = gl.createBuffer();
