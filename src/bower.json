@@ -15,6 +15,8 @@
     "tube-player": "git://github.com/nirvanatikku/jQuery-TubePlayer-Plugin",
     "momentjs": "2.4.0",
     "q": "1.0.1",
-    "cssjson": "git://github.com/aramk/CSSJSON"
+    "cssjson": "git://github.com/aramk/CSSJSON",
+    "rasterizeHTML": "git://github.com/cburgmer/rasterizeHTML.js",
+    "html2canvas": "git://github.com/niklasvh/html2canvas"
   }
 }

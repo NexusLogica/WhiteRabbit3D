@@ -3,6 +3,7 @@
 <head>
   <title>WhiteRabbit3D Basic Test</title>
   <link rel="stylesheet" href="../src/lib/bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="../src/appearance/css/whiterabbit3d.css"/>
   <link rel="-wr3d-stylesheet-3d" href="../src/components/canvas-test/canvas-test.css"/>
   <link rel="shortcut icon" href="images/wr3d.png" />
   <style>
@@ -17,6 +18,39 @@
       height: 700px;
       display: inline-block;
       z-index: 10;
+    }
+
+    .html2canvas-container {
+      xposition: absolute;
+      xtop: -200px;
+      xleft: 5px;
+      height: 1500px;
+      width: 1000px;
+    }
+
+    .html2canvas-test {
+      width:1024px;
+      height:128px;
+      color: white;
+      padding: 1px 1px;
+    }
+
+    .inner {
+      border: gray solid 1px;
+      width: 98%;
+    }
+
+    .html2canvas-test-2 {
+      width:600px;
+      height:128px;
+      color: white;
+      padding: 1px 1px;
+    }
+
+    .inner-2 {
+      border: gray solid 1px;
+      font-size: 14px;
+      width: 94%;
     }
 
     .canvas-3d-container {
@@ -43,6 +77,15 @@
     .coordinate-container>div, .color-container>div {
       display: inline-block;
     }
+
+    .song-title div {
+      border-bottom: white 3px solid;
+      border-top: white 2px solid;
+      color: white;
+      font-size: 40px;
+    }
+
+
 
   </style>
 
@@ -118,7 +161,7 @@
       for(int i=0; i<4; i++) {
         if(instructions[i] == 0) {
           break;
-        } else if(instructions[i] == 1) {
+        } else if(instructions[i] == 2) {
           sizedPosition = circularWarp(i, sizedPosition);
         }
       }
@@ -222,6 +265,26 @@
         <div class="color color-b"></div>
       </div>
     </div>
+
+    <div class="html2canvas-container">
+        <div class="html2canvas-test">
+          <div class="inner">Outer canvas</div>
+        </div>
+        <div class="html2canvas-canvas"></div>
+
+        <div class="html2canvas-test-2">
+          <div class="inner-2">Outer canvas</div>
+        </div>
+        <div class="html2canvas-canvas-2"></div>
+    </div>
+  </div>
+
+  <div class="container-3d-content">
+    <div class="wr3d-host song-title-host">
+      <div class="song-title">
+        <div>Hi there</div>
+      </div>
+    </div>
   </div>
 
   <script src="../src/lib/bower_components/jquery/dist/jquery.js"></script>
@@ -233,6 +296,7 @@
   <script src="../src/lib/random/random-0.26-debug.js"></script>
   <script src="../src/lib/bower_components/gl-matrix/dist/gl-matrix.js"></script>
   <script src="../src/lib/bower_components/cssjson/cssjson.js"></script>
+  <script src="../src/lib/html2canvas/html2canvas.js"></script>
   <script src="../src/lib/webgl-utils/webgl-utils.js"></script>
   <script src="../src/lib/zebra/zebra.js"></script>
   <script src="../src/wr3d/scene.js"></script>
@@ -256,8 +320,19 @@
       canvas.data('scene', scene);
       scene.initialize(canvas);
 
-      var curvedPanel = new Ngl.WrPanel({
-        name:         'Curved',
+      scene.add(new Ngl.WrPanel({
+        name:         'song-title',
+        host:         '.wr3d-host.song-title-host',
+        position3d:   'translate(0px, 0px, 0px)',
+        display3d:    'surface',
+        scaling3d:    'screen',
+        surfaces3d:   [{ "type": "circular", "radiusOuter": "300px", "angle": "full" }]
+      }));
+/*
+      var panel = new Ngl.WrPanel({
+        name:         'Main',
+        sourceElement:'.html2canvas-test-2',
+        radius3d:     '100',
         position3d:   'translate(0px, 0px, 0px)',
         size3d:       '(400px, 75px)',
         canvasUrl:    '../src/components/circular-test/circular-test.json',
@@ -269,22 +344,8 @@
         surface3d:    'curved',
         origin3d:     'center'
       });
-      scene.add(curvedPanel);
-
-      var panel = new Ngl.WrPanel({
-        name:         'Main',
-        position3d:   'translate(0px, 0px, 0px)',
-        size3d:       '(300px, 200px)',
-        canvasUrl:    '../src/components/canvas-test/canvas-test.json',
-        controller:   '../src/components/canvas-test/canvas-test.js',
-        display3d:    'surface',
-        scaling3d:    'screen',
-        magnification3d: 1.0,
-        surface3d:    'flat',
-        origin3d:     'center'
-      });
       scene.add(panel);
-
+*/
       var mouseMoveX = -1; mouseMoveY = -1, previousX = -1, previousY = -1;
       $(document).mousemove(function(event) {
         var offset = canvas.offset();
