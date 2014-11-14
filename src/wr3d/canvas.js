@@ -12,10 +12,11 @@ All Rights Reserved.
 */
 'use strict';
 
-Ngl.Canvas = function(configuration, panel) {
-  this.configuration = configuration;
+Ngl.Canvas = function(config, panel) {
+  this.config = config;
   this.canvasInitialized = false;
   this.panel = panel;
+  this.updateRequired = false;
 };
 
 Ngl.Canvas.nextCanvasElementNum = 0;
@@ -26,15 +27,14 @@ Ngl.Canvas.prototype = {
     var _this = this;
     var deferred = $.Deferred();
 
-    if(this.configuration.sourceElement) {
-      var element = $(this.configuration.sourceElement);
-      this.canvasWidth = element.width();
-      this.canvasHeight = element.height();
-      this.texturemapWidth = _this.powerOfTwo(_this.canvasWidth);
-      this.texturemapHeight = _this.powerOfTwo(_this.canvasHeight);
-      this.canvasTop = _this.texturemapHeight+2;
+    if(this.config.host) {
+      var host = $(this.config.host);
+      var top = $(host.children().get(0));
 
-      html2canvas(element.get(0), {
+      this.sizeElements(host, top);
+
+
+      html2canvas(host.get(0), {
         //background: undefined,
         onrendered: function(canvas) {
           var element = $('.html2canvas-canvas').get(0);
@@ -47,66 +47,13 @@ Ngl.Canvas.prototype = {
         }
       });
     }
-/*
-    //this.createHtmlCanvas(gl);
-    this.layoutJsonUrl = layoutJsonUrl;
-    var deferred = $.Deferred();
-
-    zebra()["zebra.json"] = "../src/lib/zebra/zebra.json";
-    zebra.ready(function() {
-      if(_this.layoutJsonUrl) {
-        var ajaxData = { type: 'GET', url: _this.layoutJsonUrl, dataType: 'json' };
-        $.ajax(ajaxData).then(
-          function(data, textStatus, jqXHR) {
-
-            _this.canvasWidth = data['ngl.width'];
-            _this.canvasHeight = data['ngl.height'];
-//            _this.canvasTop = data.hasOwnProperty('ngl.canvasTop') ? data['ngl.canvasTop'] : _this.texturemapHeight+2;
-
-            _this.texturemapWidth = _this.powerOfTwo(_this.canvasWidth);
-            _this.texturemapHeight = _this.powerOfTwo(_this.canvasHeight);
-
-            _this.canvasTop = _this.texturemapHeight+2;
-
-            _this.canvasElement = $('<canvas/>', {
-              class: 'white-rabbit-internal-canvas-'+Ngl.Canvas.nextCanvasElementNum,
-              style: 'position:fixed; top:-'+_this.canvasTop+'px; left:0px;'}).appendTo('body');
-            Ngl.Canvas.nextCanvasElementNum++;
-
-            _this.canvas = new zebra.ui.zCanvas(_this.canvasElement.get(0), _this.texturemapWidth, _this.texturemapHeight);
-            _this.canvasElement.width(_this.texturemapWidth).height(_this.texturemapHeight);
-
-            var bag = new zebra.util.Bag(_this.canvas.root);
-            bag.load(JSON.stringify(data));
-
-            setTimeout(function() {
-
-              // Kind of ugly, but Zebkit has troubles clearing the background. So clear it totally prior to the resize.
-              var ctx = _this.canvasElement.get(0).getContext("2d");
-              var op = ctx.globalCompositeOperation;
-              ctx.globalCompositeOperation = 'copy';
-              ctx.fillStyle = 'rgba(0, 0, 0, 0.0)';
-              ctx.fillRect(0, 0, _this.texturemapWidth, _this.texturemapHeight);
-              ctx.globalCompositeOperation = op;
-
-              // Nice if this could be done in the JSON.
-              _this.canvas.root.setSize(_this.canvasWidth, _this.canvasHeight);
-
-              setTimeout(function() {
-//                _this.createTexturemap(gl);
-                deferred.resolve();
-              }, 100);
-            }, 100);
-          },
-          function(jqXHR, textStatus, httpStatusCodeDescription) {
-            Ngl.log('LOAD ERROR: Unable to load '+_this.layoutJsonUrl+' : '+textStatus+' : '+jqXHR.status+':'+httpStatusCodeDescription);
-            deferred.reject();
-          }
-        );
-      }
-    });
-*/
     return deferred;
+  },
+
+  sizeElements: function(host, top) {
+    var primarySurface = this.panel.surfaces[0];
+    var texturemapInfo = primarySurface.configureHTML(this, host, top);
+    _.assign(this, texturemapInfo);
   },
 
   createTexturemap: function(gl, image) {
@@ -125,26 +72,22 @@ Ngl.Canvas.prototype = {
       gl.activeTexture(gl.TEXTURE0+0);
       gl.bindTexture(gl.TEXTURE_2D, this.texture);
 
-      var region = this.getUpdateRegion();
-      if(region && false) {
-        var canvasX = $("svg").get(0);
-//        var canvasX = $(".canvas-raster").get(0);
+      var required = this.getUpdateRequired();
+      if(required) {
+
 
         gl.texSubImage2D(gl.TEXTURE_2D, 0, region.x, region.y, gl.RGBA, gl.UNSIGNED_BYTE, canvasX);
-//        gl.texSubImage2D(gl.TEXTURE_2D, 0, region.x, region.y, gl.RGBA, gl.UNSIGNED_BYTE, this.canvasElement.get(0));
         gl.generateMipmap(gl.TEXTURE_2D);
       }
     }
   },
 
-  getUpdateRegion: function() {
-/*
-    if(this.canvas.canvasNeedsCopy) {
-      this.canvas.canvasNeedsCopy = false;
-      return { x: 0, y: 0, width: this.canvasWidth, height: this.canvasHeight };
-    }
-*/
-    return null;
+  getUpdateRequired: function() {
+    return this.updateRequired;
+  },
+
+  setUpdateRequired: function(required) {
+    this.updateRequired = required;
   },
 
   onEvent: function(event) {

@@ -1,0 +1,17 @@
+/**********************************************************************
+
+File     : whiterabbit3d.css
+Project  : N Simulator Library
+Purpose  : Source file for the standard WhiteRabbbit 3D CSS file.
+Revisions: Original definition by Lawrence Gunn.
+           2014/11/11
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+
+.wr3d-host {
+  padding: 2px 2px;
+  display: block;
+}
