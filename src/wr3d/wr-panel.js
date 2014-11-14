@@ -14,7 +14,7 @@ All Rights Reserved.
 
 Ngl.WrPanel = function(data) {
   Ngl.WrDock.call(this);
-  this.configuration = _.cloneDeep(data);
+  this.config = _.cloneDeep(data);
   this.canvasInitialized = false;
 };
 
@@ -28,15 +28,13 @@ Ngl.WrPanel.prototype.initialize = function(gl, scene) {
 
   var _this = this;
 
-  if(this.configuration.canvasUrl) {
-    this.canvas = new Ngl.Canvas(this.configuration.canvasUrl, this);
-    this.canvas.load(gl, this.configuration.canvasUrl).then(function() {
-        _this.finalizeInitialization(gl, scene);
-      }, function() {
-        Ngl.log('ERROR: Panel '+_this.configuration.name+' could not load canvas configuration: '+_this.configuration.canvasUrl);
-      }
-    );
-  }
+  this.canvas = new Ngl.Canvas(this.config, this);
+  this.canvas.load(gl).then(function() {
+      _this.finalizeInitialization(gl, scene);
+    }, function() {
+      Ngl.log('ERROR: Panel '+_this.config.name+' could not load canvas config: '+_this.config.canvasUrl);
+    }
+  );
 };
 
 Ngl.WrPanel.prototype.finalizeInitialization = function(gl, scene) {
@@ -54,10 +52,6 @@ Ngl.WrPanel.prototype.finalizeInitialization = function(gl, scene) {
   h2 *= this.totalScaling;
   this.size = new Float32Array([w2, h2, 0.0]);
 
-  this.instructionLength = 4;
-  this.instructions = new Int32Array(this.instructionLength);
-  for(var i=0; i<this.instructionLength; i++) { this.instructions[i] = 0.0; }
-
   // Texture coordinates.
   var scaleX = this.width/scene.selectionRenderer.width;
   var scaleY = this.canvas.texturemapHeight/scene.selectionRenderer.height;
@@ -67,7 +61,7 @@ Ngl.WrPanel.prototype.finalizeInitialization = function(gl, scene) {
   var horizTexCoord = 1.0;
   var vertTexCoord = 1-this.height/this.canvas.texturemapHeight;
 
-  var meshData = this.createMesh(20, 5, horizTexCoord, vertTexCoord);
+  var meshData = this.createMesh(parseInt(this.width/10), parseInt(this.height/10), horizTexCoord, vertTexCoord);
   this.numIndices = meshData.numIndices;
 
   this.vertexArrayBuffer = gl.createBuffer();
@@ -271,8 +265,8 @@ Ngl.WrPanel.prototype.createMesh = function(numCols, numRows, horizTexCoord, ver
 };
 
 Ngl.WrPanel.prototype.setupVertexShaderWarping = function() {
-  if(!this.configuration.hasOwnProperty('surfaceProperties3d')) { return; }
-  this.surfaceProperties = JSON.parse(this.configuration.surfaceProperties3d);
+  if(!this.config.hasOwnProperty('surfaceProperties3d')) { return; }
+  this.surfaceProperties = JSON.parse(this.config.surfaceProperties3d);
   for(var i=0; i<this.surfaceProperties.length; i++) {
     var props = this.surfaceProperties[i];
     switch(props.type) {

@@ -23,15 +23,42 @@ Ngl.WrDock.prototype = Object.create(Ngl.Dock.prototype);
 Ngl.WrDock.prototype.initialize = function(gl, scene) {
   Ngl.Dock.prototype.initialize.call(this, gl, scene);
   this.initialized = true;
-  this.name = this.configuration.name;
-  this.scaling3d = _.isUndefined(this.configuration.scaling3d) ? Ngl.Scaling.parent : Ngl.Scaling[this.configuration.scaling3d.toLowerCase()];
+  this.name = this.config.name;
+  this.scaling3d = _.isUndefined(this.config.scaling3d) ? Ngl.Scaling.parent : Ngl.Scaling[this.config.scaling3d.toLowerCase()];
   this.recalculatePosition = true;
   this.wrScaleFactor = 1.0;
-  this.magnification = _.isUndefined(this.configuration.magnification3d) ? 1.0 : this.configuration.magnification3d;
+  this.magnification = _.isUndefined(this.config.magnification3d) ? 1.0 : this.config.magnification3d;
   this.totalScaling = 1.0;
 
-  var circular = new Ngl.Surface.Circular();
-  this.surfaces.push(circular);
+  this.instructionLength = 4;
+  this.instructions = new Int32Array(this.instructionLength);
+  for(var i=0; i<this.instructionLength; i++) { this.instructions[i] = 0; }
+
+  if(!this.config.surfaces3d || this.config.surfaces3d.length === 0) {
+    this.config.surfaces3d = [];
+    this.config.surfaces3d.push(new Ngl.Surface.Rectangle());
+  } else {
+    for(var i=0; i<this.config.surfaces3d.length; i++) {
+      var conf = this.config.surfaces3d[i];
+      var surface = null;
+      switch(conf.type.toLowerCase()) {
+        case 'rectangular': {
+          surface = new Ngl.Surface.Rectangular();
+          this.instructions[i] = 1;
+          break;
+        }
+        case 'circular': {
+          surface = new Ngl.Surface.Circular();
+          this.instructions[i] = 2;
+          break;
+        }
+      }
+      if(surface) {
+        this.surfaces.push(surface);
+        surface.configure(this, conf);
+      }
+    }
+  }
 };
 
 Ngl.WrDock.prototype.preRender = function(gl, scene) {
@@ -50,7 +77,7 @@ Ngl.WrDock.prototype.calculatePositioning = function(gl, scene) {
     var cameraZ = Math.abs(this.worldTransform[14]);
     this.pixelSize = scene.camera.getPixelSizeAtCameraZ(cameraZ);
 
-    var translate = Ngl.pointFromPropString(this.configuration.position3d, 'translate');
+    var translate = Ngl.pointFromPropString(this.config.position3d, 'translate');
     if(translate) {
       vec3.scale(translate, translate, this.pixelSize);
       this.transform[12] = translate[0];

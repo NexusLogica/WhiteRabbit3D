@@ -329,6 +329,7 @@ Ngl.IntegerColor.prototype.toString = function() {
 Ngl.Scaling = { 'unscaled': 0, 'parent': 1, 'screen': 2 };
 
 Ngl.MAX_NUM_SURFACES = 4;
+Ngl.CANVAS_MARGIN = 2;
 
 // *** Utility functions ***
 
