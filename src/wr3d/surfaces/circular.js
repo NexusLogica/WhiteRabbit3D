@@ -65,7 +65,7 @@ Ngl.Surface.Circular.prototype.configureHTML = function(panel, host, top) {
   textureInfo.canvasTop = Ngl.CANVAS_MARGIN;
   textureInfo.canvasLeft = Ngl.CANVAS_MARGIN;
 
-  host.css('display', 'block').css('width', textureInfo.texturemapWidth+'px').css('height', textureInfo.texturemapHeight+'px');
+  host.css('display', 'block').css('width', textureInfo.texturemapWidth+'px').css('height', textureInfo.texturemapHeight+'px'); //.css('background-color', 'green');
   top.css({'display': 'block', 'top': textureInfo.canvasTop+'px', 'left': textureInfo.canvasTop+'px'}).width(textureInfo.canvasWidth).height(textureInfo.canvasHeight);
   return textureInfo;
 };

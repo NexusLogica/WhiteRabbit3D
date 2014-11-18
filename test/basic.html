@@ -78,11 +78,21 @@
       display: inline-block;
     }
 
-    .song-title div {
-      border-bottom: white 3px solid;
-      border-top: white 2px solid;
+    .song-title>div {
+      border-bottom: gray 2px solid;
+      border-top: gray 2px solid;
       color: white;
-      font-size: 40px;
+      font-size: 20px;
+      padding: 5px 0px 5px 0px;
+    }
+
+    .inline {
+      display: inline-block;
+    }
+
+    .btn {
+      background-color: rgba(200, 200, 200, 0.1);
+      border: 1px gray solid;
     }
 
 
@@ -282,7 +292,10 @@
   <div class="container-3d-content">
     <div class="wr3d-host song-title-host">
       <div class="song-title">
-        <div>Hi there</div>
+        <div>
+          <div class="inline">Hi there</div>
+          <button class="inline btn">Next</button>
+        </div>
       </div>
     </div>
   </div>
@@ -381,6 +394,10 @@
     });
     $('.show-texture').on('click', function() {
       $('.canvas-3d').data('wr3dScene').setRenderMode('texture');
+    });
+
+    $('inner.btn').on('click', function() {
+      alert("HEIASDFASFASF!!!");
     });
 
   </script>

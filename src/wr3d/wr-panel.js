@@ -58,10 +58,7 @@ Ngl.WrPanel.prototype.finalizeInitialization = function(gl, scene) {
   this.textureScale = new Float32Array([this.width/this.canvas.texturemapWidth, 1.0]);
   this.selectionTextureScale = new Float32Array([scaleX, scaleY]);
 
-  var horizTexCoord = 1.0;
-  var vertTexCoord = 1-this.height/this.canvas.texturemapHeight;
-
-  var meshData = this.createMesh(parseInt(this.width/10), parseInt(this.height/10), horizTexCoord, vertTexCoord);
+  var meshData = this.createMesh(scene, parseInt(this.width/10), parseInt(this.height/10));
   this.numIndices = meshData.numIndices;
 
   this.vertexArrayBuffer = gl.createBuffer();
@@ -139,7 +136,7 @@ Ngl.WrPanel.prototype.render = function(gl, scene) {
   if(scene.renderForSelectColor) {
     renderType = 'Cs';
 
-  } else if(scene.renderForSelectTexture) {
+  } else if(scene.renderForSelectTexture || scene.debugSelect) {
     renderType = 'Ts';
 
     gl.activeTexture(gl.TEXTURE0+0);
@@ -197,25 +194,41 @@ Ngl.WrPanel.prototype.render = function(gl, scene) {
  * @param vertTexCoord
  * @returns {{vertexData: Float32Array, indexData: Uint16Array, numIndices: number}}
  */
-Ngl.WrPanel.prototype.createMesh = function(numCols, numRows, horizTexCoord, vertTexCoord) {
+Ngl.WrPanel.prototype.createMesh = function(scene, numCols, numRows) {
+
+  var horizTexCoord = 1.0;
+  var vertTexCoord = 1-this.height/this.canvas.texturemapHeight;
 
   var vertexData = new Float32Array(numRows*numCols*(3+3+2));
   var i = 0;
 
-  var tmStartX = 0.0;
-  var tmEndX = horizTexCoord;
-  var tmStartY = 1.0;
-  var tmEndY = vertTexCoord;
+  var tmStartX = this.canvas.canvasLeft/this.canvas.texturemapWidth;
+  var tmEndX = horizTexCoord+tmStartX;
+  var tmStartY = 1.0-this.canvas.canvasTop/this.canvas.texturemapHeight;
+  var tmEndY = vertTexCoord-this.canvas.canvasTop/this.canvas.texturemapHeight;
 
   var tmIncX = (tmEndX-tmStartX)/(numCols-1);
   var tmIncY = (tmEndY-tmStartY)/(numRows-1);
   var tmY = tmStartY;
 
+  var selWidth = scene.selectionRenderer.width;
+  var selHeight = scene.selectionRenderer.height;
+
+  var stmStartX = 0.0;
+  var stmEndX = horizTexCoord+stmStartX;
+  var stmStartY = 1.0-this.canvas.canvasTop/this.canvas.texturemapHeight;
+  var stmEndY = vertTexCoord-this.canvas.canvasTop/this.canvas.texturemapHeight;
+
+  var stmIncX = (stmEndX-stmStartX)/(numCols-1);
+  var stmIncY = (stmEndY-stmStartY)/(numRows-1);
+  var stmY = stmStartY;
+
   var y = 0.0;
   var xInc = 1.0/(numCols-1);
   var yInc = -1.0/(numRows-1);
   for(var j = 0; j < numRows; j++) {
-    var tmX = tmStartX;
+    var tmX  = tmStartX;
+    var stmX = stmStartX;
     var x = 0.0;
 
     for(var k = 0; k < numCols; k++) {
@@ -233,6 +246,10 @@ Ngl.WrPanel.prototype.createMesh = function(numCols, numRows, horizTexCoord, ver
       // Texture coords
       vertexData[i] = tmX;   i++;
       vertexData[i] = tmY;   i++;
+
+      // Texture coords for the selection texture
+      vertexData[i] = stmX;   i++;
+      vertexData[i] = stmY;   i++;
 
       tmX += tmIncX;
       x += xInc;

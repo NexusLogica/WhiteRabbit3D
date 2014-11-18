@@ -28,13 +28,13 @@ Ngl.Canvas.prototype = {
     var deferred = $.Deferred();
 
     if(this.config.host) {
-      var host = $(this.config.host);
-      var top = $(host.children().get(0));
+      this.host = $(this.config.host);
+      this.top = $(this.host.children().get(0));
 
-      this.sizeElements(host, top);
+      this.sizeElements(this.host, this.top);
 
 
-      html2canvas(host.get(0), {
+      html2canvas(this.host.get(0), {
         //background: undefined,
         onrendered: function(canvas) {
           var element = $('.html2canvas-canvas').get(0);
@@ -50,9 +50,9 @@ Ngl.Canvas.prototype = {
     return deferred;
   },
 
-  sizeElements: function(host, top) {
+  sizeElements: function() {
     var primarySurface = this.panel.surfaces[0];
-    var texturemapInfo = primarySurface.configureHTML(this, host, top);
+    var texturemapInfo = primarySurface.configureHTML(this, this.host, this.top);
     _.assign(this, texturemapInfo);
   },
 
@@ -74,8 +74,6 @@ Ngl.Canvas.prototype = {
 
       var required = this.getUpdateRequired();
       if(required) {
-
-
         gl.texSubImage2D(gl.TEXTURE_2D, 0, region.x, region.y, gl.RGBA, gl.UNSIGNED_BYTE, canvasX);
         gl.generateMipmap(gl.TEXTURE_2D);
       }
@@ -100,7 +98,7 @@ Ngl.Canvas.prototype = {
       case 'mouseout':
       case 'mouseover':
         var ec = jQuery.Event( event.type, { pageX: pageXY.x, pageY: pageXY.y, button: 0 } );
-        this.canvasElement.trigger(ec);
+        this.top.trigger(ec);
         break;
     }
   },
@@ -108,7 +106,7 @@ Ngl.Canvas.prototype = {
   getPageXyPosition: function(event) {
     var x = event.canvasX;
     var y = event.canvasY;
-    var element = this.canvasElement.get(0);
+    var element = this.top.get(0);
     while(element) {
         x += (element.offsetLeft - element.scrollLeft + element.clientLeft);
         y += (element.offsetTop - element.scrollTop + element.clientTop);
@@ -123,46 +121,7 @@ Ngl.Canvas.prototype = {
     return Math.ceil(Math.pow(2.0, power)-0.5);
   },
 
-  createHtmlCanvas: function(gl) {
-      var data = '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">' +
-                 '<foreignObject width="100%" height="100%">' +
-                 '<div xmlns="http://www.w3.org/1999/xhtml" style="font-size:40px">' +
-                   '<em>I</em> like' +
-                   '<span style="color:white; text-shadow:0 0 2px blue;">' +
-                   'cheese</span>' +
-                 '</div>' +
-                 '</foreignObject>' +
-                 '</svg>';
-
-      var DOMURL = window.URL || window.webkitURL || window;
-
-      var img = new Image();
-      var svg = new Blob([data], {type: 'image/svg+xml;charset=utf-8'});
-      var url = DOMURL.createObjectURL(svg);
-
-      var _this = this;
-      img.onload = function () {
-//    var canvas = $(".canvas-raster").get(0);
-//      var ctx = canvas.getContext('2d');
-//ctx.drawImage(img, 0, 0);
-         _this.createTexturemap(gl, img);
-
-
-        DOMURL.revokeObjectURL(url);
-      };
-
-      img.src = url;
-/*
-    var canvas = $(".canvas-raster").get(0);
-    var html_container = document.getElementById("thehtml");
-    var html = html_container.innerHTML;
-
-    rasterizeHTML.drawHTML(html, canvas);
-*/
-  },
-
   hasCanvas : function() {
-//    return !_.isUndefined(this.canvas);
     return this.canvasInitialized;
   },
 
