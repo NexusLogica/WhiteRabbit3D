@@ -86,7 +86,8 @@ Ngl.WrPanel.prototype.finalizeInitialization = function(gl, scene) {
     this['sizeLocation'+prog.ext] = gl.getUniformLocation(program, 'size');
     this['projectionMatrixLocation'+prog.ext] = gl.getUniformLocation(program, 'projectionViewMatrix');
     this['textureLocation'+prog.ext] = gl.getAttribLocation(program, 'texCoord');
-    this['textureScaleLocation'+prog.ext] = gl.getUniformLocation(program, 'textureScale');
+    this['selectionTextureLocation'+prog.ext] = gl.getAttribLocation(program, 'selectionTexCoord');
+    this['flagsLocation'+prog.ext] = gl.getUniformLocation(program, 'flags');
     this['instructionLocation'+prog.ext] = gl.getUniformLocation(program, 'instructions');
     this['pixelSizeLocation'+prog.ext] = gl.getUniformLocation(program, 'pixelSize');
     this['surfaceColorLocation'+prog.ext] = gl.getUniformLocation(program, 'surfaceColor');
@@ -135,17 +136,20 @@ Ngl.WrPanel.prototype.render = function(gl, scene) {
   var renderType = '';
   if(scene.renderForSelectColor) {
     renderType = 'Cs';
+    this.flags[0] = 2;
 
   } else if(scene.renderForSelectTexture || scene.debugSelect) {
     renderType = 'Ts';
 
     gl.activeTexture(gl.TEXTURE0+0);
     gl.bindTexture(gl.TEXTURE_2D, scene.selectionRenderer.selectionTexture);
+    this.flags[0] = 1;
 
 
   } else {
     this.canvas.bindTexturemap(gl);
     renderType = 'Nrm';
+    this.flags[0] = 0;
 
     // Only update during regular render cycles.
     if(this.parent.transformUpdated || this.transformUpdated) {
@@ -159,6 +163,7 @@ Ngl.WrPanel.prototype.render = function(gl, scene) {
   gl.uniformMatrix4fv(this['projectionMatrixLocation'+renderType], gl.FALSE, this.projectionModelView);
   gl.uniform3fv(this['sizeLocation'+renderType], this.size);
   gl.uniform2fv(this['textureScaleLocation'+renderType], renderType === 'Ts' ? this.selectionTextureScale : this.textureScale);
+  gl.uniform4iv(this['flagsLocation'+renderType], this.flags);
   gl.uniform4iv(this['instructionLocation'+renderType], this.instructions);
   gl.uniform1f(this['pixelSizeLocation'+renderType], this.pixelSize);
   gl.uniform4fv(this['surfaceColorLocation'+renderType], renderType === 'Cs' ? this.selectColor : this.surfaceColor);
@@ -175,9 +180,10 @@ Ngl.WrPanel.prototype.render = function(gl, scene) {
   gl.enableVertexAttribArray(this['positionLocation'+renderType]);
   gl.enableVertexAttribArray(this['textureLocation'+renderType]);
 
-  gl.vertexAttribPointer(this['positionLocation'+renderType], 3, gl.FLOAT, gl.FALSE, 32, 0);
-//  gl.vertexAttribPointer(this['normalLocation'+renderType],  3, gl.FLOAT, gl.FALSE, 32, 12);
-  gl.vertexAttribPointer(this['textureLocation'+renderType],  2, gl.FLOAT, gl.FALSE, 32, 24);
+  gl.vertexAttribPointer(this['positionLocation'+renderType], 3, gl.FLOAT, gl.FALSE, 40, 0);
+//  gl.vertexAttribPointer(this['normalLocation'+renderType],  3, gl.FLOAT, gl.FALSE, 40, 12);
+  gl.vertexAttribPointer(this['textureLocation'+renderType],  2, gl.FLOAT, gl.FALSE, 40, 24);
+  gl.vertexAttribPointer(this['selectionTextureLocation'+renderType],  2, gl.FLOAT, gl.FALSE, 40, 32);
 
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
 
@@ -196,28 +202,24 @@ Ngl.WrPanel.prototype.render = function(gl, scene) {
  */
 Ngl.WrPanel.prototype.createMesh = function(scene, numCols, numRows) {
 
-  var horizTexCoord = 1.0;
-  var vertTexCoord = 1-this.height/this.canvas.texturemapHeight;
 
-  var vertexData = new Float32Array(numRows*numCols*(3+3+2));
-  var i = 0;
+  var vertexData = new Float32Array(numRows*numCols*(3+3+2+2));
 
   var tmStartX = this.canvas.canvasLeft/this.canvas.texturemapWidth;
-  var tmEndX = horizTexCoord+tmStartX;
+  var tmEndX = 1.0+tmStartX;
   var tmStartY = 1.0-this.canvas.canvasTop/this.canvas.texturemapHeight;
+  var vertTexCoord = 1.0-this.height/this.canvas.texturemapHeight;
   var tmEndY = vertTexCoord-this.canvas.canvasTop/this.canvas.texturemapHeight;
 
   var tmIncX = (tmEndX-tmStartX)/(numCols-1);
   var tmIncY = (tmEndY-tmStartY)/(numRows-1);
   var tmY = tmStartY;
 
-  var selWidth = scene.selectionRenderer.width;
-  var selHeight = scene.selectionRenderer.height;
-
-  var stmStartX = 0.0;
-  var stmEndX = horizTexCoord+stmStartX;
-  var stmStartY = 1.0-this.canvas.canvasTop/this.canvas.texturemapHeight;
-  var stmEndY = vertTexCoord-this.canvas.canvasTop/this.canvas.texturemapHeight;
+  var stmStartX = this.canvas.canvasLeft/scene.selectionRenderer.width;
+  var stmEndX = 1.0+stmStartX;
+  var stmStartY = 1.0-this.canvas.canvasTop/scene.selectionRenderer.height;
+  var sVertTexCoord = 1.0-this.height/scene.selectionRenderer.height;
+  var stmEndY = sVertTexCoord-this.canvas.canvasTop/scene.selectionRenderer.height;
 
   var stmIncX = (stmEndX-stmStartX)/(numCols-1);
   var stmIncY = (stmEndY-stmStartY)/(numRows-1);
@@ -226,6 +228,7 @@ Ngl.WrPanel.prototype.createMesh = function(scene, numCols, numRows) {
   var y = 0.0;
   var xInc = 1.0/(numCols-1);
   var yInc = -1.0/(numRows-1);
+  var i = 0;
   for(var j = 0; j < numRows; j++) {
     var tmX  = tmStartX;
     var stmX = stmStartX;
@@ -252,9 +255,11 @@ Ngl.WrPanel.prototype.createMesh = function(scene, numCols, numRows) {
       vertexData[i] = stmY;   i++;
 
       tmX += tmIncX;
+      stmX += stmIncX;
       x += xInc;
     }
     tmY += tmIncY;
+    stmY += stmIncY;
     y += yInc;
   }
 
@@ -284,11 +289,13 @@ Ngl.WrPanel.prototype.createMesh = function(scene, numCols, numRows) {
 Ngl.WrPanel.prototype.setupVertexShaderWarping = function() {
   if(!this.config.hasOwnProperty('surfaceProperties3d')) { return; }
   this.surfaceProperties = JSON.parse(this.config.surfaceProperties3d);
+
+  // We are using indexes 1 to 3 for surfaces. index 0 is currently being used for flagging selection renders.
   for(var i=0; i<this.surfaceProperties.length; i++) {
     var props = this.surfaceProperties[i];
     switch(props.type) {
       case 'circular': {
-        this.instructions[i] = 1;
+        this.instructions[i] = 2;
       }
     }
   }

@@ -32,13 +32,18 @@ Ngl.WrDock.prototype.initialize = function(gl, scene) {
 
   this.instructionLength = 4;
   this.instructions = new Int32Array(this.instructionLength);
-  for(var i=0; i<this.instructionLength; i++) { this.instructions[i] = 0; }
+  var i;
+  for(i=0; i<this.instructionLength; i++) { this.instructions[i] = 0; }
+
+  this.flagsLength = 4;
+  this.flags = new Int32Array(this.flagsLength);
+  for(var j=0; i<this.flagsLength; i++) { this.instructions[i] = 0; }
 
   if(!this.config.surfaces3d || this.config.surfaces3d.length === 0) {
     this.config.surfaces3d = [];
     this.config.surfaces3d.push(new Ngl.Surface.Rectangle());
   } else {
-    for(var i=0; i<this.config.surfaces3d.length; i++) {
+    for(i=0; i<this.config.surfaces3d.length; i++) {
       var conf = this.config.surfaces3d[i];
       var surface = null;
       switch(conf.type.toLowerCase()) {

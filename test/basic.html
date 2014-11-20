@@ -81,7 +81,7 @@
     .song-title>div {
       border-bottom: gray 2px solid;
       border-top: gray 2px solid;
-      color: white;
+      color: darkgoldenrod;
       font-size: 20px;
       padding: 5px 0px 5px 0px;
     }
@@ -133,14 +133,14 @@
     const float NXGR_E  = 2.718281828459;
     uniform mat4 projectionViewMatrix;
     uniform vec3 size;
-    uniform vec2 textureScale;
     uniform float pixelSize;
+    uniform ivec4 flags;
     uniform ivec4 instructions;
     attribute vec3 position;
     attribute vec2 texCoord;
+    attribute vec2 selectionTexCoord;
 
     varying vec2 texCoordVarying;
-    varying highp float testValue;
 
     vec4 circularWarp(int dataIndex, vec4 posIn) {
       vec4 pos = surfaceDataArray[dataIndex].transformBefore*posIn;
@@ -162,12 +162,17 @@
     }
 
     void main() {
-      testValue = 0.0;
-      texCoordVarying.x = texCoord.x*textureScale.x;
-      texCoordVarying.y = 1.0-(1.0-texCoord.y)*textureScale.y;
+      if(flags[0] == 0) {
+        texCoordVarying.x = texCoord.x;
+        texCoordVarying.y = texCoord.y;
+      }
+      else if(flags[0] == 1) {
+        texCoordVarying.x = selectionTexCoord.x;
+        texCoordVarying.y = selectionTexCoord.y;
+      }
+
 
       vec4 sizedPosition = vec4(size[0]*position[0], size[1]*position[1], position[2], 1.0);
-
       for(int i=0; i<4; i++) {
         if(instructions[i] == 0) {
           break;
@@ -175,7 +180,6 @@
           sizedPosition = circularWarp(i, sizedPosition);
         }
       }
-
 
       gl_Position = projectionViewMatrix*sizedPosition;
     }
@@ -186,14 +190,13 @@
     // A basic flat fragment shader, hello world'esque.
     varying highp vec2 texCoordVarying;
     uniform sampler2D mainTexture;
-    varying highp float testValue;
 
     void main() {
-      if(testValue != 0.0) {
-        gl_FragColor = vec4(testValue, testValue, testValue, 1.0);
-      } else {
+//      if(testValue != 0.0) {
+//        gl_FragColor = vec4(testValue, testValue, testValue, 1.0);
+//      } else {
         gl_FragColor = vec4(texture2D(mainTexture, texCoordVarying));
-      }
+//      }
     }
   </script>
 
@@ -295,6 +298,9 @@
         <div>
           <div class="inline">Hi there</div>
           <button class="inline btn">Next</button>
+          <div class="inline">
+            Lorem ipsum dolor sit amet, dicat adipiscing id sed. Qui natum euismod pertinacia eu, mei ad summo tempor sententiae. Sint nibh mei no, modo habeo recteque pri ei. Aliquip fuisset eu pro, ad his malis propriae, nihil labitur id vis. Eos cu esse facilis, vis offendit deserunt mediocrem in, ut has deleniti facilisi.
+          </div>
         </div>
       </div>
     </div>
