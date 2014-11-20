@@ -142,6 +142,21 @@
 
     varying vec2 texCoordVarying;
 
+    vec4 rectangularWarp(int dataIndex, vec4 posIn) {
+      vec4 pos = surfaceDataArray[dataIndex].transformBefore*posIn;
+
+      // surface data:
+      //   0,0: outer radius - radius in pixels.
+      float scaleX = surfaceDataArray[dataIndex].floatData[0][0];
+      float scaleY = surfaceDataArray[dataIndex].floatData[0][1];
+
+      float x = posIn.x*scaleX;
+      float y = posIn.y*scaleY;
+      float z = posIn.z;
+
+      return surfaceDataArray[dataIndex].transformAfter*vec4(x, y, z, 1.0);
+    }
+
     vec4 circularWarp(int dataIndex, vec4 posIn) {
       vec4 pos = surfaceDataArray[dataIndex].transformBefore*posIn;
 
@@ -156,7 +171,7 @@
       radius = radiusOuter*pow(NXGR_E, -(radiusOuter-radius)/radiusOuter);
       float x = radius*cos(angle)*pixelSize;
       float y = radius*sin(angle)*pixelSize;
-      float z = pos[2]; //////////////////////+offsetAfterZ*pixelSize;
+      float z = pos[2];
 
       return surfaceDataArray[dataIndex].transformAfter*vec4(x, y, z, 1.0);
     }
@@ -327,6 +342,7 @@
   <script src="../src/wr3d/texturemap.js"></script>
   <script src="../src/wr3d/canvas.js"></script>
   <script src="../src/wr3d/selection-renderer.js"></script>
+  <script src="../src/wr3d/surfaces/rectangular.js"></script>
   <script src="../src/wr3d/surfaces/circular.js"></script>
 
   <script src="../src/components/canvas-test/canvas-test.js"></script>
@@ -345,7 +361,8 @@
         position3d:   'translate(0px, 0px, 0px)',
         display3d:    'surface',
         scaling3d:    'screen',
-        surfaces3d:   [{ "type": "circular", "radiusOuter": "300px", "angle": "full" }]
+        surfaces3d:   [{ "type": "rectangular" }]
+//        surfaces3d:   [{ "type": "circular", "radiusOuter": "300px", "angle": "full" }]
       }));
 /*
       var panel = new Ngl.WrPanel({

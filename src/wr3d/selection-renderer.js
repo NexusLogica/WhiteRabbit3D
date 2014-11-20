@@ -25,8 +25,8 @@ Ngl.SelectionRenderer = function() {
 Ngl.SelectionRenderer.prototype = {
 
   createSelectionTexture: function(gl, scene, width, height, testFunction) {
-    this.width  = !_.isUndefined(width)  ? Ngl.powerOfTwo(width)  : this.width;
-    this.height = !_.isUndefined(height) ? Ngl.powerOfTwo(height) : this.height;
+    this.width  = !_.isUndefined(width)  ? Ngl.powerOfTwo(width)  : Ngl.powerOfTwo(this.width);
+    this.height = !_.isUndefined(height) ? Ngl.powerOfTwo(height) : Ngl.powerOfTwo(this.height);
 
     this.selectionTexture = gl.createTexture();
     var framebuffer = gl.createFramebuffer();
@@ -105,7 +105,7 @@ Ngl.SelectionRenderer.prototype = {
 
     if(wrObj) {
       var pixel = this.findPixelOnObject(gl, scene, x, y, wrObj);
-//      Ngl.log('Found '+wrObj.name+' at '+pixel.x+','+pixel.y);
+      Ngl.log('Found '+wrObj.name+' at '+pixel.x+','+pixel.y);
       return { x: x, y: y, obj: wrObj, canvasX: pixel.x, canvasY: pixel.y };
     }
 
@@ -136,8 +136,6 @@ Ngl.SelectionRenderer.prototype = {
     var color = new Ngl.IntegerColor(this.selectionPixel[0], this.selectionPixel[1], this.selectionPixel[2]);
     var obj = scene.wrObjectsByColorHash[color.toString()];
     return obj;
-
-//      Ngl.log('x,y = '+x+','+y+'   color='+this.selectionPixel[0]+' '+this.selectionPixel[1]+' '+this.selectionPixel[2]);
   },
 
   findPixelOnObject: function(gl, scene, x, y, wrObj) {

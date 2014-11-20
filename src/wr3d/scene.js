@@ -68,7 +68,7 @@ Ngl.Scene.prototype.initialize = function(canvas) {
   this.initialTime = (new Date()).getTime();
 
   this.selectionRenderer = new Ngl.SelectionRenderer();
-  this.selectionRenderer.createSelectionTexture(gl, this, Ngl.powerOfTwo(4000), Ngl.powerOfTwo(1000)); // To test  append: , this.selectionRenderer.validationFunction);
+  this.selectionRenderer.createSelectionTexture(gl, this, Ngl.powerOfTwo(4000), Ngl.powerOfTwo(4000)); // To test  append: , this.selectionRenderer.validationFunction);
 
   if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE) {
     throw new Error('gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE');

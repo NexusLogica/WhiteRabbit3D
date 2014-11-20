@@ -138,7 +138,7 @@ Ngl.WrPanel.prototype.render = function(gl, scene) {
     renderType = 'Cs';
     this.flags[0] = 2;
 
-  } else if(scene.renderForSelectTexture || scene.debugSelect) {
+  } else if(true || scene.renderForSelectTexture || scene.debugSelect) {
     renderType = 'Ts';
 
     gl.activeTexture(gl.TEXTURE0+0);
@@ -206,7 +206,7 @@ Ngl.WrPanel.prototype.createMesh = function(scene, numCols, numRows) {
   var vertexData = new Float32Array(numRows*numCols*(3+3+2+2));
 
   var tmStartX = this.canvas.canvasLeft/this.canvas.texturemapWidth;
-  var tmEndX = 1.0+tmStartX;
+  var tmEndX = this.canvas.canvasWidth/this.canvas.texturemapWidth+tmStartX;
   var tmStartY = 1.0-this.canvas.canvasTop/this.canvas.texturemapHeight;
   var vertTexCoord = 1.0-this.height/this.canvas.texturemapHeight;
   var tmEndY = vertTexCoord-this.canvas.canvasTop/this.canvas.texturemapHeight;
@@ -216,7 +216,7 @@ Ngl.WrPanel.prototype.createMesh = function(scene, numCols, numRows) {
   var tmY = tmStartY;
 
   var stmStartX = this.canvas.canvasLeft/scene.selectionRenderer.width;
-  var stmEndX = 1.0+stmStartX;
+  var stmEndX = this.canvas.canvasWidth/scene.selectionRenderer.width+stmStartX;
   var stmStartY = 1.0-this.canvas.canvasTop/scene.selectionRenderer.height;
   var sVertTexCoord = 1.0-this.height/scene.selectionRenderer.height;
   var stmEndY = sVertTexCoord-this.canvas.canvasTop/scene.selectionRenderer.height;
