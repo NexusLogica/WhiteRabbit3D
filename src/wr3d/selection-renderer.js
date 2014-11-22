@@ -106,10 +106,10 @@ Ngl.SelectionRenderer.prototype = {
     if(wrObj) {
       var pixel = this.findPixelOnObject(gl, scene, x, y, wrObj);
       Ngl.log('Found '+wrObj.name+' at '+pixel.x+','+pixel.y);
-      return { x: x, y: y, obj: wrObj, canvasX: pixel.x, canvasY: pixel.y };
+      return { canvasX: x, canvasY: y, target: wrObj, targetX: pixel.x, targetY: pixel.y };
     }
 
-    return { x: x, y: y, obj: null };
+    return { canvasX: x, canvasY: y, target: null };
   },
 
   findObject: function(gl, scene, x, y) {
@@ -157,6 +157,8 @@ Ngl.SelectionRenderer.prototype = {
     gl.readPixels(x, scene.height-y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, this.selectionPixel);
     var color = new Ngl.IntegerColor(this.selectionPixel[0], this.selectionPixel[1], this.selectionPixel[2]);
     var pixel = this.getXYFromIntColor(color.r, color.g, color.b);
+    pixel.x -= Ngl.CANVAS_MARGIN;
+    pixel.y -= Ngl.CANVAS_MARGIN;
     return pixel;
   },
 

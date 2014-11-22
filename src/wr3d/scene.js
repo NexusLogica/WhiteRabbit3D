@@ -96,19 +96,20 @@ Ngl.Scene.prototype.render = function() {
 
   while(this.mouseEvents.length) {
     var event = this.mouseEvents.shift();
+
     if(_.isUndefined(event.offsetX)) {
       event.offsetX  = event.clientX - $(event.target).offset().left;
       event.offsetY  = event.clientY - $(event.target).offset().top;
     }
     var _this = this;
     var selectionResult = this.selectionRenderer.getObjectUnderPixel(gl, this, event.offsetX, event.offsetY);
-    if(selectionResult.obj) {
-      var _event = _.cloneDeep(event);
-      var _obj = selectionResult.obj;
-      _event.canvasX = selectionResult.canvasX;
-      _event.canvasY = selectionResult.canvasY;
+    if(selectionResult.target) {
+      var eventCopy = _.cloneDeep(event);
+      eventCopy.wr = selectionResult;
+      var target = selectionResult.target;
+
       setTimeout(function() {
-        _obj.onEvent(_event);
+        target.onEvent(eventCopy);
       }, 0);
     }
   }

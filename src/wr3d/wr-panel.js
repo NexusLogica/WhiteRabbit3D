@@ -28,7 +28,7 @@ Ngl.WrPanel.prototype.initialize = function(gl, scene) {
 
   var _this = this;
 
-  this.canvas = new Ngl.Canvas(this.config, this);
+  this.canvas = new Ngl.HtmlCanvas(this.config, this);
   this.canvas.load(gl).then(function() {
       _this.finalizeInitialization(gl, scene);
     }, function() {
@@ -138,7 +138,7 @@ Ngl.WrPanel.prototype.render = function(gl, scene) {
     renderType = 'Cs';
     this.flags[0] = 2;
 
-  } else if(true || scene.renderForSelectTexture || scene.debugSelect) {
+  } else if(scene.renderForSelectTexture || scene.debugSelect) {
     renderType = 'Ts';
 
     gl.activeTexture(gl.TEXTURE0+0);
@@ -201,7 +201,6 @@ Ngl.WrPanel.prototype.render = function(gl, scene) {
  * @returns {{vertexData: Float32Array, indexData: Uint16Array, numIndices: number}}
  */
 Ngl.WrPanel.prototype.createMesh = function(scene, numCols, numRows) {
-
 
   var vertexData = new Float32Array(numRows*numCols*(3+3+2+2));
 
@@ -290,10 +289,13 @@ Ngl.WrPanel.prototype.setupVertexShaderWarping = function() {
   if(!this.config.hasOwnProperty('surfaceProperties3d')) { return; }
   this.surfaceProperties = JSON.parse(this.config.surfaceProperties3d);
 
-  // We are using indexes 1 to 3 for surfaces. index 0 is currently being used for flagging selection renders.
+  // We are using indexes 0 to 3 for surfaces.
   for(var i=0; i<this.surfaceProperties.length; i++) {
     var props = this.surfaceProperties[i];
     switch(props.type) {
+      case 'rectangular': {
+        this.instructions[i] = 1;
+      }
       case 'circular': {
         this.instructions[i] = 2;
       }

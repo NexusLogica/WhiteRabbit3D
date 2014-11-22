@@ -419,8 +419,24 @@
       $('.canvas-3d').data('wr3dScene').setRenderMode('texture');
     });
 
-    $('inner.btn').on('click', function() {
-      alert("HEIASDFASFASF!!!");
+    $('.inline.btn').on('mousedown', function(e) {
+      console.log("HEIASDFASFASF!!!");
+    });
+
+    $('.song-title>div').on('mouseenter', function(e) {
+      console.log("Parent**** mouseenter");
+    });
+
+    $('.song-title>div').on('mouseleave', function(e) {
+      console.log("Parent*** mouseleave");
+    });
+
+    $('.inline.btn').on('mouseenter', function(e) {
+      console.log("Button mouseenter");
+    });
+
+    $('.inline.btn').on('mouseleave', function(e) {
+      console.log("Button mouseleave");
     });
 
   </script>
