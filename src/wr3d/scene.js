@@ -34,7 +34,10 @@ Ngl.Scene = function() {
 
   this.camera = new Ngl.Camera();
 
-  this.mouseEvents = [];
+  this.rawMouseEvents = [];
+  this.mouseEventQueue = [];
+  this.currentMouseOverPanel = undefined;
+  this.processingMouseEvent = false;
 };
 
 Ngl.Scene.prototype.initialize = function(canvas) {
@@ -77,40 +80,82 @@ Ngl.Scene.prototype.initialize = function(canvas) {
   this.createEventHandlers();
 };
 
-Ngl.Scene.prototype.createEventHandlers = function() {
-  var _this = this;
-  this.canvasElement.on('mouseup mousedown mousemove mouseover mouseout', function(event) {
-    var cp = _.cloneDeep(event);
-    _this.mouseEvents.push(event);
-  });
-};
-
 Ngl.Scene.prototype.add = function(obj) {
   this.children.push(obj);
   obj.parent = this;
+};
+
+/***
+ *
+ * @method addMouseEvent
+ * @param e { eventType, target, screenX, screenY, clientX, clientY, altKey, shiftKey, metaKey, button }
+ */
+Ngl.Scene.prototype.addMouseEvent = function(e) {
+  var mouseEvent = document.createEvent('MouseEvents');
+  mouseEvent.initMouseEvent(e.eventType, true, true, null, 0, e.screenX, e.screenY, e.clientX, e.clientY, e.altKey, e.shiftKey, e.metaKey, e.button, undefined);
+  this.mouseEventQueue.push(mouseEvent);
+  this.dispatchEvent();
+};
+
+Ngl.Scene.prototype.createEventHandlers = function() {
+  var _this = this;
+  this.canvasElement.on('mouseup mousedown mousemove mouseover mouseout', function(e) {
+    var data = {
+      eventType: e.eventType,
+      screenX:   e.screenX,
+      screenY:   e.screenY,
+      clientX:   e.clientX,
+      clientY:   e.clientY,
+      altKey:    e.altKey,
+      shiftKey:  e.shiftKey,
+      metaKey:   e.metaKey,
+      button:    e.button
+    };
+    _this.rawMouseEvents.push(data);
+    event.stopPropagation();
+    return false;
+  });
+};
+
+Ngl.Scene.prototype.dispatchEvent = function() {
+  var _this = this;
+  var next = this.mouseEventQueue.shift();
+  this.processingMouseEvent = true;
+  if(next) {
+    setTimeout(function () {
+      next.target.onEvent(this, next.event);
+      if(_this.mouseEventQueue.length) {
+        _this.dispatchEvent();
+      } else {
+        this.processingMouseEvent = false;
+      }
+    }, 0);
+  }
 };
 
 Ngl.Scene.prototype.render = function() {
 
   var gl = this.gl;
 
-  while(this.mouseEvents.length) {
-    var event = this.mouseEvents.shift();
+  if(this.rawMouseEvents.length) {
+    var e = this.rawMouseEvents.shift();
 
-    if(_.isUndefined(event.offsetX)) {
-      event.offsetX  = event.clientX - $(event.target).offset().left;
-      event.offsetY  = event.clientY - $(event.target).offset().top;
+    var hit = this.selectionRenderer.getObjectUnderPixel(gl, this, event.offsetX, event.offsetY);
+
+    // This deserves some explanation. We
+    if(hit.target !== this.currentMouseOverPanel && this.currentMouseOverPanel) {
+      var leaveEvent = this.currentMouseOverPanel.onMouseLeave(this);
+      if(leaveEvent) {
+        this.mouseEventQueue.push(leaveEvent);
+      }
     }
-    var _this = this;
-    var selectionResult = this.selectionRenderer.getObjectUnderPixel(gl, this, event.offsetX, event.offsetY);
-    if(selectionResult.target) {
-      var eventCopy = _.cloneDeep(event);
-      eventCopy.wr = selectionResult;
-      var target = selectionResult.target;
 
-      setTimeout(function() {
-        target.onEvent(eventCopy);
-      }, 0);
+    if(hit.target) {
+      e.wr = hit;
+      this.mouseEventQueue.push( { target: hit.target, event: e } );
+      if(!this.processingMouseEvent) {
+        this.dispatchEvent();
+      }
     }
   }
 
@@ -330,7 +375,7 @@ Ngl.IntegerColor.prototype.toString = function() {
 Ngl.Scaling = { 'unscaled': 0, 'parent': 1, 'screen': 2 };
 
 Ngl.MAX_NUM_SURFACES = 4;
-Ngl.CANVAS_MARGIN = 2;
+Ngl.CANVAS_MARGIN = 0;
 
 // *** Utility functions ***
 

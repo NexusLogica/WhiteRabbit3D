@@ -304,8 +304,14 @@ Ngl.WrPanel.prototype.setupVertexShaderWarping = function() {
 
 };
 
-Ngl.WrPanel.prototype.onEvent = function(event) {
+Ngl.WrPanel.prototype.onEvent = function(scene, event) {
   if(this.canvasInitialized) {
-    this.canvas.onEvent(event);
+    this.canvas.onEvent(scene, event);
+  }
+};
+
+Ngl.WrPanel.prototype.onMouseLeave = function(scene) {
+  if(this.canvasInitialized) {
+    this.canvas.onMouseLeave(scene);
   }
 };

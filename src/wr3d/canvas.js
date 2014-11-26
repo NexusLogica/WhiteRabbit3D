@@ -17,6 +17,7 @@ Ngl.HtmlCanvas = function(config, panel) {
   this.canvasInitialized = false;
   this.panel = panel;
   this.updateRequired = false;
+  this.mouseOverElements = [];
 };
 
 Ngl.HtmlCanvas.nextCanvasElementNum = 0;
@@ -30,7 +31,7 @@ Ngl.HtmlCanvas.prototype.load = function(gl) {
     this.top = $(this.host.children().get(0));
 
     this.sizeElements(this.host, this.top);
-
+    this.buildLayoutTree();
 
     html2canvas(this.host.get(0), {
       //background: undefined,
@@ -86,8 +87,8 @@ Ngl.HtmlCanvas.prototype.setUpdateRequired = function(required) {
   this.updateRequired = required;
 };
 
-Ngl.HtmlCanvas.prototype.onEvent = function(event) {
-  var elAndPos = this.findElementUnderXyPosition(event.wr.targetX, event.wr.targetY);
+Ngl.HtmlCanvas.prototype.onEvent = function(scene, event) {
+  var hitTest = this.findElementUnderXyPosition(scene, event.wr.targetX, event.wr.targetY);
 
   switch(event.type) {
     case 'click':
@@ -96,36 +97,32 @@ Ngl.HtmlCanvas.prototype.onEvent = function(event) {
     case 'mousemove':
     case 'mouseout':
     case 'mouseover':
-      var ec = jQuery.Event( event.type, { clientX: elAndPos.clientX, clientY: elAndPos.clientY, button: 0 } );
-      elAndPos.target.trigger(ec);
-      Ngl.log("event: "+event.type)
+      var ec = jQuery.Event( event.type, { clientX: hitTest.targetX, clientY: hitTest.targetY, button: 0 } );
+      hitTest.target.trigger(ec);
       break;
   }
 };
 
-Ngl.HtmlCanvas.prototype.findElementUnderXyPosition = function(xPanel, yPanel) {
-  var element = this.top.get(0);
-  var x = xPanel;
-  var y = yPanel;
-  while(element) {
-    x += (element.offsetLeft - element.scrollLeft + element.clientLeft);
-    y += (element.offsetTop - element.scrollTop + element.clientTop);
-    element = element.offsetParent;
-  }
-  var targetElement = document.elementFromPoint(x, y);
-  return { target: $(targetElement), x: x, y: y };
+Ngl.HtmlCanvas.prototype.findElementUnderXyPosition = function(scene, x, y) {
+  var mouseOvers = [];
+  var target = this.layoutTree.findTarget(x, y, mouseOvers);
+
+  var leaving = _.xor(this.mouseOverElements, mouseOvers);
+  _.forEach(leaving, function(layout) {
+    scene.addEvent('mouseenter', layout.element, x, y);
+  });
+
+  var entering = _.without(this.mouseOverElements, mouseOvers);
+  _.forEach(leaving, function(layout) {
+    scene.addEvent('mouseleave', layout.element, x, y);
+  });
+
+  this.mouseOverElements = mouseOvers;
+  return { target: $(target.element), canvasX: x, canvasY: y, targetX: x-target.x, targetY: y-target.y };
 };
 
-Ngl.HtmlCanvas.prototype.getPageXyPosition = function(event) {
-  var x = event.canvasX;
-  var y = event.canvasY;
-  var element = this.top.get(0);
-  while(element) {
-      x += (element.offsetLeft - element.scrollLeft + element.clientLeft);
-      y += (element.offsetTop - element.scrollTop + element.clientTop);
-      element = element.offsetParent;
-  }
-  return { x: x, y: y };
+Ngl.HtmlCanvas.prototype.buildLayoutTree = function() {
+  this.layoutTree = new Ngl.LayoutTree(this.top.get(0), 0, 0);
 };
 
 Ngl.HtmlCanvas.prototype.hasCanvas = function() {

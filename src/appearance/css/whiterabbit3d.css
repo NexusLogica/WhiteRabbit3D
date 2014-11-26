@@ -12,6 +12,13 @@ All Rights Reserved.
 */
 
 .wr3d-host {
-  padding: 2px 2px;
+  padding: 0px 0px;
+  /*padding: 2px 2px;*/
   display: block;
+  position: relative;
+}
+
+.wr3d-top {
+  display: block;
+  position: relative;
 }
