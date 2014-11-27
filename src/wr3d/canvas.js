@@ -42,7 +42,8 @@ Ngl.HtmlCanvas.prototype.load = function(gl) {
         deferred.resolve();
       },
       onclone: function(element) {
-//          $(element).find('.html2canvas-container').css('background-color', 'green').css('top', '0px');
+        $(element).find('.wr3d-host').css('visibility', 'visible');
+        //$(element).find('.html2canvas-container').css('background-color', 'green').css('top', '0px');
       }
     });
   }
