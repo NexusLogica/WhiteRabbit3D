@@ -38,6 +38,7 @@ Ngl.Scene = function() {
   this.mouseEventQueue = [];
   this.currentMouseOverPanel = undefined;
   this.processingMouseEvent = false;
+  this.currentEvent = undefined;
 };
 
 Ngl.Scene.prototype.initialize = function(canvas) {
@@ -87,13 +88,39 @@ Ngl.Scene.prototype.add = function(obj) {
 
 /***
  *
- * @method addMouseEvent
+ * @method createMouseEvent
  * @param e { eventType, target, screenX, screenY, clientX, clientY, altKey, shiftKey, metaKey, button }
  */
-Ngl.Scene.prototype.addMouseEvent = function(e) {
+Ngl.Scene.prototype.createMouseEvent = function(e) {
   var mouseEvent = document.createEvent('MouseEvents');
-  mouseEvent.initMouseEvent(e.eventType, true, true, null, 0, e.screenX, e.screenY, e.clientX, e.clientY, e.altKey, e.shiftKey, e.metaKey, e.button, undefined);
-  this.mouseEventQueue.push(mouseEvent);
+
+  mouseEvent.initMouseEvent(
+    e.eventType,
+    true,
+    true,
+    null,
+    0,
+    e.screenX,
+    e.screenY,
+    e.clientX,
+    e.clientY,
+    _.isUndefined(e.altKey)   ? this.currentEvent.altKey   : e.altKey,
+    _.isUndefined(e.shiftKey) ? this.currentEvent.shiftKey : e.shiftKey,
+    _.isUndefined(e.metaKey)  ? this.currentEvent.metaKey  : e.metaKey,
+    _.isUndefined(e.button)   ? this.currentEvent.button   : e.button,
+    undefined);
+  return mouseEvent;
+};
+
+/***
+ *
+ * @method addMouseEvent
+ * @param target {
+ * @param e { eventType, target, screenX, screenY, clientX, clientY, altKey, shiftKey, metaKey, button }
+ */
+Ngl.Scene.prototype.addMouseEvent = function(target, targetData, e) {
+  var mouseEvent = this.createMouseEvent(e);
+  this.mouseEventQueue.push( { targetPanel: target, targetData: targetData, event: mouseEvent } );
   this.dispatchEvent();
 };
 
@@ -101,11 +128,11 @@ Ngl.Scene.prototype.createEventHandlers = function() {
   var _this = this;
   this.canvasElement.on('mouseup mousedown mousemove mouseover mouseout', function(e) {
     var data = {
-      eventType: e.eventType,
+      eventType: e.type,
       screenX:   e.screenX,
       screenY:   e.screenY,
-      clientX:   e.clientX,
-      clientY:   e.clientY,
+      clientX:   e.offsetX,
+      clientY:   e.offsetY,
       altKey:    e.altKey,
       shiftKey:  e.shiftKey,
       metaKey:   e.metaKey,
@@ -117,30 +144,13 @@ Ngl.Scene.prototype.createEventHandlers = function() {
   });
 };
 
-Ngl.Scene.prototype.dispatchEvent = function() {
-  var _this = this;
-  var next = this.mouseEventQueue.shift();
-  this.processingMouseEvent = true;
-  if(next) {
-    setTimeout(function () {
-      next.target.onEvent(this, next.event);
-      if(_this.mouseEventQueue.length) {
-        _this.dispatchEvent();
-      } else {
-        this.processingMouseEvent = false;
-      }
-    }, 0);
-  }
-};
-
-Ngl.Scene.prototype.render = function() {
-
-  var gl = this.gl;
+Ngl.Scene.prototype.processMouseEvents = function() {
 
   if(this.rawMouseEvents.length) {
     var e = this.rawMouseEvents.shift();
+    this.currentEvent = e;
 
-    var hit = this.selectionRenderer.getObjectUnderPixel(gl, this, event.offsetX, event.offsetY);
+    var hit = this.selectionRenderer.getObjectUnderPixel(this.gl, this, e.clientX, e.clientY);
 
     // This deserves some explanation. We
     if(hit.target !== this.currentMouseOverPanel && this.currentMouseOverPanel) {
@@ -151,13 +161,37 @@ Ngl.Scene.prototype.render = function() {
     }
 
     if(hit.target) {
-      e.wr = hit;
-      this.mouseEventQueue.push( { target: hit.target, event: e } );
+      var targetData = hit.target.findElementUnderXyPosition(this, hit.targetX, hit.targetY);
+      var mouseEvent = this.createMouseEvent(e);
+      this.mouseEventQueue.push( { targetPanel: hit.target, targetData: targetData, event: mouseEvent } );
       if(!this.processingMouseEvent) {
         this.dispatchEvent();
       }
     }
   }
+
+};
+
+Ngl.Scene.prototype.dispatchEvent = function() {
+  var _this = this;
+  var next = this.mouseEventQueue.shift();
+  this.processingMouseEvent = true;
+  if(next) {
+    setTimeout(function () {
+      next.targetPanel.dispatchMouseEvent(_this, next.targetData, next.event);
+      if(_this.mouseEventQueue.length) {
+        _this.dispatchEvent();
+      } else {
+        _this.processingMouseEvent = false;
+      }
+    }, 0);
+  }
+};
+
+Ngl.Scene.prototype.render = function() {
+
+  var gl = this.gl;
+  this.processMouseEvents();
 
   this.renderForSelect = false;
   this.renderForSelectColor = false;

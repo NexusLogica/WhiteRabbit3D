@@ -38,7 +38,7 @@ Ngl.LayoutTree.prototype.findTarget = function(x, y, mouseOvers) {
 
   for(var i=0; i<this.children.length; i++) {
     var child = this.children[i];
-    var target = child.findTarget(x, y);
+    var target = child.findTarget(x, y, mouseOvers);
     if(target) {
       return target;
     }

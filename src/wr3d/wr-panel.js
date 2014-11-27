@@ -295,19 +295,28 @@ Ngl.WrPanel.prototype.setupVertexShaderWarping = function() {
     switch(props.type) {
       case 'rectangular': {
         this.instructions[i] = 1;
+        break;
       }
       case 'circular': {
         this.instructions[i] = 2;
+        break;
       }
     }
   }
 
 };
 
-Ngl.WrPanel.prototype.onEvent = function(scene, event) {
+Ngl.WrPanel.prototype.dispatchMouseEvent = function(scene, targetData, event) {
   if(this.canvasInitialized) {
-    this.canvas.onEvent(scene, event);
+    this.canvas.dispatchMouseEvent(scene, targetData, event);
   }
+};
+
+Ngl.WrPanel.prototype.findElementUnderXyPosition = function(scene, x, y) {
+  if(this.canvasInitialized) {
+    return this.canvas.findElementUnderXyPosition(scene, x, y);
+  }
+  return undefined;
 };
 
 Ngl.WrPanel.prototype.onMouseLeave = function(scene) {

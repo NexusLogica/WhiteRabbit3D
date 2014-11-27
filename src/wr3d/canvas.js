@@ -88,6 +88,8 @@ Ngl.HtmlCanvas.prototype.setUpdateRequired = function(required) {
 };
 
 Ngl.HtmlCanvas.prototype.onEvent = function(scene, event) {
+  debugger;
+/*
   var hitTest = this.findElementUnderXyPosition(scene, event.wr.targetX, event.wr.targetY);
 
   switch(event.type) {
@@ -101,24 +103,39 @@ Ngl.HtmlCanvas.prototype.onEvent = function(scene, event) {
       hitTest.target.trigger(ec);
       break;
   }
+  */
+};
+
+Ngl.HtmlCanvas.prototype.dispatchMouseEvent = function(scene, targetData, event) {
+  targetData.target.dispatchEvent(event);
 };
 
 Ngl.HtmlCanvas.prototype.findElementUnderXyPosition = function(scene, x, y) {
   var mouseOvers = [];
   var target = this.layoutTree.findTarget(x, y, mouseOvers);
 
-  var leaving = _.xor(this.mouseOverElements, mouseOvers);
-  _.forEach(leaving, function(layout) {
-    scene.addEvent('mouseenter', layout.element, x, y);
-  });
+  var e = {
+    target: target,
+    screenX: undefined,
+    screenY: undefined,
+    clientX: x-target.x,
+    clientY: y-target.y
+  };
 
-  var entering = _.without(this.mouseOverElements, mouseOvers);
+  var leaving = _.without(this.mouseOverElements, mouseOvers);
   _.forEach(leaving, function(layout) {
-    scene.addEvent('mouseleave', layout.element, x, y);
-  });
+    var e = { eventType: 'mouseleave', clientX: x, clientY: y };
+    scene.addMouseEvent(this.panel, { target: layout.element }, e);
+  }, this);
+
+  var entering = _.xor(this.mouseOverElements, mouseOvers);
+  _.forEach(entering, function(layout) {
+    var e = { eventType: 'mouseenter', clientX: x, clientY: y };
+    scene.addMouseEvent(this.panel, { target: layout.element }, e);
+  }, this);
 
   this.mouseOverElements = mouseOvers;
-  return { target: $(target.element), canvasX: x, canvasY: y, targetX: x-target.x, targetY: y-target.y };
+  return { target: target.element, canvasX: x, canvasY: y, targetX: x-target.x, targetY: y-target.y };
 };
 
 Ngl.HtmlCanvas.prototype.buildLayoutTree = function() {
