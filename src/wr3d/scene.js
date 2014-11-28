@@ -268,20 +268,20 @@ Ngl.Scene.prototype.addShader = function(name) {
   shader.program  = this.createProgram(shader.vertex, shader.fragment);
   this.shaders[name] = shader;
 
-  if($('#'+name+'-color-select-fragment-shader').length) {
+  if(this.shaderExists(name+'-color-select-fragment-shader')) {
     var colorShader = {};
     colorShader.vertex = shader.vertex;
-    colorShader.fragment = this.compileShaderFromElement(name+'-color-select-fragment-shader');
-    colorShader.program  = this.createProgram(colorShader.vertex, colorShader.fragment);
-    this.shaders[name+'-color-select'] = colorShader;
+    colorShader.fragment = this.compileShaderFromElement(name + '-color-select-fragment-shader');
+    colorShader.program = this.createProgram(colorShader.vertex, colorShader.fragment);
+    this.shaders[name + '-color-select'] = colorShader;
   }
 
-  if($('#'+name+'-texture-select-fragment-shader').length) {
+  if(this.shaderExists(name+'-texture-select-fragment-shader')) {
     var textureShader = {};
     textureShader.vertex = shader.vertex;
-    textureShader.fragment = this.compileShaderFromElement(name+'-texture-select-fragment-shader');
-    textureShader.program  = this.createProgram(textureShader.vertex, textureShader.fragment);
-    this.shaders[name+'-texture-select'] = textureShader;
+    textureShader.fragment = this.compileShaderFromElement(name + '-texture-select-fragment-shader');
+    textureShader.program = this.createProgram(textureShader.vertex, textureShader.fragment);
+    this.shaders[name + '-texture-select'] = textureShader;
   }
 };
 
@@ -307,23 +307,42 @@ Ngl.Scene.prototype.createProgram = function(vertexShader, fragmentShader) {
 Ngl.Scene.prototype.compileShaderFromElement = function(scriptId) {
   var shaderSource = '';
   var shaderType;
-  var shaderScript = document.getElementById(scriptId);
-  if (!shaderScript) {
-    Ngl.log('ERROR: Unknown script element ' + scriptId);
-    throw('Error: unknown script element ' + scriptId);
-  }
-  shaderSource = shaderScript.text;
 
-  if (shaderScript.type === 'x-shader/x-vertex') {
+  var jsName = Ngl.toCamelCase(scriptId);
+  if(Ngl.VertexShaders[jsName]) {
+    shaderSource = Ngl.VertexShaders[jsName];
     shaderType = this.gl.VERTEX_SHADER;
-  } else if (shaderScript.type === 'x-shader/x-fragment') {
+  } else if(Ngl.FragmentShaders[jsName]) {
+    shaderSource = Ngl.FragmentShaders[jsName];
     shaderType = this.gl.FRAGMENT_SHADER;
-  } else if (shaderType !== this.gl.VERTEX_SHADER && shaderType !== this.gl.FRAGMENT_SHADER) {
-    Ngl.log('ERROR: unknown shader type '+scriptId);
-    return null;
+  } else {
+
+    var shaderScript = document.getElementById(scriptId);
+    if (!shaderScript) {
+      Ngl.log('ERROR: Unknown script element ' + scriptId);
+      throw('Error: unknown script element ' + scriptId);
+    }
+    shaderSource = shaderScript.text;
+
+    if (shaderScript.type === 'x-shader/x-vertex') {
+      shaderType = this.gl.VERTEX_SHADER;
+    } else if (shaderScript.type === 'x-shader/x-fragment') {
+      shaderType = this.gl.FRAGMENT_SHADER;
+    } else if (shaderType !== this.gl.VERTEX_SHADER && shaderType !== this.gl.FRAGMENT_SHADER) {
+      Ngl.log('ERROR: unknown shader type '+scriptId);
+      return null;
+    }
   }
 
   return this.compileShader(shaderSource, shaderType);
+};
+
+Ngl.Scene.prototype.shaderExists = function(scriptId) {
+  var jsName = Ngl.toCamelCase(scriptId);
+  if(Ngl.VertexShaders[jsName] || Ngl.FragmentShaders[jsName] || document.getElementById(scriptId)) {
+    return true;
+  }
+  return false;
 };
 
 Ngl.Scene.prototype.compileShader = function(shaderSource, shaderType) {
@@ -370,6 +389,12 @@ Ngl.pointFromPropString = function(properties, propName) {
     }
   }
   return point;
+};
+
+Ngl.toCamelCase = function(str) {
+  return str.replace(/-([a-z])/g, function (g) {
+    return g[1].toUpperCase();
+  });
 };
 
 // *** Color utilities ***

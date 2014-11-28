@@ -1,0 +1,20 @@
+/**********************************************************************
+
+File     : audio-player.wrcss
+Project  : WhiteRabbit3D audio player
+Purpose  : Source file for WR3D css declarations.
+Revisions: Original definition by Lawrence Gunn.
+           2014/11/28
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+
+.song-title {
+  host:       '.wr3d-host.song-title-host';
+  position3d: translate(0px, 0px, 0px);
+  display3d:  surface;
+  scaling3d:  screen;
+  surfaces3d: [{ type: "circular", radiusOuter: "300px", angle: "full" }];
+}

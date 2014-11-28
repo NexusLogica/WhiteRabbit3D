@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="wr3dApp">
 <head>
   <title>WhiteRabbit3D Basic Test</title>
   <link rel="stylesheet" href="../src/lib/bower_components/bootstrap/dist/css/bootstrap.min.css"/>
@@ -60,6 +60,7 @@
       padding: 20px;
       vertical-align: top;
       display: inline-block;
+      -wr3d-hello: world;
     }
 
     .control-container>div {
@@ -90,177 +91,7 @@
       background-color: rgba(200, 200, 200, 0.1);
       border: 1px gray solid;
     }
-
-
-
   </style>
-
-  <script id="flat-vertex-shader" type="x-shader/x-vertex">
-    // A basic flat vertex shader, hello world'esque.
-    uniform mat4 projectionViewMatrix;
-    attribute vec2 position;
-
-    void main() {
-      vec4 sizedPosition = vec4(position[0], position[1], 0.0, 1.0);
-      gl_Position = projectionViewMatrix*sizedPosition;
-    }
-  </script>
-
-  <script id="flat-fragment-shader" type="x-shader/x-fragment">
-    // A basic flat fragment shader, hello world'esque.
-    uniform highp vec4 surfaceColor;
-
-    void main() {
-      gl_FragColor = surfaceColor;
-    }
-  </script>
-
-  <script id="texture-vertex-shader" type="x-shader/x-vertex">
-    const int MAX_SURFACES = 4;
-    struct surfaceData {
-      mat4 floatData;
-      mat4 transformBefore;
-      mat4 transformAfter;
-      ivec4 integerData;
-    };
-    uniform surfaceData surfaceDataArray[MAX_SURFACES];
-
-    const float NXGR_PI = 3.141592653589;
-    const float NXGR_E  = 2.718281828459;
-    uniform mat4 projectionViewMatrix;
-    uniform vec3 size;
-    uniform float pixelSize;
-    uniform ivec4 flags;
-    uniform ivec4 instructions;
-    attribute vec3 position;
-    attribute vec2 texCoord;
-    attribute vec2 selectionTexCoord;
-
-    varying vec2 texCoordVarying;
-
-    vec4 rectangularWarp(int dataIndex, vec4 posIn) {
-      vec4 pos = surfaceDataArray[dataIndex].transformBefore*posIn;
-
-      // surface data:
-      //   0,0: outer radius - radius in pixels.
-      float scaleX = surfaceDataArray[dataIndex].floatData[0][0];
-      float scaleY = surfaceDataArray[dataIndex].floatData[0][1];
-
-      float x = posIn.x*scaleX;
-      float y = posIn.y*scaleY;
-      float z = posIn.z;
-
-      return surfaceDataArray[dataIndex].transformAfter*vec4(x, y, z, 1.0);
-    }
-
-    vec4 circularWarp(int dataIndex, vec4 posIn) {
-      vec4 pos = surfaceDataArray[dataIndex].transformBefore*posIn;
-
-      // surface data:
-      //   0,0: outer radius - radius in pixels.
-      float radiusOuter = surfaceDataArray[dataIndex].floatData[0][0];
-
-      float radius = radiusOuter+pos.y/pixelSize;
-      float xPixels = pos.x/pixelSize;
-
-      float angle = -xPixels/radiusOuter+90.0/180.0*NXGR_PI;
-      radius = radiusOuter*pow(NXGR_E, -(radiusOuter-radius)/radiusOuter);
-      float x = radius*cos(angle)*pixelSize;
-      float y = radius*sin(angle)*pixelSize;
-      float z = pos[2];
-
-      return surfaceDataArray[dataIndex].transformAfter*vec4(x, y, z, 1.0);
-    }
-
-    void main() {
-      if(flags[0] == 0) {
-        texCoordVarying.x = texCoord.x;
-        texCoordVarying.y = texCoord.y;
-      }
-      else if(flags[0] == 1) {
-        texCoordVarying.x = selectionTexCoord.x;
-        texCoordVarying.y = selectionTexCoord.y;
-      }
-
-
-      vec4 sizedPosition = vec4(size[0]*position[0], size[1]*position[1], position[2], 1.0);
-      for(int i=0; i<4; i++) {
-        if(instructions[i] == 0) {
-          break;
-        } else if(instructions[i] == 2) {
-          sizedPosition = circularWarp(i, sizedPosition);
-        }
-      }
-
-      gl_Position = projectionViewMatrix*sizedPosition;
-    }
-
-  </script>
-
-  <script id="texture-fragment-shader" type="x-shader/x-fragment">
-    // A basic flat fragment shader, hello world'esque.
-    varying highp vec2 texCoordVarying;
-    uniform sampler2D mainTexture;
-
-    void main() {
-//      if(testValue != 0.0) {
-//        gl_FragColor = vec4(testValue, testValue, testValue, 1.0);
-//      } else {
-        gl_FragColor = vec4(texture2D(mainTexture, texCoordVarying));
-//      }
-    }
-  </script>
-
-  <script id="texture-color-select-fragment-shader" type="x-shader/x-fragment">
-    uniform highp vec4 surfaceColor;
-
-    void main() {
-      gl_FragColor = surfaceColor;
-    }
-  </script>
-
-  <script id="texture-texture-select-fragment-shader" type="x-shader/x-fragment">
-    varying highp vec2 texCoordVarying;
-    uniform sampler2D mainTexture;
-
-    void main() {
-      gl_FragColor = vec4(texture2D(mainTexture, texCoordVarying));
-    }
-  </script>
-
-
-  <script id="selection-texture-builder-vertex-shader" type="x-shader/x-vertex">
-
-    precision highp float;
-    uniform float width;         // The width of the bitmap in pixels.
-    attribute vec2 position;
-    attribute vec2 increment;
-    varying vec2 xyCoordinate;
-
-    void main() {
-      gl_Position = vec4(position[0], position[1], 0.0, 1.0);
-      xyCoordinate = increment*width;
-    }
-
-  </script>
-
-  <script id="selection-texture-builder-fragment-shader" type="x-shader/x-fragment">
-
-    precision highp float;
-    uniform float width;
-    varying vec2 xyCoordinate;
-
-    void main() {
-      float l = (xyCoordinate.y-0.5)*width+(xyCoordinate.x-0.5);
-
-      float r = floor(l*0.00001525878);          // divided by 256^2
-      float g = floor((l-r*65536.0)*0.00390625); // divided by 256
-      float b = floor(l-r*65536.0-g*256.0);
-
-      gl_FragColor = vec4(r/255.0, g/255.0, b/255.0, 1.0);
-    }
-
-  </script>
 
 </head>
 <body>
@@ -321,8 +152,8 @@
   <script src="../src/lib/bower_components/cssjson/cssjson.js"></script>
   <script src="../src/lib/html2canvas/html2canvas.js"></script>
   <script src="../src/lib/webgl-utils/webgl-utils.js"></script>
-  <script src="../src/lib/zebra/zebra.js"></script>
   <script src="../src/wr3d/scene.js"></script>
+  <script src="../src/wr3d/standard-shaders.js"></script>
   <script src="../src/wr3d/camera.js"></script>
   <script src="../src/wr3d/dock.js"></script>
   <script src="../src/wr3d/wr-dock.js"></script>
@@ -336,6 +167,8 @@
   <script src="../src/wr3d/surfaces/circular.js"></script>
 
   <script src="../src/components/canvas-test/canvas-test.js"></script>
+
+  <script src="../src/app.js"></script>
 
   <script>
 
@@ -399,34 +232,8 @@
       render();
     }, 1000);
 
-    $('.show-canvas').on('click', function() {
-      $('.canvas-3d').data('wr3dScene').setRenderMode('canvas');
-    });
-    $('.show-color').on('click', function() {
-      $('.canvas-3d').data('wr3dScene').setRenderMode('color');
-    });
-    $('.show-texture').on('click', function() {
-      $('.canvas-3d').data('wr3dScene').setRenderMode('texture');
-    });
-
     $('.inline.btn').on('mousedown', function(e) {
       console.log("HEIASDFASFASF!!!");
-    });
-
-    $('.song-title>div').on('mouseenter', function(e) {
-      console.log("Parent**** mouseenter");
-    });
-
-    $('.song-title>div').on('mouseleave', function(e) {
-      console.log("Parent*** mouseleave");
-    });
-
-    $('.inline.btn').on('mouseenter', function(e) {
-      console.log("Button mouseenter");
-    });
-
-    $('.inline.btn').on('mouseleave', function(e) {
-      console.log("Button mouseleave");
     });
 
   </script>
