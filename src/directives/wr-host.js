@@ -19,6 +19,16 @@ angular.module('wr3dApp').directive('wrHost', [function() {
 
     }],
     link: function($scope, $element, $attrs, $ctrl) {
+//      scene.add(new Ngl.WrPanel({
+//        name:         'song-title',
+//        host:         '.wr3d-host.song-title-host',
+//        position3d:   'translate(0px, 0px, 0px)',
+//        display3d:    'surface',
+//        scaling3d:    'screen',
+////        surfaces3d:   [{ "type": "rectangular" }]
+//        surfaces3d:   [{ "type": "circular", "radiusOuter": "300px", "angle": "full" }]
+//      }));
+
     }
   };
 }]);

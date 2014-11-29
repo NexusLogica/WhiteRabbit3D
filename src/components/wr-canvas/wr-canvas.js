@@ -18,32 +18,20 @@ angular.module('wr3dApp').directive('wrCanvas', [function() {
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', function (ComponentExtensions, $scope, $element, $attrs, $timeout) {
       ComponentExtensions.initialize(this, 'wrCanvas', $scope, $element, $attrs);
 
-
+      $scope.notifyHost = function() {
+        $timeout(function() {
+          $scope.$emit('wr-canvas:canvas-ready', $scope.canvas);
+        }, 1);
+      };
     }],
-    link: function($scope, $element, $attrs) {
+    link: function($scope, $element, $attrs, $timeout) {
       var w = $element.width();
       var h = $element.height();
       if(!w) { w = 600; }
       if(!h) { h = 400; }
-      var canvas = $element.append('<canvas width="'+w+'" height="'+h+'"></canvas>').find('canvas');
+      $scope.canvas = $element.append('<canvas width="'+w+'" height="'+h+'"></canvas>').find('canvas');
 
-      var scene = new Ngl.Scene();
-      canvas.data('scene', scene);
-      scene.initialize(canvas);
-
-      $scope.displayHosts = $attrs.wrHosts;
-      if($attrs.hasOwnProperty('clearColor')) {
-        var clearColor = $attrs.clearColor;
-        var colorVec = Ngl.vecFromString(clearColor);
-        scene.setClearColor(colorVec);
-      }
-
-      function render() {
-        requestAnimationFrame(render);
-        scene.render();
-      }
-
-      render();
+      $scope.notifyHost();
     }
   };
 }]);

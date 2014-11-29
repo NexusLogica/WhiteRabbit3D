@@ -715,6 +715,15 @@ body {
 .pi-error {
   border-color: #eb881e; }
 
+.audio-container {
+  width: 100%; }
+  .audio-container .audio-canvas {
+    display: block;
+    position: relative;
+    margin: 30px auto 30px auto;
+    width: 800px;
+    height: 600px; }
+
 .song-title > div {
   border-bottom: gray 2px solid;
   border-top: gray 2px solid;
