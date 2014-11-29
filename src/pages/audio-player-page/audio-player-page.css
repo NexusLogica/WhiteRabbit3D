@@ -1,0 +1,24 @@
+/**********************************************************************
+
+File     : audio-player-page.scss
+Project  : N Simulator Library
+Purpose  : Source file for audio player page styles.
+Revisions: Original definition by Lawrence Gunn.
+           2014/11/28
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+body {
+  position: relative;
+  background-color: #2B374D; }
+
+.audio-player {
+  position: relative;
+  background-color: #2B374D;
+  width: 100%;
+  display: inline-block;
+  min-width: 1350px; }
+
+/*# sourceMappingURL=audio-player-page.css.map */

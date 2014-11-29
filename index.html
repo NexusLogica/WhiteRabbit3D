@@ -13,21 +13,43 @@
 
 <body>
 
+  <div ng-view>
+  </div>
+
   <script src="src/lib/bower_components/jquery/dist/jquery.js"></script>
   <script src="src/lib/bower_components/lodash/dist/lodash.js"></script>
   <script src="src/lib/bower_components/angular/angular.js"></script>
   <script src="src/lib/bower_components/angular-route/angular-route.js"></script>
   <script src="src/lib/bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
   <script src="src/lib/bower_components/q/q.js"></script>
+  <script src="src/lib/bower_components/cssjson/cssjson.js"></script>
+  <script src="src/lib/bower_components/gl-matrix/dist/gl-matrix.js"></script>
   <script src="src/lib/bower_components/tube-player/jQuery.tubeplayer.js"></script>
   <script src="src/app.js"></script>
   <script src="src/services/component-extensions.js"></script>
+
+  <script src="src/wr3d/scene.js">  </script>
+  <script src="src/wr3d/standard-shaders.js"></script>
+  <script src="src/wr3d/camera.js"></script>
+  <script src="src/wr3d/dock.js"></script>
+  <script src="src/wr3d/wr-dock.js"></script>
+  <script src="src/wr3d/wr-panel.js"></script>
+  <script src="src/wr3d/layout-tree.js"></script>
+  <script src="src/wr3d/canvas.js"></script>
+  <script src="src/wr3d/selection-renderer.js"></script>
+  <script src="src/wr3d/surfaces/rectangular.js"></script>
+  <script src="src/wr3d/surfaces/circular.js"></script>
+
+  <script src="src/components/wr-canvas/wr-canvas.js"></script>
+  <script src="src/directives/wr-host.js"></script>
+  <script src="src/directives/wr-style.js"></script>
+
   <script src="src/pages/home-page/home-page.js"></script>
   <script src="src/components/home/home.js"></script>
   <script src="src/components/background-video/background-video.js"></script>
 
-  <div ng-view>
-  </div>
+  <script src="src/pages/audio-player-page/audio-player-page.js"></script>
+  <script src="src/components/audio-player/audio-player.js"></script>
 
 </body>
 </html>

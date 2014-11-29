@@ -1,10 +1,10 @@
 /**********************************************************************
 
-File     : audioPlayer.js
+File     : audio-player-page.js
 Project  : N Simulator Library
-Purpose  : Source file for a home page component.
+Purpose  : Source file for the audio player page.
 Revisions: Original definition by Lawrence Gunn.
-           2014/09/27
+           2014/11/28
 
 Copyright (c) 2014 by Lawrence Gunn
 All Rights Reserved.
@@ -12,14 +12,15 @@ All Rights Reserved.
 */
 'use strict';
 
-angular.module('wr3dApp').directive('audioPlayer', [function() {
+angular.module('wr3dApp').directive('audioPlayerPage', [function() {
   return {
     restrict: 'E',
-    templateUrl: 'src/components/audio-player/audio-player.html',
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', function (ComponentExtensions, $scope, $element, $attrs, $timeout) {
-      ComponentExtensions.initialize(this, 'audioPlayer', $scope, $element, $attrs);
+      ComponentExtensions.initialize(this, 'audioPlayerPage', $scope, $element, $attrs);
+
     }],
     link: function($scope, $element, $attrs, $ctrl) {
+
     }
   };
 }]);

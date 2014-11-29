@@ -1,6 +1,8 @@
-<div wr-host-container wr-styles=".css">
+<div class="audio-container" wr-host-container>
 
-  <wr-style wr-import="src/components/audio-player/audio-player.wrcss">
+  <wr-canvas class="audio-canvas" clear-color="1.0,0.0,0.0,1.0" wr-hosts=".audio-container"></wr-canvas>
+
+  <wr-style wr-import="src/components/audio-player/audio-player.wrcss"/>
 
   <wr-host>
     <div class="song-title">

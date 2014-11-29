@@ -32,6 +32,8 @@ Ngl.Scene = function() {
   this.wrObjectsByColorHash = {};
   this.wrNextColor = new Ngl.IntegerColor();
 
+  this.clearColor = vec4.fromValues(0.0, 0.0, 0.0, 1.0);
+
   this.camera = new Ngl.Camera();
 
   this.rawMouseEvents = [];
@@ -63,7 +65,7 @@ Ngl.Scene.prototype.initialize = function(canvas) {
 
   gl.cullFace(gl.BACK);
   gl.enable(gl.CULL_FACE);
-  gl.clearColor(0.1, 0.1, 0.1, 1.0);
+  gl.clearColor(this.clearColor[0], this.clearColor[1], this.clearColor[2], this.clearColor[3]);
   gl.clearDepth(1.0);
   gl.enable(gl.DEPTH_TEST);
   gl.depthFunc(gl.LEQUAL);
@@ -84,6 +86,10 @@ Ngl.Scene.prototype.initialize = function(canvas) {
 Ngl.Scene.prototype.add = function(obj) {
   this.children.push(obj);
   obj.parent = this;
+};
+
+Ngl.Scene.prototype.setClearColor = function(color) {
+  this.clearColor = color;
 };
 
 /***
@@ -202,7 +208,7 @@ Ngl.Scene.prototype.render = function() {
   gl.bindFramebuffer(gl.FRAMEBUFFER, null);
   gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 
-  gl.clearColor(0.0, 0.0, 0.0, 1.0);
+  gl.clearColor(this.clearColor[0], this.clearColor[1], this.clearColor[2], this.clearColor[3]);
   /* jshint -W016 */
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   /* jshint +W016 */
@@ -382,13 +388,32 @@ Ngl.pointFromPropString = function(properties, propName) {
   var iStart = properties.indexOf('(', index);
   var iEnd = properties.indexOf(')', iStart);
   var values = properties.substring(iStart+1, iEnd).split(',');
-  var point = new Float32Array([0.0, 0.0, 0.0]);
-  for(var i=0; i<3; i++) {
+  var num = values.length;
+  var point = new Float32Array(num);
+
+  for(var i=0; i<num; i++) {
+    point[i] = 0.0;
     if(!_.isUndefined(values[i])) {
       point[i] = parseFloat(values[i]);
     }
   }
   return point;
+};
+
+Ngl.vecFromString = function(str) {
+  if(_.isEmpty(str)) { return null; }
+
+  var values = str.split(',');
+  var num = values.length;
+  var vec = new Float32Array(num);
+
+  for(var i=0; i<num; i++) {
+    vec[i] = 0.0;
+    if(!_.isUndefined(values[i])) {
+      vec[i] = parseFloat(values[i]);
+    }
+  }
+  return vec;
 };
 
 Ngl.toCamelCase = function(str) {
