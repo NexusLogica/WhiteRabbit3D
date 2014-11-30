@@ -12,17 +12,31 @@
  */
 'use strict';
 
+Ngl.nextWrStyleId = 0;
+
 angular.module('wr3dApp').directive('wrStyle', [function() {
   return {
     restrict: 'E',
     controller: ['$scope', '$element', '$attrs', '$http', function ($scope, $element, $attrs, $http) {
+
+      $scope.styleId = Ngl.nextWrStyleId;
+      Ngl.nextWrStyleId++;
+
+      $scope.$emit('wr-style:notify-style', $scope);
+
       var url = $attrs.wrImport;
       if(url) {
         $http.get(url).success(function (data) {
-          var json = CSSJSON.toJSON(data);
-          Ngl.log("GOT from "+url+' - ' + JSON.stringify(json, undefined, 2));
+
+          $scope.styleJson = CSSJSON.toJSON(data);
+          Ngl.log($scope.styleJson);
+          $scope.$emit('wr-style:notify-style-load-complete', $scope, true);
+
         }).error(function (err) {
-          Ngl.log("ERROR " + err);
+
+          Ngl.log('ERROR: Wr3d: Unable to load style ' + err);
+          $scope.$emit('wr-style:notify-style-load-complete', $scope, false);
+
         });
       }
     }],

@@ -12,13 +12,40 @@
  */
 'use strict';
 
+Ngl.nextWrHostId = 0;
+
 angular.module('wr3dApp').directive('wrHost', [function() {
   return {
     restrict: 'E',
     controller: ['$scope', '$element', '$attrs', '$http', function ($scope, $element, $attrs, $http) {
 
-    }],
-    link: function($scope, $element, $attrs, $ctrl) {
+      $scope.hostId = Ngl.nextWrHostId;
+      Ngl.nextWrHostId++;
+      $scope.styleSelectors = [];
+
+      var getWrStyleSelectors = function() {
+        var className = $element.find('>div').attr('class');
+        if (className) {
+          $scope.styleSelectors = className.split(' ').reverse();
+          for(var i=0; i < $scope.styleSelectors.length; i++) {
+            $scope.styleSelectors[i] = '.'+$scope.styleSelectors[i];
+          }
+        }
+      };
+
+      getWrStyleSelectors();
+
+      $scope.$emit('wr-host:notify-host-container', $scope);
+
+      $scope.getStyles = function(hostContainer) {
+        $scope.wrStyle = {};
+        _.forEach($scope.styleSelectors, function(id) {
+          var style = hostContainer.getStyle(id);
+          $scope.wrStyle = _.merge($scope.wrStyle, style);
+        });
+        debugger;
+      };
+
 //      scene.add(new Ngl.WrPanel({
 //        name:         'song-title',
 //        host:         '.wr3d-host.song-title-host',
@@ -28,6 +55,9 @@ angular.module('wr3dApp').directive('wrHost', [function() {
 ////        surfaces3d:   [{ "type": "rectangular" }]
 //        surfaces3d:   [{ "type": "circular", "radiusOuter": "300px", "angle": "full" }]
 //      }));
+
+    }],
+    link: function($scope, $element, $attrs, $ctrl) {
 
     }
   };
