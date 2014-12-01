@@ -1,8 +1,8 @@
 /**********************************************************************
 
-File     : canvas.js
+File     : html-canvas.js
 Project  : N Simulator Library
-Purpose  : Source file for a canvas surface.
+Purpose  : Source file for an HTML canvas surface.
 Revisions: Original definition by Lawrence Gunn.
            2014/10/01
 
@@ -12,41 +12,44 @@ All Rights Reserved.
 */
 'use strict';
 
-Ngl.HtmlCanvas = function(config, panel) {
+Ngl.HtmlCanvas = function(host, config) {
+  this.host = $(host);
+  this.top = $(this.host.children().get(0));
+
   this.config = config;
+
   this.canvasInitialized = false;
-  this.panel = panel;
   this.updateRequired = false;
   this.mouseOverElements = [];
 };
 
 Ngl.HtmlCanvas.nextCanvasElementNum = 0;
 
+Ngl.HtmlCanvas.prototype.setPanel = function(panel) {
+  this.panel = panel;
+}
+
 Ngl.HtmlCanvas.prototype.load = function(gl) {
   var _this = this;
   var deferred = $.Deferred();
 
-  if(this.config.host) {
-    this.host = $(this.config.host);
-    this.top = $(this.host.children().get(0));
+  this.sizeElements(this.host, this.top);
+  this.buildLayoutTree();
 
-    this.sizeElements(this.host, this.top);
-    this.buildLayoutTree();
+  html2canvas(this.host.get(0), {
+    //background: undefined,
+    onrendered: function(canvas) {
+      var element = $('.html2canvas-canvas').get(0);
+      element.appendChild(canvas);
+      _this.createTexturemap(gl, canvas);
+      deferred.resolve();
+    },
+    onclone: function(element) {
+      $(element).find('.wr3d-host').css('visibility', 'visible');
+      //$(element).find('.html2canvas-container').css('background-color', 'green').css('top', '0px');
+    }
+  });
 
-    html2canvas(this.host.get(0), {
-      //background: undefined,
-      onrendered: function(canvas) {
-        var element = $('.html2canvas-canvas').get(0);
-        element.appendChild(canvas);
-        _this.createTexturemap(gl, canvas);
-        deferred.resolve();
-      },
-      onclone: function(element) {
-        $(element).find('.wr3d-host').css('visibility', 'visible');
-        //$(element).find('.html2canvas-container').css('background-color', 'green').css('top', '0px');
-      }
-    });
-  }
   return deferred;
 };
 
@@ -86,25 +89,6 @@ Ngl.HtmlCanvas.prototype.getUpdateRequired = function() {
 
 Ngl.HtmlCanvas.prototype.setUpdateRequired = function(required) {
   this.updateRequired = required;
-};
-
-Ngl.HtmlCanvas.prototype.onEvent = function(scene, event) {
-  debugger;
-/*
-  var hitTest = this.findElementUnderXyPosition(scene, event.wr.targetX, event.wr.targetY);
-
-  switch(event.type) {
-    case 'click':
-    case 'mousedown':
-    case 'mouseup':
-    case 'mousemove':
-    case 'mouseout':
-    case 'mouseover':
-      var ec = jQuery.Event( event.type, { clientX: hitTest.targetX, clientY: hitTest.targetY, button: 0 } );
-      hitTest.target.trigger(ec);
-      break;
-  }
-  */
 };
 
 Ngl.HtmlCanvas.prototype.dispatchMouseEvent = function(scene, targetData, event) {

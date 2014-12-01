@@ -20,6 +20,7 @@ angular.module('wr3dApp').directive('wrHostContainer', [function() {
       $scope.hostList = [];
       $scope.styleListPending = [];
       $scope.styleListLoaded = [];
+      $element.append('<div class="html2canvas-canvas"></div>');
 
       $scope.styles = {};
 

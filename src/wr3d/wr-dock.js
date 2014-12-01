@@ -39,12 +39,14 @@ Ngl.WrDock.prototype.initialize = function(gl, scene) {
   this.flags = new Int32Array(this.flagsLength);
   for(var j=0; i<this.flagsLength; i++) { this.instructions[i] = 0; }
 
-  if(!this.config.surfaces3d || this.config.surfaces3d.length === 0) {
-    this.config.surfaces3d = [];
-    this.config.surfaces3d.push(new Ngl.Surface.Rectangle());
+  this.config.surface3d = this.parseSurface3d(this.config.surface3d);
+
+  if(!this.config.surface3d || this.config.surface3d.length === 0) {
+    this.config.surface3d = [];
+    this.config.surface3d.push(new Ngl.Surface.Rectangular());
   } else {
-    for(i=0; i<this.config.surfaces3d.length; i++) {
-      var conf = this.config.surfaces3d[i];
+    for(i=0; i<this.config.surface3d.length; i++) {
+      var conf = this.config.surface3d[i];
       var surface = null;
       switch(conf.type.toLowerCase()) {
         case 'rectangular': {
@@ -109,4 +111,25 @@ Ngl.WrDock.prototype.updateTransform = function(scene) {
 
 Ngl.WrDock.prototype.onPositioningRecalculated = function() {
 
+};
+
+Ngl.WrDock.prototype.parseSurface3d = function(surface3d) {
+  var parsed = [];
+  var regex = /\([^)]+\)+?/g;
+  var matches = surface3d.match(regex);
+  for(var i=0; i<matches.length; i++) {
+    var surface = {};
+    var m = matches[i];
+    m = m.replace(/^\s*\(/, '');
+    m = m.replace(/\)\s*$/, '');
+    var s = m.split(',');
+    for(var j=0; j<s.length; j++) {
+      var keyval = s[j].split(':');
+      var key = $.trim(keyval[0]);
+      var val = $.trim(keyval[1]);
+      surface[key] = val;
+    }
+    parsed.push(surface);
+  }
+  return parsed;
 };

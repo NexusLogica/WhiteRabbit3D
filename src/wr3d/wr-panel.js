@@ -12,10 +12,12 @@ All Rights Reserved.
 */
 'use strict';
 
-Ngl.WrPanel = function(data) {
+Ngl.WrPanel = function(canvas, config) {
   Ngl.WrDock.call(this);
-  this.config = _.cloneDeep(data);
+  this.config = _.cloneDeep(config);
   this.canvasInitialized = false;
+  this.canvas = canvas;
+  this.canvas.setPanel(this);
 };
 
 Ngl.WrPanel.prototype = Object.create(Ngl.WrDock.prototype);
@@ -28,7 +30,6 @@ Ngl.WrPanel.prototype.initialize = function(gl, scene) {
 
   var _this = this;
 
-  this.canvas = new Ngl.HtmlCanvas(this.config, this);
   this.canvas.load(gl).then(function() {
       _this.finalizeInitialization(gl, scene);
     }, function() {

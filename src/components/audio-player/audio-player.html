@@ -1,14 +1,14 @@
-<wr-host-container class="audio-container" clear-color="1.0,0.0,0.0,1.0">
+<wr-host-container class="audio-container" clear-color="0.0,0.0,0.0,1.0">
 
   <wr-canvas class="audio-canvas" wr-hosts=".audio-container"></wr-canvas>
 
-  <wr-style wr-import="src/components/audio-player/audio-player.wrcss"/>
+  <wr-style wr-import="src/components/audio-player/audio-player.wrcss"></wr-style>
 
   <wr-host>
     <div class="song-title">
       <div>
         <div class="inline">Hi there</div>
-        <button class="inline btn">Next</button>
+        <button class="inline btn" ng-click="next()">Next</button>
         <div class="inline">
           Lorem ipsum dolor sit amet, dicat adipiscing id sed. Qui natum euismod pertinacia eu, mei ad summo tempor sententiae.
         </div>

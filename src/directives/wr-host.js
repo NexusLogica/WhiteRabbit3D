@@ -19,6 +19,8 @@ angular.module('wr3dApp').directive('wrHost', [function() {
     restrict: 'E',
     controller: ['$scope', '$element', '$attrs', '$http', function ($scope, $element, $attrs, $http) {
 
+      $element.css('position', 'relative');
+
       $scope.hostId = Ngl.nextWrHostId;
       Ngl.nextWrHostId++;
       $scope.styleSelectors = [];
@@ -43,8 +45,12 @@ angular.module('wr3dApp').directive('wrHost', [function() {
           var style = hostContainer.getStyle(id);
           $scope.wrStyle = _.merge($scope.wrStyle, style);
         });
-        debugger;
+
+        var canvas = new Ngl.HtmlCanvas($element, $scope.wrStyle);
+        var panel = new Ngl.WrPanel(canvas, $scope.wrStyle);
+        hostContainer.scene.add(panel);
       };
+
 
 //      scene.add(new Ngl.WrPanel({
 //        name:         'song-title',

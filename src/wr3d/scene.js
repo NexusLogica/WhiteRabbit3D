@@ -132,7 +132,7 @@ Ngl.Scene.prototype.addMouseEvent = function(target, targetData, e) {
 
 Ngl.Scene.prototype.createEventHandlers = function() {
   var _this = this;
-  this.canvasElement.on('mouseup mousedown mousemove mouseover mouseout', function(e) {
+  this.canvasElement.on('mouseup mousedown mousemove mouseover mouseout click', function(e) {
     var data = {
       eventType: e.type,
       screenX:   e.screenX,

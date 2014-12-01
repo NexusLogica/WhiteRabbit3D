@@ -16,5 +16,5 @@ All Rights Reserved.
   position3d: translate(0px, 0px, 0px);
   display3d:  surface;
   scaling3d:  screen;
-  surfaces3d: (type: circular, radiusOuter: 300px, angle: full );
+  surface3d: ( type: circular, radiusOuter: 300px, angle: full );
 }
