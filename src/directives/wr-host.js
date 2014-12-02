@@ -17,7 +17,7 @@ Ngl.nextWrHostId = 0;
 angular.module('wr3dApp').directive('wrHost', [function() {
   return {
     restrict: 'E',
-    controller: ['$scope', '$element', '$attrs', '$http', function ($scope, $element, $attrs, $http) {
+    controller: ['$scope', '$element', '$attrs', '$timeout', function ($scope, $element, $attrs, $timeout) {
 
       $element.css('position', 'relative');
 
@@ -46,25 +46,22 @@ angular.module('wr3dApp').directive('wrHost', [function() {
           $scope.wrStyle = _.merge($scope.wrStyle, style);
         });
 
-        var canvas = new Ngl.HtmlCanvas($element, $scope.wrStyle);
-        var panel = new Ngl.WrPanel(canvas, $scope.wrStyle);
-        hostContainer.scene.add(panel);
+        $scope.canvas = new Ngl.HtmlCanvas($element, $scope.wrStyle);
+        $scope.panel = new Ngl.WrPanel($scope.canvas, $scope.wrStyle);
+        hostContainer.scene.add($scope.panel);
       };
 
-
-//      scene.add(new Ngl.WrPanel({
-//        name:         'song-title',
-//        host:         '.wr3d-host.song-title-host',
-//        position3d:   'translate(0px, 0px, 0px)',
-//        display3d:    'surface',
-//        scaling3d:    'screen',
-////        surfaces3d:   [{ "type": "rectangular" }]
-//        surfaces3d:   [{ "type": "circular", "radiusOuter": "300px", "angle": "full" }]
-//      }));
+      $scope.updateTexture = function() {
+        $timeout(function() {
+          $scope.canvas.setUpdateRequired(true);
+        }, 0);
+      };
 
     }],
     link: function($scope, $element, $attrs, $ctrl) {
+      $element.on('click', function() {
 
+      });
     }
   };
 }]);

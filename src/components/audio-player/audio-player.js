@@ -19,8 +19,10 @@ angular.module('wr3dApp').directive('audioPlayer', [function() {
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', function (ComponentExtensions, $scope, $element, $attrs, $timeout) {
       ComponentExtensions.initialize(this, 'audioPlayer', $scope, $element, $attrs);
 
-      $scope.next = function() {
-        debugger;
+      $scope.buttonText = 'Next';
+      $scope.onNext = function() {
+        $scope.buttonText = 'Other';
+        $scope.updateTexture();
       };
     }],
     link: function($scope, $element, $attrs, $ctrl) {

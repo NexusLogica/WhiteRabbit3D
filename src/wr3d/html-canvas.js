@@ -76,9 +76,10 @@ Ngl.HtmlCanvas.prototype.bindTexturemap = function(gl) {
     gl.bindTexture(gl.TEXTURE_2D, this.texture);
 
     var required = this.getUpdateRequired();
-    if(required) {
-      gl.texSubImage2D(gl.TEXTURE_2D, 0, region.x, region.y, gl.RGBA, gl.UNSIGNED_BYTE, canvasX);
+    if(required && this.updateCanvas) {
+      gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, this.updateCanvas);
       gl.generateMipmap(gl.TEXTURE_2D);
+      this.updateCanvas = undefined;
     }
   }
 };
@@ -89,6 +90,20 @@ Ngl.HtmlCanvas.prototype.getUpdateRequired = function() {
 
 Ngl.HtmlCanvas.prototype.setUpdateRequired = function(required) {
   this.updateRequired = required;
+  this.updateCanvas = undefined;
+  var _this = this;
+
+  html2canvas(this.host.get(0), {
+    onrendered: function(canvas) {
+      var element = $('.html2canvas-canvas').get(0);
+      element.appendChild(canvas);
+      _this.updateCanvas = canvas;
+    },
+    onclone: function(element) {
+      $(element).find('.wr3d-host').css('visibility', 'visible');
+    }
+  });
+
 };
 
 Ngl.HtmlCanvas.prototype.dispatchMouseEvent = function(scene, targetData, event) {
