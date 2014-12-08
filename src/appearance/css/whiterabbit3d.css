@@ -11,11 +11,13 @@ All Rights Reserved.
 
 */
 
-.wr3d-host {
+.wr-host {
   padding: 0px 0px;
   /*padding: 2px 2px;*/
   visibility: hidden;
-  position: relative;
+  position: fixed;
+  top: 0px;
+  left: 0px;
 }
 
 .wr3d-top {

@@ -597,6 +597,7 @@ window.html2canvas = function(nodeList, options) {
     return renderDocument(node.ownerDocument, options, node.ownerDocument.defaultView.innerWidth, node.ownerDocument.defaultView.innerHeight).then(function(canvas) {
         if (typeof(options.onrendered) === "function") {
             log("options.onrendered is deprecated, html2canvas returns a Promise containing the canvas");
+          $(canvas).addClass('blah');
             options.onrendered(canvas);
         }
         return canvas;
@@ -607,26 +608,39 @@ window.html2canvas.punycode = this.punycode;
 window.html2canvas.proxy = {};
 
 function renderDocument(document, options, windowWidth, windowHeight) {
-    return createWindowClone(document, document, windowWidth, windowHeight, options).then(function(container) {
-        log("Document cloned");
+//LAG    return createWindowClone(document, document, windowWidth, windowHeight, options).then(function(container) {
+//LAG        log("Document cloned");
         var selector = "[" + html2canvasNodeAttribute + "='true']";
-        document.querySelector(selector).removeAttribute(html2canvasNodeAttribute);
-        var clonedWindow = container.contentWindow;
+//LAG         var clonedWindow = container.contentWindow;
+        var clonedWindow = window; // LAG added
         var node = clonedWindow.document.querySelector(selector);
-        var oncloneHandler = (typeof(options.onclone) === "function") ? Promise.resolve(options.onclone(clonedWindow.document)) : Promise.resolve(true);
+        document.querySelector(selector).removeAttribute(html2canvasNodeAttribute); // LAG moved
+//LAG        var oncloneHandler = (typeof(options.onclone) === "function") ? Promise.resolve(options.onclone(clonedWindow.document)) : Promise.resolve(true);
+        var oncloneHandler = Promise.resolve(true); // LAG added
         return oncloneHandler.then(function() {
-            return renderWindow(node, container, options, windowWidth, windowHeight);
+//LAG          return renderWindow(node, container, options, windowWidth, windowHeight);
+          return renderWindow(node, window, options, windowWidth, windowHeight);
         });
-    });
+//LAG    });
 }
 
-function renderWindow(node, container, options, windowWidth, windowHeight) {
-    var clonedWindow = container.contentWindow;
+/***
+ *
+ * @param node The target node for replicating
+ * @param container The window object or equivalent
+ * @param options options...
+ * @param windowWidth width of node
+ * @param windowHeight height of node
+ * @returns {*}
+ */
+//LAG function renderWindow(node, container, options, windowWidth, windowHeight) {
+//LAG    var clonedWindow = container.contentWindow;
+  function renderWindow(node, clonedWindow, options, windowWidth, windowHeight) {
     var support = new Support(clonedWindow.document);
     var imageLoader = new ImageLoader(options, support);
     var bounds = getBounds(node);
-    var width = options.type === "view" ? windowWidth : documentWidth(clonedWindow.document);
-    var height = options.type === "view" ? windowHeight : documentHeight(clonedWindow.document);
+    var width = options.type === "view" ? windowWidth : node.offsetWidth;
+    var height = options.type === "view" ? windowHeight : node.offsetHeight;
     var renderer = new CanvasRenderer(width, height, imageLoader, options, document);
     var parser = new NodeParser(node, renderer, support, imageLoader, options);
     return parser.ready.then(function() {
@@ -641,24 +655,29 @@ function renderWindow(node, container, options, windowWidth, windowHeight) {
             canvas = crop(renderer.canvas, {width:  options.width != null ? options.width : bounds.width, height: options.height != null ? options.height : bounds.height, top: bounds.top, left: bounds.left, x: clonedWindow.pageXOffset, y: clonedWindow.pageYOffset});
         }
 
-        cleanupContainer(container, options);
+        //cleanupContainer(container, options);
         return canvas;
     });
 }
 
 function cleanupContainer(container, options) {
-    if (options.removeContainer) {
-        container.parentNode.removeChild(container);
+    //LAG if (options.removeContainer) {
+    //LAG    container.parentNode.removeChild(container);
         log("Cleaned up container");
-    }
+    //LAG}
 }
 
 function crop(canvas, bounds) {
     var croppedCanvas = document.createElement("canvas");
+  $(croppedCanvas).addClass('cropped');
     var x1 = Math.min(canvas.width - 1, Math.max(0, bounds.left));
     var x2 = Math.min(canvas.width, Math.max(1, bounds.left + bounds.width));
     var y1 = Math.min(canvas.height - 1, Math.max(0, bounds.top));
     var y2 = Math.min(canvas.height, Math.max(1, bounds.top + bounds.height));
+  x1 = 0;
+  y1 = 0;
+  x2 = 2048;
+  y2 = 64;
     croppedCanvas.width = bounds.width;
     croppedCanvas.height =  bounds.height;
     log("Cropping canvas at:", "left:", bounds.left, "top:", bounds.top, "width:", (x2-x1), "height:", (y2-y1));
@@ -2802,11 +2821,20 @@ function XHR(url) {
 function CanvasRenderer(width, height) {
     Renderer.apply(this, arguments);
     this.canvas = this.options.canvas || this.document.createElement("canvas");
+  $(this.canvas).addClass('blah-blah');
     if (!this.options.canvas) {
         this.canvas.width = width;
         this.canvas.height = height;
     }
     this.ctx = this.canvas.getContext("2d");
+  //this.ctx.beginPath();
+  //this.ctx.rect(0, 0, 700, 50);
+  //this.ctx.fillStyle = 'yellow';
+  //this.ctx.fill();
+  //this.ctx.lineWidth = 7;
+  //this.ctx.strokeStyle = 'black';
+  //this.ctx.stroke();
+
     this.taintCtx = this.document.createElement("canvas").getContext("2d");
     this.ctx.textBaseline = "bottom";
     this.variables = {};
