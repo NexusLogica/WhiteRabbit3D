@@ -569,6 +569,31 @@ if (typeof(Object.create) !== "function" || typeof(document.createElement("canva
 var html2canvasNodeAttribute = "data-html2canvas-node";
 var html2canvasCanvasCloneAttribute = "data-html2canvas-canvas-clone";
 var html2canvasCanvasCloneIndex = 0;
+var wr3dHtml2CanvasOffset = undefined;
+
+function wr3dGetBoundingClientRect(node) {
+  if (node.getBoundingClientRect) {
+    var tempClientRect = node.getBoundingClientRect();
+    var clientRect = {
+      top: tempClientRect.top,
+      bottom: tempClientRect.bottom,
+      right: tempClientRect.right,
+      left: tempClientRect.left,
+      width: tempClientRect.width,
+      height: tempClientRect.height
+    };
+
+    if(!_.isUndefined(wr3dHtml2CanvasOffset)) {
+      clientRect.left -= wr3dHtml2CanvasOffset.left;
+      clientRect.right -= wr3dHtml2CanvasOffset.left;
+      clientRect.top -= wr3dHtml2CanvasOffset.top;
+      clientRect.bottom -= wr3dHtml2CanvasOffset.top;
+    }
+//    Ngl.log('*** node='+$(node).attr('class')+' rect x,y:'+clientRect.left+','+clientRect.top+'  w,h: '+(clientRect.right-clientRect.left)+','+(clientRect.bottom-clientRect.top));
+    return clientRect;
+  }
+  return {};
+}
 
 window.html2canvas = function(nodeList, options) {
     options = options || {};
@@ -639,24 +664,18 @@ function renderDocument(document, options, windowWidth, windowHeight) {
     var support = new Support(clonedWindow.document);
     var imageLoader = new ImageLoader(options, support);
     var bounds = getBounds(node);
+    wr3dHtml2CanvasOffset = _.cloneDeep(bounds);
+
     var width = options.type === "view" ? windowWidth : node.offsetWidth;
     var height = options.type === "view" ? windowHeight : node.offsetHeight;
     var renderer = new CanvasRenderer(width, height, imageLoader, options, document);
     var parser = new NodeParser(node, renderer, support, imageLoader, options);
     return parser.ready.then(function() {
         log("Finished rendering");
-        var canvas;
 
-        if (options.type === "view") {
-            canvas = crop(renderer.canvas, {width: renderer.canvas.width, height: renderer.canvas.height, top: 0, left: 0, x: 0, y: 0});
-        } else if (node === clonedWindow.document.body || node === clonedWindow.document.documentElement || options.canvas != null) {
-            canvas = renderer.canvas;
-        } else {
-            canvas = crop(renderer.canvas, {width:  options.width != null ? options.width : bounds.width, height: options.height != null ? options.height : bounds.height, top: bounds.top, left: bounds.left, x: clonedWindow.pageXOffset, y: clonedWindow.pageYOffset});
-        }
-
+      wr3dHtml2CanvasOffset = undefined;
         //cleanupContainer(container, options);
-        return canvas;
+        return renderer.canvas;
     });
 }
 
@@ -665,25 +684,6 @@ function cleanupContainer(container, options) {
     //LAG    container.parentNode.removeChild(container);
         log("Cleaned up container");
     //LAG}
-}
-
-function crop(canvas, bounds) {
-    var croppedCanvas = document.createElement("canvas");
-  $(croppedCanvas).addClass('cropped');
-    var x1 = Math.min(canvas.width - 1, Math.max(0, bounds.left));
-    var x2 = Math.min(canvas.width, Math.max(1, bounds.left + bounds.width));
-    var y1 = Math.min(canvas.height - 1, Math.max(0, bounds.top));
-    var y2 = Math.min(canvas.height, Math.max(1, bounds.top + bounds.height));
-  x1 = 0;
-  y1 = 0;
-  x2 = 2048;
-  y2 = 64;
-    croppedCanvas.width = bounds.width;
-    croppedCanvas.height =  bounds.height;
-    log("Cropping canvas at:", "left:", bounds.left, "top:", bounds.top, "width:", (x2-x1), "height:", (y2-y1));
-    log("Resulting crop with width", bounds.width, "and height", bounds.height, " with x", x1, "and y", y1);
-    croppedCanvas.getContext("2d").drawImage(canvas, x1, y1, x2-x1, y2-y1, bounds.x, bounds.y, x2-x1, y2-y1);
-    return croppedCanvas;
 }
 
 function documentWidth (doc) {
@@ -1564,7 +1564,7 @@ function asFloat(str) {
 
 function getBounds(node) {
     if (node.getBoundingClientRect) {
-        var clientRect = node.getBoundingClientRect();
+        var clientRect = wr3dGetBoundingClientRect(node);
         var width = node.offsetWidth == null ? clientRect.width : node.offsetWidth;
         return {
             top: clientRect.top,
@@ -1832,7 +1832,7 @@ NodeParser.prototype.getRangeBounds = function(node, offset, length) {
     var range = this.range || (this.range = node.ownerDocument.createRange());
     range.setStart(node, offset);
     range.setEnd(node, offset + length);
-    return range.getBoundingClientRect();
+    return wr3dGetBoundingClientRect(range);
 };
 
 function ClearTransform() {}
@@ -2623,7 +2623,7 @@ Support.prototype.testRangeBounds = function(document) {
             document.body.appendChild(testElement);
 
             range.selectNode(testElement);
-            rangeBounds = range.getBoundingClientRect();
+            rangeBounds = wr3dGetBoundingClientRect(range);
             rangeHeight = rangeBounds.height;
 
             if (rangeHeight === 123) {

@@ -20,7 +20,8 @@ angular.module('wr3dApp').directive('wrHost', [function() {
     controller: ['$scope', '$element', '$attrs', '$timeout', function ($scope, $element, $attrs, $timeout) {
 
       $element.css('position', 'relative');
-      $element.css({ 'position': 'fixed', 'top': '-20px', 'left': '0px' });
+      $element.css({ 'position': 'fixed', 'top': '-200px', 'left': '0px' });
+      //$element.css({ 'position': 'fixed', 'top': '-20px', 'left': '0px' });
 
       $scope.hostId = Ngl.nextWrHostId;
       Ngl.nextWrHostId++;

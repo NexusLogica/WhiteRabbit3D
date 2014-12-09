@@ -21,6 +21,7 @@ Ngl.HtmlCanvas = function(host, config) {
   this.canvasInitialized = false;
   this.updateRequired = false;
   this.mouseOverElements = [];
+  this.updateCanvas = undefined;
 };
 
 Ngl.HtmlCanvas.nextCanvasElementNum = 0;
@@ -36,12 +37,16 @@ Ngl.HtmlCanvas.prototype.load = function(gl) {
   this.sizeElements(this.host, this.top);
   this.buildLayoutTree();
 
+  var start = new Date();
   html2canvas(this.host.get(0), {
     //background: undefined,
     onrendered: function(canvas) {
       var element = $('.html2canvas-canvas').get(0);
-      element.appendChild(canvas);
+      _this.updateCanvas = canvas;
+      //element.appendChild(canvas);
       _this.createTexturemap(gl, canvas);
+      var end = new Date();
+      Ngl.log("*** Time = "+(end.getTime()-start.getTime()));
       deferred.resolve();
     },
     onclone: function(element) {
@@ -63,11 +68,12 @@ Ngl.HtmlCanvas.prototype.createTexturemap = function(gl, image) {
   this.texture = gl.createTexture();
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
   gl.bindTexture(gl.TEXTURE_2D, this.texture);
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.updateCanvas);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
   gl.generateMipmap(gl.TEXTURE_2D);
   gl.bindTexture(gl.TEXTURE_2D, null);
+  this.updateCanvas = undefined;
 };
 
 Ngl.HtmlCanvas.prototype.bindTexturemap = function(gl) {
@@ -93,11 +99,15 @@ Ngl.HtmlCanvas.prototype.setUpdateRequired = function(required) {
   this.updateCanvas = undefined;
   var _this = this;
 
+  var start = new Date();
+
   html2canvas(this.host.get(0), {
     onrendered: function(canvas) {
       var element = $('.html2canvas-canvas').get(0);
-      element.appendChild(canvas);
+      //element.appendChild(canvas);
       _this.updateCanvas = canvas;
+      var end = new Date();
+      Ngl.log("*** Time = "+(end.getTime()-start.getTime()));
     },
     onclone: function(element) {
       $(element).find('.wr3d-host').css('visibility', 'visible');
