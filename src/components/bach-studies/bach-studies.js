@@ -20,12 +20,15 @@ angular.module('wr3dApp').directive('bachStudies', [function() {
       ComponentExtensions.initialize(this, 'bachStudies', $scope, $element, $attrs);
 
       $scope.showStatus = false;
+      $scope.simulation = { };
 
       var runOnServer = function(command) {
         $scope.showStatus = false;
         $http.get('http://localhost:3006?do='+encodeURIComponent(command)).success(function(data) {
           $scope.showStatus = true;
           $scope.success = true;
+          $scope.simulation.data = data;
+
         }).error(function(err) {
           $scope.showStatus = true;
           $scope.success = false;

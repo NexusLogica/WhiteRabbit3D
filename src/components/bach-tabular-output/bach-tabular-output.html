@@ -1,0 +1,17 @@
+<div class="bach-tabular-output-container">
+
+  <div class="data-table">
+    <table>
+      <thead>
+        <tr>
+          <th ng-bind="data.independent.name"></th>
+          <th ng-repeat="y in data.dependent" ng-bind="y.name"></th>
+        </tr>
+      </thead>
+      <tr ng-repeat="x in data.independent.values">
+        <td ng-bind="{{x}}"></td>
+        <td ng-repeat="y in data.dependent" ng-bind="{{y.values[$index]}}"></td>
+      </tr>
+    </table>
+  </div>
+</div>

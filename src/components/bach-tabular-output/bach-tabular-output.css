@@ -1,0 +1,64 @@
+/**********************************************************************
+
+File     : bach-tabular-output.scss
+Project  : N Simulator Library
+Purpose  : Source file for bach studies component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2014/12/09
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+/**********************************************************************
+
+File     : core.scss
+Project  : N Simulator Library
+Purpose  : Source file for a core SCSS/CSS file.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+input::-webkit-input-placeholder {
+  color: #dddddd; }
+
+input::-moz-placeholder {
+  color: #dddddd; }
+
+input::-moz-placeholder {
+  color: #dddddd; }
+
+input:-ms-input-placeholder {
+  color: #dddddd; }
+
+/**********************************************************************
+
+File     : mixins.scss
+Project  : N Simulator Library
+Purpose  : Source file for a mixin SCSS/CSS file.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+.bach-tabular-output-container {
+  width: 100%;
+  clear: both;
+  color: white; }
+  .bach-tabular-output-container .run-container {
+    width: 900px;
+    margin: 50px auto 100px auto; }
+    .bach-tabular-output-container .run-container .button-container, .bach-tabular-output-container .run-container .status {
+      display: block;
+      margin: 50px auto 50px auto;
+      text-align: center; }
+    .bach-tabular-output-container .run-container .status div {
+      font-size: 30px;
+      text-align: center; }
+
+/*# sourceMappingURL=bach-tabular-output.css.map */

@@ -1,0 +1,38 @@
+/**********************************************************************
+
+File     : bach-tabular-output.scss
+Project  : N Simulator Library
+Purpose  : Source file for bach studies component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2014/12/09
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+
+@import '../../appearance/css/core.scss';
+@import '../../appearance/css/mixins.scss';
+
+.bach-tabular-output-container {
+  width: 100%;
+  clear: both;
+  color: white;
+  .data-table {
+    table {
+      border-collapse: collapse;
+      border-spacing: 20px 10px;
+      margin: 50px auto 50px auto;
+      th {
+        font-weight: normal;
+        text-align: center;
+
+      }
+      td, th {
+        padding: 0px 7px;
+        border: gray solid 1px;
+      }
+    }
+
+  }
+};
