@@ -132,7 +132,8 @@ Ngl.Scene.prototype.addMouseEvent = function(target, targetData, e) {
 
 Ngl.Scene.prototype.createEventHandlers = function() {
   var _this = this;
-  this.canvasElement.on('mouseup mousedown mousemove mouseover mouseout click', function(e) {
+  this.canvasElement.on('mousedown', function(e) {
+  //this.canvasElement.on('mouseup mousedown mousemove mouseover mouseout click', function(e) {
     var data = {
       eventType: e.type,
       screenX:   e.screenX,
@@ -145,7 +146,6 @@ Ngl.Scene.prototype.createEventHandlers = function() {
       button:    e.button
     };
     _this.rawMouseEvents.push(data);
-    event.stopPropagation();
     return false;
   });
 };

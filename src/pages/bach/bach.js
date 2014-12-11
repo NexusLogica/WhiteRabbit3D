@@ -20,7 +20,6 @@ angular.module('wr3dApp').directive('bach', [function() {
 
     }],
     link: function($scope, $element, $attrs, $ctrl) {
-
     }
   };
 }]);

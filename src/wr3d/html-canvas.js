@@ -47,6 +47,8 @@ Ngl.HtmlCanvas.prototype.load = function(gl) {
       _this.createTexturemap(gl, canvas);
       var end = new Date();
       Ngl.log("*** Time = "+(end.getTime()-start.getTime()));
+
+      _this.watchDomChanges();
       deferred.resolve();
     },
     onclone: function(element) {
@@ -56,6 +58,30 @@ Ngl.HtmlCanvas.prototype.load = function(gl) {
   });
 
   return deferred;
+};
+
+Ngl.HtmlCanvas.prototype.watchDomChanges = function() {
+
+   // select the target node
+  var target = this.host.find('button');
+
+  var _this = this;
+  // create an observer instance
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+      console.log(mutation.type);
+      _this.setUpdateRequired(true);
+    });
+  });
+
+  // configuration of the observer:
+  var config = {attributes: true, childList: true, characterData: true, subtree: true };
+
+  // pass in the target node, as well as the observer options
+  observer.observe(target.get(0), config);
+
+  // later, you can stop observing
+  //////////observer.disconnect();
 };
 
 Ngl.HtmlCanvas.prototype.sizeElements = function() {
@@ -117,6 +143,17 @@ Ngl.HtmlCanvas.prototype.setUpdateRequired = function(required) {
 };
 
 Ngl.HtmlCanvas.prototype.dispatchMouseEvent = function(scene, targetData, event) {
+  Ngl.log('Event: '+event.type);
+  //if(event.type === 'mouseleave' || event.type === 'mousedown') {
+  //  return;
+  //}
+  if(event.type === 'mousedown') {
+  //  return;
+  }
+  if(/*event.type === 'mouseleave' || event.type === 'mouseenter' ||*/ event.type === 'mousedown' || event.type === 'mouseup') {
+    var _this = this;
+//    setTimeout(function() { _this.setUpdateRequired(true); }, 60);
+  }
   targetData.target.dispatchEvent(event);
 };
 

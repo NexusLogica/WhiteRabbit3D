@@ -22,7 +22,6 @@ angular.module('wr3dApp').directive('audioPlayer', [function() {
       $scope.buttonText = 'Next';
       $scope.onNext = function() {
         $scope.buttonText = 'Other';
-        $scope.updateTexture();
       };
     }],
     link: function($scope, $element, $attrs, $ctrl) {

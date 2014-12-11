@@ -24,7 +24,20 @@ angular.module('wr3dApp').directive('bachTabularOutput', [function() {
 
       $scope.showStatus = false;
 
+      $scope.format = function(val) {
+        return sprintf('%5.5e', val);
+      };
 
+      $scope.isAbs = function(name) {
+        if(name.indexOf('|') >= 0) {
+          return true;
+        }
+        return false;
+      };
+
+      $scope.cleanName = function(name) {
+        return $.trim(name.replace(/\|/g, ''));
+      };
 
     }],
     link: function($scope, $element, $attrs, $ctrl) {

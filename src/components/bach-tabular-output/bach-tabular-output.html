@@ -3,14 +3,24 @@
   <div class="data-table">
     <table>
       <thead>
-        <tr>
-          <th ng-bind="data.independent.name"></th>
-          <th ng-repeat="y in data.dependent" ng-bind="y.name"></th>
-        </tr>
+      <tr>
+        <th><i ng-bind="data.independent.name"></i></th>
+        <th ng-repeat="y in data.dependent">
+          <i ng-show="!isAbs(y.name)" ng-bind="y.name"></i>
+          <span ng-show="isAbs(y.name)">|&nbsp;<i ng-bind="cleanName(y.name)"></i>&nbsp;|</span>
+        </th>
+      </tr>
+      <tr>
+        <th><i ng-bind="data.independent.name"></i></th>
+        <th ng-repeat="y in data.dependent">
+          <i ng-show="!isAbs(y.name)" ng-bind="y.name"></i>
+          <span ng-show="isAbs(y.name)">|&nbsp;<i ng-bind="cleanName(y.name)"></i>&nbsp;|</span>
+        </th>
+      </tr>
       </thead>
       <tr ng-repeat="x in data.independent.values">
-        <td ng-bind="{{x}}"></td>
-        <td ng-repeat="y in data.dependent" ng-bind="{{y.values[$index]}}"></td>
+        <td ng-bind="format(x)"></td>
+        <td ng-repeat="y in data.dependent" ng-bind="format(y.values[$index])"></td>
       </tr>
     </table>
   </div>

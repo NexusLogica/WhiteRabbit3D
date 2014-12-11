@@ -20,7 +20,7 @@ angular.module('wr3dApp').directive('wrHost', [function() {
     controller: ['$scope', '$element', '$attrs', '$timeout', function ($scope, $element, $attrs, $timeout) {
 
       $element.css('position', 'relative');
-      $element.css({ 'position': 'fixed', 'top': '-200px', 'left': '0px' });
+      $element.css({ 'position': 'fixed', 'top': '0px', 'left': '0px' });
       //$element.css({ 'position': 'fixed', 'top': '-20px', 'left': '0px' });
 
       $scope.hostId = Ngl.nextWrHostId;
@@ -53,11 +53,11 @@ angular.module('wr3dApp').directive('wrHost', [function() {
         hostContainer.scene.add($scope.panel);
       };
 
-      $scope.updateTexture = function() {
-        $timeout(function() {
-          $scope.canvas.setUpdateRequired(true);
-        }, 0);
-      };
+      //$scope.updateTexture = function() {
+      //  $timeout(function() {
+      //    $scope.canvas.setUpdateRequired(true);
+      //  }, 0);
+      //};
 
     }],
     link: function($scope, $element, $attrs, $ctrl) {

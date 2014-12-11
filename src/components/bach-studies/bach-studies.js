@@ -22,9 +22,10 @@ angular.module('wr3dApp').directive('bachStudies', [function() {
       $scope.showStatus = false;
       $scope.simulation = { };
 
-      var runOnServer = function(command) {
+      var runOnServer = function(config) {
         $scope.showStatus = false;
-        $http.get('http://localhost:3006?do='+encodeURIComponent(command)).success(function(data) {
+        var url = 'http://localhost:3006?do='+encodeURIComponent(JSON.stringify(config));
+        $http.get(url).success(function(data) {
           $scope.showStatus = true;
           $scope.success = true;
           $scope.simulation.data = data;
@@ -35,9 +36,8 @@ angular.module('wr3dApp').directive('bachStudies', [function() {
         });
       };
 
-      $scope.run = function() {
-        var command = '{ "system": "Betatron", "command": "dynamic-sim" }';
-        runOnServer(command);
+      $scope.run = function(config) {
+        runOnServer(config);
       };
     }],
     link: function($scope, $element, $attrs, $ctrl) {

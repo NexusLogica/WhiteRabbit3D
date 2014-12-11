@@ -1,0 +1,54 @@
+/**********************************************************************
+
+File     : bach-tabular-output.scss
+Project  : N Simulator Library
+Purpose  : Source file for Betatron input component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2014/12/10
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+/**********************************************************************
+
+File     : core.scss
+Project  : N Simulator Library
+Purpose  : Source file for a core SCSS/CSS file.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+input::-webkit-input-placeholder {
+  color: #dddddd; }
+
+input::-moz-placeholder {
+  color: #dddddd; }
+
+input::-moz-placeholder {
+  color: #dddddd; }
+
+input:-ms-input-placeholder {
+  color: #dddddd; }
+
+/**********************************************************************
+
+File     : mixins.scss
+Project  : N Simulator Library
+Purpose  : Source file for a mixin SCSS/CSS file.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+.betatron-input-container {
+  width: 100%;
+  clear: both;
+  color: white; }
+
+/*# sourceMappingURL=betatron-input.css.map */

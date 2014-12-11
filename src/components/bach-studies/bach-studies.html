@@ -1,19 +1,13 @@
-<div class="bach-studies-container">
-  <div class="run-container">
-    <div class="button-container">
-      <a class="btn btn-primary btn-lg" role="button" ng-click="run()">
-        Run
-      </a>
-    </div>
-
+<div class="bach-studies-container container-fluid">
+  <div class="run-container row">
     <div class="status">
       <div class="success" ng-show="success && showStatus">Success</div>
       <div class="error" ng-show="!success && showStatus">Error</div>
     </div>
 
-    <bach-tabular-output ng-show="simulation.data" simulation-data="simulation.data">
+    <betatron-input></betatron-input>
 
-    </bach-tabular-output>
+    <bach-tabular-output ng-show="simulation.data" simulation-data="simulation.data"></bach-tabular-output>
 
   </div>
 </div>

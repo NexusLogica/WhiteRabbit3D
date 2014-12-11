@@ -929,7 +929,75 @@ All Rights Reserved.
       font-weight: normal;
       text-align: center; }
     .bach-tabular-output-container .data-table table td, .bach-tabular-output-container .data-table table th {
-      padding: 0px 7px;
+      padding: 0px 10px;
       border: gray solid 1px; }
+
+/**********************************************************************
+
+File     : bach-tabular-output.scss
+Project  : N Simulator Library
+Purpose  : Source file for Betatron input component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2014/12/10
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+/**********************************************************************
+
+File     : core.scss
+Project  : N Simulator Library
+Purpose  : Source file for a core SCSS/CSS file.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+input::-webkit-input-placeholder {
+  color: #dddddd; }
+
+input::-moz-placeholder {
+  color: #dddddd; }
+
+input::-moz-placeholder {
+  color: #dddddd; }
+
+input:-ms-input-placeholder {
+  color: #dddddd; }
+
+/**********************************************************************
+
+File     : mixins.scss
+Project  : N Simulator Library
+Purpose  : Source file for a mixin SCSS/CSS file.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+.betatron-input-container {
+  width: 100%;
+  clear: both;
+  color: white; }
+  .betatron-input-container .form-group.run-type {
+    margin-bottom: 35px; }
+  .betatron-input-container form.inputs input {
+    color: #444444; }
+  .betatron-input-container .form-group.run-button {
+    margin-top: 45px; }
+  .betatron-input-container .popover {
+    color: black;
+    width: 200px;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    background-color: #e5e5e5; }
+    .betatron-input-container .popover .arrow::after {
+      border-right-color: #e5e5e5; }
 
 /*# sourceMappingURL=wr3d.css.map */
