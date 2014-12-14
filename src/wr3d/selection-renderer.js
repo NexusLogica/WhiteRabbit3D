@@ -104,7 +104,6 @@ Ngl.SelectionRenderer.prototype = {
     var wrObj = this.findObject(gl, scene, x, y);
 
     if(wrObj) {
-      Ngl.log("*** wrObj == null");
       var pixel = this.findPixelOnObject(gl, scene, x, y, wrObj);
       return { canvasX: x, canvasY: y, target: wrObj, targetX: pixel.x, targetY: pixel.y };
     }
@@ -134,7 +133,9 @@ Ngl.SelectionRenderer.prototype = {
 
     gl.readPixels(x, scene.height-y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, this.selectionPixel);
     var color = new Ngl.IntegerColor(this.selectionPixel[0], this.selectionPixel[1], this.selectionPixel[2]);
-    Ngl.log('color found = '+this.selectionPixel[0]+','+this.selectionPixel[1]+','+this.selectionPixel[2]);
+
+    // Ngl.log('color found = '+this.selectionPixel[0]+','+this.selectionPixel[1]+','+this.selectionPixel[2]);
+
     var obj = scene.wrObjectsByColorHash[color.toString()];
     return obj;
   },
@@ -157,7 +158,9 @@ Ngl.SelectionRenderer.prototype = {
 
     gl.readPixels(x, scene.height-y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, this.selectionPixel);
     var color = new Ngl.IntegerColor(this.selectionPixel[0], this.selectionPixel[1], this.selectionPixel[2]);
-    Ngl.log("rbg = "+color.r+', '+color.g+', '+color.b);
+
+    // Ngl.log("rbg = "+color.r+', '+color.g+', '+color.b);
+
     var pixel = this.getXYFromIntColor(color.r, color.g, color.b);
     pixel.x -= Ngl.CANVAS_MARGIN;
     pixel.y -= Ngl.CANVAS_MARGIN;

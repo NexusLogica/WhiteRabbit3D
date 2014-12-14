@@ -98,27 +98,11 @@ Ngl.Scene.prototype.setClearColor = function(color) {
  * @param e { eventType, target, screenX, screenY, clientX, clientY, altKey, shiftKey, metaKey, button }
  */
 Ngl.Scene.prototype.createMouseEvent = function(e, target) {
-  var mouseEvent = document.createEvent('MouseEvents');
-
-  try {
-    mouseEvent.initMouseEvent(
-      e.eventType,
-      true,
-      true,
-      window,
-      0,
-      e.screenX,
-      e.screenY,
-      e.clientX,
-      e.clientY,
-      _.isUndefined(e.altKey) ? this.currentEvent.altKey : e.altKey,
-      _.isUndefined(e.shiftKey) ? this.currentEvent.shiftKey : e.shiftKey,
-      _.isUndefined(e.metaKey) ? this.currentEvent.metaKey : e.metaKey,
-      _.isUndefined(e.button) ? this.currentEvent.button : e.button,
-      target);
-  } catch(err) {
-    Ngl.log('Error in createMouseEvent: '+err.message+': target = '+target);
-  }
+  var mouseEvent = new MouseEvent(e.eventType, {
+    bubbles: true,
+    cancelable: true,
+    view: window
+  });
   return mouseEvent;
 };
 
@@ -137,8 +121,10 @@ Ngl.Scene.prototype.addMouseEvent = function(target, targetData, e) {
 Ngl.Scene.prototype.createEventHandlers = function() {
   var _this = this;
   this.canvasElement.on('mouseup mousedown mousemove mouseover mouseout click', function(e) {
-    var clientX = _.isUndefined(e.offsetX) ? e.clientX : e.offsetX;
-    var clientY = _.isUndefined(e.offsetY) ? e.clientY : e.offsetY;
+
+    var clientX = _.isUndefined(e.offsetX) ? e.clientX - $(e.target).offset().left : e.offsetX;
+    var clientY = _.isUndefined(e.offsetY) ? e.clientY - $(e.target).offset().top  : e.offsetY;
+
     var data = {
       eventType: e.type,
       screenX:   e.screenX,

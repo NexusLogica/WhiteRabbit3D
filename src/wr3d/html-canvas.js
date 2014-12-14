@@ -147,24 +147,11 @@ Ngl.HtmlCanvas.prototype.setUpdateRequired = function(required) {
 };
 
 Ngl.HtmlCanvas.prototype.dispatchMouseEvent = function(scene, targetData, event) {
-  Ngl.log('Event: '+event.type);
   if(_.isUndefined(event.offsetX)) {
     event.offsetX  = event.clientX - $(targetData.target).offset().left;
     event.offsetY  = event.clientY - $(targetData.target).offset().top;
   }
 
-/*
-  //if(event.type === 'mouseleave' || event.type === 'mousedown') {
-  //  return;
-  //}
-  if(event.type === 'mousedown') {
-  //  return;
-  }
-  if(event.type === 'mouseleave' || event.type === 'mouseenter' || event.type === 'mousedown' || event.type === 'mouseup') {
-    var _this = this;
-//    setTimeout(function() { _this.setUpdateRequired(true); }, 60);
-  }
-*/
   targetData.target.dispatchEvent(event);
 };
 
