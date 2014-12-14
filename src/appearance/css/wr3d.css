@@ -1000,4 +1000,64 @@ All Rights Reserved.
     .betatron-input-container .popover .arrow::after {
       border-right-color: #e5e5e5; }
 
+/**********************************************************************
+
+File     : bach-chart.scss
+Project  : N Simulator Library
+Purpose  : Source file for bach chart component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2014/12/12
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+/**********************************************************************
+
+File     : core.scss
+Project  : N Simulator Library
+Purpose  : Source file for a core SCSS/CSS file.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+input::-webkit-input-placeholder {
+  color: #dddddd; }
+
+input::-moz-placeholder {
+  color: #dddddd; }
+
+input::-moz-placeholder {
+  color: #dddddd; }
+
+input:-ms-input-placeholder {
+  color: #dddddd; }
+
+/**********************************************************************
+
+File     : mixins.scss
+Project  : N Simulator Library
+Purpose  : Source file for a mixin SCSS/CSS file.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+.bach-chart-container {
+  width: 100%;
+  clear: both;
+  color: white; }
+  .bach-chart-container .plot {
+    width: 500px;
+    margin: 0px auto 0px auto; }
+    .bach-chart-container .plot .plot-iframe {
+      width: 500px;
+      height: 400px;
+      border-style: none; }
+
 /*# sourceMappingURL=wr3d.css.map */

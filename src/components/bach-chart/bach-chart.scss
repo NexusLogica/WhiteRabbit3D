@@ -1,0 +1,31 @@
+/**********************************************************************
+
+File     : bach-chart.scss
+Project  : N Simulator Library
+Purpose  : Source file for bach chart component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2014/12/12
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+
+@import '../../appearance/css/core.scss';
+@import '../../appearance/css/mixins.scss';
+
+.bach-chart-container {
+  width: 100%;
+  clear: both;
+  color: white;
+  .plot {
+    width: 500px;
+    margin: 0px auto 0px auto;
+    .plot-iframe {
+      width: 500px;
+      height: 400px;
+      border-style: none;
+    }
+  }
+
+};

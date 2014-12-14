@@ -60,6 +60,7 @@ Ngl.HtmlCanvas.prototype.load = function(gl) {
   return deferred;
 };
 
+var x = false;
 Ngl.HtmlCanvas.prototype.watchDomChanges = function() {
 
    // select the target node
@@ -69,8 +70,11 @@ Ngl.HtmlCanvas.prototype.watchDomChanges = function() {
   // create an observer instance
   var observer = new MutationObserver(function(mutations) {
     mutations.forEach(function(mutation) {
-      console.log(mutation.type);
-      _this.setUpdateRequired(true);
+      if(!x) {
+        console.log(mutation.type);
+        _this.setUpdateRequired(true);
+        x = true;
+      }
     });
   });
 
@@ -144,16 +148,23 @@ Ngl.HtmlCanvas.prototype.setUpdateRequired = function(required) {
 
 Ngl.HtmlCanvas.prototype.dispatchMouseEvent = function(scene, targetData, event) {
   Ngl.log('Event: '+event.type);
+  if(_.isUndefined(event.offsetX)) {
+    event.offsetX  = event.clientX - $(targetData.target).offset().left;
+    event.offsetY  = event.clientY - $(targetData.target).offset().top;
+  }
+
+/*
   //if(event.type === 'mouseleave' || event.type === 'mousedown') {
   //  return;
   //}
   if(event.type === 'mousedown') {
   //  return;
   }
-  if(/*event.type === 'mouseleave' || event.type === 'mouseenter' ||*/ event.type === 'mousedown' || event.type === 'mouseup') {
+  if(event.type === 'mouseleave' || event.type === 'mouseenter' || event.type === 'mousedown' || event.type === 'mouseup') {
     var _this = this;
 //    setTimeout(function() { _this.setUpdateRequired(true); }, 60);
   }
+*/
   targetData.target.dispatchEvent(event);
 };
 
@@ -163,22 +174,22 @@ Ngl.HtmlCanvas.prototype.findElementUnderXyPosition = function(scene, x, y) {
 
   var e = {
     target: target,
-    screenX: undefined,
-    screenY: undefined,
+    screenX: $(target.element).offset().top + window.screenY,
+    screenY: $(target.element).offset().left + window.screenX,
     clientX: x-target.x,
     clientY: y-target.y
   };
 
   var leaving = _.without(this.mouseOverElements, mouseOvers);
   _.forEach(leaving, function(layout) {
-    var e = { eventType: 'mouseleave', clientX: x, clientY: y };
-    scene.addMouseEvent(this.panel, { target: layout.element }, e);
+    var eLeave = { eventType: 'mouseleave', clientX: e.clientX, clientY: e.clientY, screenX: e.screenX, screenY: e.screenY };
+    scene.addMouseEvent(this.panel, { target: layout.element }, eLeave);
   }, this);
 
   var entering = _.xor(this.mouseOverElements, mouseOvers);
   _.forEach(entering, function(layout) {
-    var e = { eventType: 'mouseenter', clientX: x, clientY: y };
-    scene.addMouseEvent(this.panel, { target: layout.element }, e);
+    var eEnter = { eventType: 'mouseenter', clientX: e.clientX, clientY: e.clientY, screenX: e.screenX, screenY: e.screenY };
+    scene.addMouseEvent(this.panel, { target: layout.element }, eEnter);
   }, this);
 
   this.mouseOverElements = mouseOvers;

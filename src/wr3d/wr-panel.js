@@ -180,6 +180,7 @@ Ngl.WrPanel.prototype.render = function(gl, scene) {
   // Where the vertex data needs to go.
   gl.enableVertexAttribArray(this['positionLocation'+renderType]);
   gl.enableVertexAttribArray(this['textureLocation'+renderType]);
+  gl.enableVertexAttribArray(this['selectionTextureLocation'+renderType]);
 
   gl.vertexAttribPointer(this['positionLocation'+renderType], 3, gl.FLOAT, gl.FALSE, 40, 0);
 //  gl.vertexAttribPointer(this['normalLocation'+renderType],  3, gl.FLOAT, gl.FALSE, 40, 12);

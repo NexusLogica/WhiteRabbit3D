@@ -30,7 +30,7 @@ Ngl.Scene = function() {
 
   this.wrObjects = [];
   this.wrObjectsByColorHash = {};
-  this.wrNextColor = new Ngl.IntegerColor();
+  this.wrNextColor = new Ngl.IntegerColor(128, 0, 0);
 
   this.clearColor = vec4.fromValues(0.0, 0.0, 0.0, 1.0);
 
@@ -97,24 +97,28 @@ Ngl.Scene.prototype.setClearColor = function(color) {
  * @method createMouseEvent
  * @param e { eventType, target, screenX, screenY, clientX, clientY, altKey, shiftKey, metaKey, button }
  */
-Ngl.Scene.prototype.createMouseEvent = function(e) {
+Ngl.Scene.prototype.createMouseEvent = function(e, target) {
   var mouseEvent = document.createEvent('MouseEvents');
 
-  mouseEvent.initMouseEvent(
-    e.eventType,
-    true,
-    true,
-    null,
-    0,
-    e.screenX,
-    e.screenY,
-    e.clientX,
-    e.clientY,
-    _.isUndefined(e.altKey)   ? this.currentEvent.altKey   : e.altKey,
-    _.isUndefined(e.shiftKey) ? this.currentEvent.shiftKey : e.shiftKey,
-    _.isUndefined(e.metaKey)  ? this.currentEvent.metaKey  : e.metaKey,
-    _.isUndefined(e.button)   ? this.currentEvent.button   : e.button,
-    undefined);
+  try {
+    mouseEvent.initMouseEvent(
+      e.eventType,
+      true,
+      true,
+      window,
+      0,
+      e.screenX,
+      e.screenY,
+      e.clientX,
+      e.clientY,
+      _.isUndefined(e.altKey) ? this.currentEvent.altKey : e.altKey,
+      _.isUndefined(e.shiftKey) ? this.currentEvent.shiftKey : e.shiftKey,
+      _.isUndefined(e.metaKey) ? this.currentEvent.metaKey : e.metaKey,
+      _.isUndefined(e.button) ? this.currentEvent.button : e.button,
+      target);
+  } catch(err) {
+    Ngl.log('Error in createMouseEvent: '+err.message+': target = '+target);
+  }
   return mouseEvent;
 };
 
@@ -125,21 +129,24 @@ Ngl.Scene.prototype.createMouseEvent = function(e) {
  * @param e { eventType, target, screenX, screenY, clientX, clientY, altKey, shiftKey, metaKey, button }
  */
 Ngl.Scene.prototype.addMouseEvent = function(target, targetData, e) {
-  var mouseEvent = this.createMouseEvent(e);
+  var mouseEvent = this.createMouseEvent(e, targetData.target);
   this.mouseEventQueue.push( { targetPanel: target, targetData: targetData, event: mouseEvent } );
   this.dispatchEvent();
 };
 
 Ngl.Scene.prototype.createEventHandlers = function() {
   var _this = this;
-  this.canvasElement.on('mousedown', function(e) {
-  //this.canvasElement.on('mouseup mousedown mousemove mouseover mouseout click', function(e) {
+  this.canvasElement.on('mouseup mousedown mousemove mouseover mouseout click', function(e) {
+    var clientX = _.isUndefined(e.offsetX) ? e.clientX : e.offsetX;
+    var clientY = _.isUndefined(e.offsetY) ? e.clientY : e.offsetY;
     var data = {
       eventType: e.type,
       screenX:   e.screenX,
       screenY:   e.screenY,
-      clientX:   e.offsetX,
-      clientY:   e.offsetY,
+      clientX:   clientX,
+      clientY:   clientY,
+      offsetX:   clientX,
+      offsetY:   clientY,
       altKey:    e.altKey,
       shiftKey:  e.shiftKey,
       metaKey:   e.metaKey,
@@ -168,7 +175,7 @@ Ngl.Scene.prototype.processMouseEvents = function() {
 
     if(hit.target) {
       var targetData = hit.target.findElementUnderXyPosition(this, hit.targetX, hit.targetY);
-      var mouseEvent = this.createMouseEvent(e);
+      var mouseEvent = this.createMouseEvent(e, hit.target);
       this.mouseEventQueue.push( { targetPanel: hit.target, targetData: targetData, event: mouseEvent } );
       if(!this.processingMouseEvent) {
         this.dispatchEvent();
