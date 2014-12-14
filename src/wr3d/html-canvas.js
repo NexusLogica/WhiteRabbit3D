@@ -60,29 +60,30 @@ Ngl.HtmlCanvas.prototype.load = function(gl) {
   return deferred;
 };
 
-var x = false;
 Ngl.HtmlCanvas.prototype.watchDomChanges = function() {
 
-   // select the target node
-  var target = this.host.find('button');
-
   var _this = this;
-  // create an observer instance
+  this.inWatchDom = false;
+  // Create an observer instance and get callbacks
   var observer = new MutationObserver(function(mutations) {
-    mutations.forEach(function(mutation) {
-      if(!x) {
+
+    if(_this.inWatchDom) {
+      return;
+    } else {
+      _this.inWatchDom = true;
+      mutations.forEach(function (mutation) {
         console.log(mutation.type);
         _this.setUpdateRequired(true);
-        x = true;
-      }
-    });
+        _this.inWatchDom = false;
+      });
+    }
   });
 
   // configuration of the observer:
   var config = {attributes: true, childList: true, characterData: true, subtree: true };
 
   // pass in the target node, as well as the observer options
-  observer.observe(target.get(0), config);
+  observer.observe(this.host.get(0), config);
 
   // later, you can stop observing
   //////////observer.disconnect();
@@ -115,7 +116,7 @@ Ngl.HtmlCanvas.prototype.bindTexturemap = function(gl) {
     if(required && this.updateCanvas) {
       gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, this.updateCanvas);
       gl.generateMipmap(gl.TEXTURE_2D);
-      this.updateCanvas = undefined;
+      this.updateAvailable = false;
     }
   }
 };
@@ -125,13 +126,19 @@ Ngl.HtmlCanvas.prototype.getUpdateRequired = function() {
 };
 
 Ngl.HtmlCanvas.prototype.setUpdateRequired = function(required) {
+  if(this.updateAvailable) {
+    return;
+  }
+
   this.updateRequired = required;
   this.updateCanvas = undefined;
   var _this = this;
 
   var start = new Date();
+  this.updateAvailable = true;
 
   html2canvas(this.host.get(0), {
+    canvas: this.updateCanvas,
     onrendered: function(canvas) {
       var element = $('.html2canvas-canvas').get(0);
       //element.appendChild(canvas);

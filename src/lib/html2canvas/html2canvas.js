@@ -1700,9 +1700,14 @@ NodeParser.prototype.disableAnimations = function(document) {
 };
 
 NodeParser.prototype.createStyles = function(document, styles) {
+    // Interestingly, when 
+    if(window.html2canvas.hasPseudoElement) {
+      return;
+    }
     var hidePseudoElements = document.createElement('style');
     hidePseudoElements.innerHTML = styles;
     document.body.appendChild(hidePseudoElements);
+    window.html2canvas.hasPseudoElement = true;
 };
 
 NodeParser.prototype.getPseudoElements = function(container) {
