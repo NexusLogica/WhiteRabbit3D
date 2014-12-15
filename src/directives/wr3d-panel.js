@@ -1,6 +1,6 @@
 /**********************************************************************
 
- File     : wr-host.js
+ File     : wr3d-panel.js
  Project  : N Simulator Library
  Purpose  : Source file for a WhiteRabbit3D style.
  Revisions: Original definition by Lawrence Gunn.
@@ -12,19 +12,18 @@
  */
 'use strict';
 
-Ngl.nextWrHostId = 0;
+Ngl.nextWr3dPanelId = 0;
 
-angular.module('wr3dApp').directive('wrHost', [function() {
+angular.module('wr3dApp').directive('wr3dPanel', [function() {
   return {
     restrict: 'E',
     controller: ['$scope', '$element', '$attrs', '$timeout', function ($scope, $element, $attrs, $timeout) {
 
-      $element.css('position', 'relative');
-      $element.css({ 'position': 'fixed', 'top': '0px', 'left': '0px' });
-      //$element.css({ 'position': 'fixed', 'top': '-20px', 'left': '0px' });
+      // TODO: Find a proper value for 'top'
+      $element.css({ 'position': 'fixed', 'top': '-2000px', 'left': '0px' });
 
-      $scope.hostId = Ngl.nextWrHostId;
-      Ngl.nextWrHostId++;
+      $scope.hostId = Ngl.nextWr3dPanelId;
+      Ngl.nextWr3dPanelId++;
       $scope.styleSelectors = [];
 
       var getWrStyleSelectors = function() {
@@ -39,7 +38,7 @@ angular.module('wr3dApp').directive('wrHost', [function() {
 
       getWrStyleSelectors();
 
-      $scope.$emit('wr-host:notify-host-container', $scope);
+      $scope.$emit('wr3d-panel:notify-scene', $scope);
 
       $scope.getStyles = function(hostContainer) {
         $scope.wrStyle = {};
@@ -61,7 +60,7 @@ angular.module('wr3dApp').directive('wrHost', [function() {
 
     }],
     link: function($scope, $element, $attrs, $ctrl) {
-      $element.addClass('wr-host');
+      $element.addClass('wr3d-panel');
       $element.on('click', function() {
 
       });

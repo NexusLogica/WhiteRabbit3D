@@ -1,8 +1,8 @@
 /**********************************************************************
 
-File     : wr-canvas.js
+File     : wr3d-canvas.js
 Project  : N Simulator Library
-Purpose  : Source file for a home page component.
+Purpose  : Source file for a WR3D canvas component.
 Revisions: Original definition by Lawrence Gunn.
            2014/09/27
 
@@ -12,15 +12,15 @@ All Rights Reserved.
 */
 'use strict';
 
-angular.module('wr3dApp').directive('wrCanvas', [function() {
+angular.module('wr3dApp').directive('wr3dCanvas', [function() {
   return {
     restrict: 'E',
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', function (ComponentExtensions, $scope, $element, $attrs, $timeout) {
-      ComponentExtensions.initialize(this, 'wrCanvas', $scope, $element, $attrs);
+      ComponentExtensions.initialize(this, 'wr3dCanvas', $scope, $element, $attrs);
 
       $scope.notifyHost = function() {
         $timeout(function() {
-          $scope.$emit('wr-canvas:canvas-ready', $scope.canvas);
+          $scope.$emit('wr3d-canvas:canvas-ready', $scope.canvas);
         }, 1);
       };
     }],

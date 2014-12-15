@@ -1,6 +1,6 @@
 /**********************************************************************
 
- File     : wr-host-container.js
+ File     : wr3d-scene.js
  Project  : WhiteRabbit3D
  Purpose  : Source file for a wr3d Html host container - i.e. the top level WR3D component.
  Revisions: Original definition by Lawrence Gunn.
@@ -12,7 +12,7 @@
  */
 'use strict';
 
-angular.module('wr3dApp').directive('wrHostContainer', [function() {
+angular.module('wr3dApp').directive('wr3dScene', [function() {
   return {
     restrict: 'E',
     controller: ['$scope', '$element', '$attrs', '$http', function ($scope, $element, $attrs, $http) {
@@ -20,7 +20,6 @@ angular.module('wr3dApp').directive('wrHostContainer', [function() {
       $scope.hostList = [];
       $scope.styleListPending = [];
       $scope.styleListLoaded = [];
-      $element.append('<div class="html2canvas-canvas"></div>');
 
       $scope.styles = {};
 
@@ -43,13 +42,13 @@ angular.module('wr3dApp').directive('wrHostContainer', [function() {
         render();
       };
 
-      $scope.$on('wr-canvas:canvas-ready', function(event, canvas) {
+      $scope.$on('wr3d-canvas:canvas-ready', function(event, canvas) {
         $scope.canvas = canvas;
         initializeCanvas();
         event.stopPropagation();
       });
 
-      $scope.$on('wr-host:notify-host-container', function(event, hostScope) {
+      $scope.$on('wr3d-panel:notify-scene', function(event, hostScope) {
         $scope.hostList.push(hostScope);
         event.stopPropagation();
       });

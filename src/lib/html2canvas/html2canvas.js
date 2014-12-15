@@ -1700,7 +1700,7 @@ NodeParser.prototype.disableAnimations = function(document) {
 };
 
 NodeParser.prototype.createStyles = function(document, styles) {
-    // Interestingly, when 
+    // Interestingly, when
     if(window.html2canvas.hasPseudoElement) {
       return;
     }

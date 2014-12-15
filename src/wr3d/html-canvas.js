@@ -174,11 +174,22 @@ Ngl.HtmlCanvas.prototype.findElementUnderXyPosition = function(scene, x, y) {
     clientY: y-target.y
   };
 
+  var loggedLine = false;
   var leaving = _.without(this.mouseOverElements, mouseOvers);
-  _.forEach(leaving, function(layout) {
-    var eLeave = { eventType: 'mouseleave', clientX: e.clientX, clientY: e.clientY, screenX: e.screenX, screenY: e.screenY };
-    scene.addMouseEvent(this.panel, { target: layout.element }, eLeave);
-  }, this);
+  if(leaving.length) {
+    _.forEach(leaving, function (layout) {
+      //if(!loggedLine) { loggedLine = true; Ngl.log('********************************'); }
+      Ngl.log('Leaving '+layout.element.className);
+      var eLeave = {
+        eventType: 'mouseleave',
+        clientX: e.clientX,
+        clientY: e.clientY,
+        screenX: e.screenX,
+        screenY: e.screenY
+      };
+      scene.addMouseEvent(this.panel, {target: layout.element}, eLeave);
+    }, this);
+  }
 
   var entering = _.xor(this.mouseOverElements, mouseOvers);
   _.forEach(entering, function(layout) {

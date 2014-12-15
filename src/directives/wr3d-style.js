@@ -1,6 +1,6 @@
 /**********************************************************************
 
- File     : wr-style.js
+ File     : wr3d-style.js
  Project  : N Simulator Library
  Purpose  : Source file for a WhiteRabbit3D style.
  Revisions: Original definition by Lawrence Gunn.
@@ -14,7 +14,7 @@
 
 Ngl.nextWrStyleId = 0;
 
-angular.module('wr3dApp').directive('wrStyle', [function() {
+angular.module('wr3dApp').directive('wr3dStyle', [function() {
   return {
     restrict: 'E',
     controller: ['$scope', '$element', '$attrs', '$http', function ($scope, $element, $attrs, $http) {
