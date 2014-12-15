@@ -12,9 +12,9 @@ All Rights Reserved.
 */
 
 .song-title {
-  host:       .wr3d-host.song-title-host;
-  position3d: translate(0px, 0px, 0px);
-  display3d:  surface;
-  scaling3d:  screen;
-  surface3d: ( type: circular, radiusOuter: 300px, angle: full );
+  -wr3d-host:       .wr3d-host.song-title-host;
+  -wr3d-position3d: translate(100px, 0px, 200px) rotateY(30deg);
+  -wr3d-display3d:  surface;
+  -wr3d-scaling3d:  screen;
+  -wr3d-surface3d: ( type: circular, radiusOuter: 300px, angle: full );
 }

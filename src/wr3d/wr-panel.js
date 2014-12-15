@@ -151,12 +151,6 @@ Ngl.WrPanel.prototype.render = function(gl, scene) {
     this.canvas.bindTexturemap(gl);
     renderType = 'Nrm';
     this.flags[0] = 0;
-
-    // Only update during regular render cycles.
-    if(this.parent.transformUpdated || this.transformUpdated) {
-      mat4.multiply(this.worldTransform, this.parent.worldTransform,  this.transform);
-      mat4.multiply(this.projectionModelView, scene.camera.projectionMatrix, this.worldTransform);
-    }
   }
 
   gl.useProgram(this['program'+renderType]);

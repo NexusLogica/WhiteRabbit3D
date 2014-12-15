@@ -409,6 +409,14 @@ Ngl.vecFromString = function(str) {
   return vec;
 };
 
+Ngl.floatAndUnitFromString = function(str) {
+  if(_.isEmpty(str)) { return { value: 0 }; }
+
+  var value = parseFloat(str);
+  var units = str.match(/[a-zA-Z]{2,}/);
+  return { value: value, units: units };
+};
+
 Ngl.toCamelCase = function(str) {
   return str.replace(/-([a-z])/g, function (g) {
     return g[1].toUpperCase();
