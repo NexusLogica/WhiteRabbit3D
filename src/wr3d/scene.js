@@ -462,6 +462,20 @@ Ngl.Scaling = { 'unscaled': 0, 'parent': 1, 'screen': 2 };
 Ngl.MAX_NUM_SURFACES = 4;
 Ngl.CANVAS_MARGIN = 0;
 
+Ngl.Placement = Ngl.Placement || {};
+Ngl.Placement.UPPER_LEFT   = 0;
+Ngl.Placement.UPPER_RIGHT  = 1;
+Ngl.Placement.BOTTOM_RIGHT = 2;
+Ngl.Placement.BOTTOM_LEFT  = 3;
+Ngl.Placement.CENTER       = 4;
+Ngl.Placement.map = {
+  'upper-left': 0,
+  'upper-right': 1,
+  'bottom-right': 2,
+  'bottom-left': 3,
+  'center': 4
+};
+
 // *** Utility functions ***
 
 Ngl.radians = function(degrees) {

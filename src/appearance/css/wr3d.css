@@ -723,18 +723,32 @@ body {
     margin: 30px auto 30px auto;
     width: 800px;
     height: 600px; }
-
-.song-title > div {
-  border-bottom: gray 2px solid;
-  border-top: gray 2px solid;
-  color: darkgoldenrod;
-  font-size: 20px;
-  padding: 5px 0px 5px 0px; }
-.song-title .inline {
-  display: inline-block; }
-.song-title .btn {
-  background-color: rgba(200, 200, 200, 0.1);
-  border: 1px gray solid; }
+  .audio-container .song-title > div {
+    border-bottom: gray 2px solid;
+    border-top: gray 2px solid;
+    color: darkgoldenrod;
+    font-size: 20px;
+    padding: 5px 0px 5px 0px; }
+  .audio-container .song-title .inline {
+    display: inline-block; }
+  .audio-container .song-title .btn {
+    background-color: rgba(200, 200, 200, 0.1);
+    border: 1px gray solid; }
+  .audio-container .main-content {
+    background-color: transparent;
+    padding: 2px; }
+    .audio-container .main-content > div {
+      border: darkgray 2px solid;
+      padding: 10px;
+      font-size: 38px;
+      background-color: #e5e5e5;
+      border-radius: 20px;
+      -webkit-border-radius: 20px;
+      -moz-border-radius: 20px;
+      width: 300px;
+      height: 200px; }
+      .audio-container .main-content > div .btn {
+        font-size: 26px; }
 
 /**********************************************************************
 

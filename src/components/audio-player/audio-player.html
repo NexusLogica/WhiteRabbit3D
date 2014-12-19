@@ -4,7 +4,11 @@
 
   <wr3d-style wr-import="src/components/audio-player/audio-player.wrcss"></wr3d-style>
 
-  <wr3d-panel>
+  <wr3d-dock class="page-anchor">
+    <wr3d-object class="anchor-cube"></wr3d-object>
+  </wr3d-dock>
+
+  <wr3d-panel wr3d-display="false">
     <div class="song-title">
       <div>
         <div class="inline">Hi there</div>
@@ -14,6 +18,15 @@
         </div>
       </div>
     </div>
-  </wr3d-panel>>
+  </wr3d-panel>
+
+  <wr3d-panel wr3d-display="true">
+    <div class="main-content">
+      <div>
+        <div class="inline">Hi there</div>
+        <button class="btn" ng-click="onNext()" ng-bind="buttonText"></button>
+      </div>
+    </div>
+  </wr3d-panel>
 
 </wr3d-scene>

@@ -24,22 +24,40 @@ All Rights Reserved.
     width: 800px;
     height: 600px;
   }
-}
-.song-title {
-  >div {
-    border-bottom: gray 2px solid;
-    border-top: gray 2px solid;
-    color: darkgoldenrod;
-    font-size: 20px;
-    padding: 5px 0px 5px 0px;
+
+  .song-title {
+    >div {
+      border-bottom: gray 2px solid;
+      border-top: gray 2px solid;
+      color: darkgoldenrod;
+      font-size: 20px;
+      padding: 5px 0px 5px 0px;
+    }
+
+    .inline {
+      display: inline-block;
+    }
+
+    .btn {
+      background-color: rgba(200, 200, 200, 0.1);
+      border: 1px gray solid;
+    }
   }
 
-  .inline {
-    display: inline-block;
-  }
-
-  .btn {
-    background-color: rgba(200, 200, 200, 0.1);
-    border: 1px gray solid;
+  .main-content {
+    background-color: rgba(0, 0, 0, 0.0);
+    padding: 2px;
+    >div {
+      border: darkgray 2px solid;
+      padding: 10px;
+      font-size: 38px;
+      background-color: #e5e5e5;
+      @include border-radius(20px);
+      width: 300px;
+      height: 200px;
+      .btn {
+        font-size: 26px;
+      }
+    }
   }
 }

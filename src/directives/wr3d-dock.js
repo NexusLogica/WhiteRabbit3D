@@ -1,6 +1,6 @@
 /**********************************************************************
 
- File     : wr3d-panel.js
+ File     : wr3d-dock.js
  Project  : N Simulator Library
  Purpose  : Source file for a WhiteRabbit3D style.
  Revisions: Original definition by Lawrence Gunn.
@@ -12,14 +12,14 @@
  */
 'use strict';
 
-Ngl.nextWr3dPanelId = 0;
+Ngl.nextWr3dDockId = 0;
 
-angular.module('wr3dApp').directive('wr3dPanel', [function() {
+angular.module('wr3dApp').directive('wr3dDock', [function() {
   return {
     restrict: 'E',
     scope: {},
     controller: ['$scope', '$element', '$attrs', '$timeout', '$parse', function ($scope, $element, $attrs, $timeout, $parse) {
-      $scope.componentName = 'wr3dPanel';
+      $scope.componentName = 'wr3dDock';
 
       $scope.noShow = false;
       if($attrs.hasOwnProperty('wr3dDisplay')) {
@@ -33,10 +33,10 @@ angular.module('wr3dApp').directive('wr3dPanel', [function() {
       }
 
       // TODO: Find a proper value for 'top'
-      $element.css({ 'position': 'fixed', 'top': '-2000px', 'left': '0px' });
+      $element.css({ 'display': 'none' });
 
-      $scope.hostId = Ngl.nextWr3dPanelId;
-      Ngl.nextWr3dPanelId++;
+      $scope.hostId = Ngl.nextWr3dDockId;
+      Ngl.nextWr3dDockId++;
       $scope.styleSelectors = [];
 
     }],
@@ -67,12 +67,11 @@ angular.module('wr3dApp').directive('wr3dPanel', [function() {
           $scope.wrStyle = _.merge($scope.wrStyle, style);
         });
 
-        $scope.canvas = new Ngl.HtmlCanvas($element, $scope.wrStyle);
-        $scope.panel = new Ngl.WrPanel($scope.canvas, $scope.wrStyle);
-        hostContainer.scene.add($scope.panel);
+        $scope.dock = new Ngl.WrDock($scope.wrStyle);
+        hostContainer.scene.add($scope.dock);
       };
 
-      $element.addClass('wr3d-panel');
+      $element.addClass('wr3d-dock');
     }
   };
 }]);

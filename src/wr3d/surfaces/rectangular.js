@@ -77,3 +77,7 @@ Ngl.Surface.Rectangular.prototype.attachToShader = function(gl, scene, locations
   gl.uniformMatrix4fv(locations.after, gl.FALSE, this.after);
   gl.uniform4iv(locations.ivec, this.ivec);
 };
+
+Ngl.Surface.Rectangular.prototype.translate = function(trans, pixSizes) {
+
+};

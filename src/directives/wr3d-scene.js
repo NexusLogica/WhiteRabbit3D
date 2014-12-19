@@ -48,7 +48,7 @@ angular.module('wr3dApp').directive('wr3dScene', [function() {
         event.stopPropagation();
       });
 
-      $scope.$on('wr3d-panel:notify-scene', function(event, hostScope) {
+      $scope.$on('wr3d:notify-scene', function(event, hostScope) {
         $scope.hostList.push(hostScope);
         event.stopPropagation();
       });
@@ -86,6 +86,7 @@ angular.module('wr3dApp').directive('wr3dScene', [function() {
         });
 
         _.forEach($scope.hostList, function(host) {
+          debugger;
           host.getStyles($scope);
         });
       };

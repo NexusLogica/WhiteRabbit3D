@@ -24,6 +24,13 @@ angular.module('wr3dApp').directive('bachChart', [function() {
 
       $scope.showStatus = false;
 
+      $scope.$watch('data', function(newVal, oldVal) {
+        debugger;
+        if (newVal) {
+          $scope.plot();
+        }
+      });
+
       $scope.plot = function() {
         var data = {
           un: "LawrenceGunn",
@@ -64,7 +71,7 @@ angular.module('wr3dApp').directive('bachChart', [function() {
 
     }],
     link: function($scope, $element, $attrs, $ctrl) {
-      $scope.plot();
+//      $scope.plot();
     }
   };
 }]);

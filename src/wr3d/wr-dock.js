@@ -27,18 +27,25 @@ Ngl.WrDock.prototype.initialize = function(gl, scene) {
   Ngl.Dock.prototype.initialize.call(this, gl, scene);
   this.initialized = true;
 
-  this.configureFromStyles();
+  this.configureFromStyles(gl, scene);
   this.parseSurfaces();
 };
 
-Ngl.WrDock.prototype.configureFromStyles = function() {
+Ngl.WrDock.prototype.configureFromStyles = function(gl, scene) {
+  // Scaling
   this.scaling3d = _.isUndefined(this.config['-wr3d-scaling3d']) ? Ngl.Scaling.parent : Ngl.Scaling[this.config['-wr3d-scaling3d'].toLowerCase()];
   this.recalculatePosition = true;
   this.wrScaleFactor = 1.0;
   this.magnification = _.isUndefined(this.config['-wr3d-magnification3d']) ? 1.0 : this.config['-wr3d-magnification3d'];
   this.totalScaling = 1.0;
 
-  // Parse position3d
+  // Position from an anchor position.
+  this.screenAnchor = this.parseAnchor();
+  if(this.screenAnchor) {
+    this.transform = this.anchorToScreen(scene);
+  }
+
+  // Parse position3d.
   var _this = this;
   var rotDeg;
   var position3d = this.config['-wr3d-position3d'];
@@ -76,6 +83,22 @@ Ngl.WrDock.prototype.configureFromStyles = function() {
         }
       }
     });
+  }
+};
+
+Ngl.WrDock.prototype.parseAnchor = function() {
+  var screenAnchor = this.config['-wr3d-screen-anchor'];
+  if (!_.isEmpty(screenAnchor)) {
+    var anp = screenAnchor.split();
+    if (anp.length === 2) {
+      var zIndex = (_.isNumber(anp[0]) ? 0 : 1);
+      var z = parseFloat(anp[zIndex]);
+      var anchor = Ngl.Placement.map[anp[zIndex === 0 ? 1 : 0]];
+      if (!_.isUndefined(anchor)) {
+        return {z: z, anchor: anchor};
+      }
+    }
+    return undefined;
   }
 };
 
@@ -142,6 +165,11 @@ Ngl.WrDock.prototype.parseSurface3d = function(surface3d) {
   return parsed;
 };
 
+Ngl.WrDock.prototype.render = function(gl, scene) {
+  this.preRender(gl, scene);
+  this.postRender(gl, scene);
+};
+
 Ngl.WrDock.prototype.preRender = function(gl, scene) {
   if(!this.initialized) {
     this.initialize(gl, scene);
@@ -191,3 +219,211 @@ Ngl.WrDock.prototype.updateTransformWithoutWrTransform = function(scene) {
 Ngl.WrDock.prototype.onPositioningRecalculated = function() {
 
 };
+
+//*****************
+//* Fun WR3D Stuff
+//*****************
+
+Ngl.WrDock.prototype.anchorToScreen = function(scene, placement, z) {
+  if(z === 0.0) {
+    Ngl.log('ERROR: Ngl.WrDock.anchorToScreen: Z is zero');
+    return;
+  }
+
+  var pixelSize = scene.camera.getPixelSizeAtCameraZ(z);
+  var w2 = 0.5*scene.gl.drawingBufferWidth;
+  var h2 = 0.5*scene.gl.drawingBufferHeight;
+
+  var x, y;
+  switch(placement) {
+    case Ngl.Placement.UPPER_LEFT: {
+      x = -w2;
+      y =  h2;
+      break;
+    }
+    case Ngl.Placement.UPPER_RIGHT: {
+      x =  w2;
+      y =  h2;
+     break;
+    }
+    case Ngl.Placement.BOTTOM_RIGHT: {
+      x =  w2;
+      y = -h2;
+      break;
+    }
+    case Ngl.Placement.BOTTOM_LEFT: {
+      x = -w2;
+      y = -h2;
+      break;
+    }
+    case Ngl.Placement.CENTER: {
+      x = 0.0;
+      y = 0.0;
+      break;
+    }
+    default: {
+      Ngl.log('ERROR: Ngl.WrDock.anchorToScreen: Invalid option '+placement);
+      return;
+    }
+  }
+
+  mat4.identity(this.transform);
+////////////////  mat4.rotateX(this.transform, this.transform, Math.PI);
+  mat4.translate(this.transform, this.transform, vec3.fromValues(x/pixelSize, y/pixelSize, z));
+  this.transformUpdated = true;
+};
+
+/***
+ * For a given point in the pixel metric space this function returns the position, up and normal vectors, and pixel sizes.
+ * Returned is:
+ *     transform: The transform of the point in pixel metric coordinates.
+ *     pixelMetric: The base pixel metric for the dock. Note that this may be inherited from a parent dock.
+ *     pixSizes: The pixel space unit pixel sizes in the x, y (up), and z (norm) directions.
+ *
+ * @method getMetricsFromPoint
+ * @param p { vec4 } The position in pixel coordinates.
+ * @returns {{pos: *, up: *, norm: *, pixSizes: *}}
+ */
+Ngl.WrDock.prototype.getMetricsFromPoint = function(p) {
+
+  var trans = mat4.create();
+  mat4.translate(trans, p);
+
+  var pixSizes = vec4.create();
+
+  for(var i=0; i<this.surfaces.length; i++) {
+    var surface = this.surfaces[i];
+    surface.translate(trans, pixSizes);
+  }
+
+  return { transform: trans, pixSizes: pixSizes, pixelMetric: this.pixelSize };
+};
+
+/*************************************************************************
+
+[propget]
+HRESULT   PixelSize(
+  [out,retval] double*          retval);
+
+[propget]
+HRESULT   Scale(
+  [out,retval] double*          retval);
+
+[propput]
+HRESULT   Scale(
+  [in] double                   ScalingFactor);
+
+[propget]
+HRESULT   SurfaceRescaleType(
+  [out,retval] nxsrtSurfaceRescaleType* retval);
+
+[propput]
+HRESULT   SurfaceRescaleType(
+  [in] nxsrtSurfaceRescaleType  TheType);
+
+[propget]
+HRESULT   CanvasSize(
+  [out,retval] INxGrPoint**     retval);
+
+HRESULT   GetCanvasSize(
+  [in] INxGrPoint*              PointToFill);
+
+HRESULT   SetCanvasSize(
+  [in] INxGrPoint*              TheDockCanvasSize);
+
+HRESULT   GetSurfaceGeometry(
+  [out] INxGrSurfaceGeometry**  ppiSurfaceGeometry);
+
+[propget]
+HRESULT   PixelSizeReferencePosition(
+  [out,retval] INxGrPoint**     retval);
+
+HRESULT   GetPixelSizeReferencePosition(
+  [in] INxGrPoint*              PointToFill);
+
+HRESULT   SetPixelSizeReferencePosition(
+  [in] INxGrPoint*              TheRefPosition);
+
+
+
+
+
+
+HRESULT   SurfaceRescaleType(
+  [out,retval] nxsrtSurfaceRescaleType* retval);
+
+[propget]
+HRESULT   PixelSizeReferencePosition(
+  [out,retval] INxGrPoint**     retval);
+
+HRESULT   GetPixelSizeReferencePosition(
+  [in] INxGrPoint*              PointToFill);
+
+HRESULT   SetPixelSizeReferencePosition(
+  [in] INxGrPoint*              TheRefPosition);
+
+
+HRESULT   GetTransformAndPixelSizeFromPixel(
+  [in] INxGrPoint*              Pixel,
+[in] INxGrTransform*          TransformToFill,
+  [out,retval] double*          PixelSize);
+
+HRESULT   GetPixelSize(
+  [in] INxGrPoint*              Pixel,
+  [out,retval] double*          retval);
+
+HRESULT   GetPosition3DFromPixel(
+  [in] INxGrPoint*              Pixel,
+[in] INxGrPoint*              Position3D);
+
+HRESULT   GetNormalVector(
+  [in] INxGrPoint*              Pixel,
+[in] INxGrVector*             NormalVector);
+
+HRESULT   GetUpVector(
+  [in] INxGrPoint*              Pixel,
+[in] INxGrVector*             UpVector);
+
+[propget]
+HRESULT   PixelWidth(
+  [in] INxGrPoint*              Pixel,
+  [out,retval] double*          retval);
+
+[propget]
+HRESULT   PixelHeight(
+  [in] INxGrPoint*              Pixel,
+  [out,retval] double*          retval);
+
+[propget]
+HRESULT   PixelZ(
+  [in] INxGrPoint*              Pixel,
+  [out,retval] double*          retval);
+
+[propget]
+HRESULT   DockScale(
+  [out,retval] double*          retval);
+
+[propget]
+HRESULT   CurvatureX(
+  [in] INxGrPoint*              Pixel,
+  [out,retval] double*          retval);
+
+[propget]
+HRESULT   CurvatureY(
+  [in] INxGrPoint*              Pixel,
+  [out,retval] double*          retval);
+
+[propget]
+HRESULT   SurfaceSizeXPixels(
+  [out,retval] double*          retval);
+
+[propget]
+HRESULT   SurfaceSizeYPixels(
+  [out,retval] double*          retval);
+
+[propget]
+HRESULT   ZDistanceFromCamera(
+  [out,retval] double*          retval);
+}
+
+***************************************************************************/

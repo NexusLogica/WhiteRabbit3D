@@ -11,10 +11,23 @@ All Rights Reserved.
 
 */
 
+.page-anchor {
+  /* screen-anchor implies it's root is the camera frame */
+  -wr3d-screen-anchor: 1.2 upper-left;
+}
+
 .song-title {
-  -wr3d-host:       .wr3d-host.song-title-host;
+  -wr3d-parent3d:   .page-anchor;
   -wr3d-position3d: translate(100px, 0px, 200px) rotateY(30deg);
   -wr3d-display3d:  surface;
   -wr3d-scaling3d:  screen;
   -wr3d-surface3d: ( type: circular, radiusOuter: 300px, angle: full );
+}
+
+.main-content {
+  -wr3d-host:       .wr3d-host.song-title-host;
+  -wr3d-position3d: translate(100px, 0px, 0px) rotateY(30deg);
+  -wr3d-display3d:  surface;
+  -wr3d-scaling3d:  screen;
+  -wr3d-surface3d: ( type: rectangular );
 }

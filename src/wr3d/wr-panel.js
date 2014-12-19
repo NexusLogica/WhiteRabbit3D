@@ -119,17 +119,17 @@ Ngl.WrPanel.prototype.onPositioningRecalculated = function() {
 };
 
 Ngl.WrPanel.prototype.render = function(gl, scene) {
-  Ngl.WrDock.prototype.preRender.call(this, gl, scene);
+  this.preRender.call(this, gl, scene);
 
   if(!this.canvasInitialized) {
     if(!this.initialized) {
       this.initialize(gl, scene);
       if(!this.canvasInitialized) {
-        Ngl.WrDock.prototype.postRender.call(this, gl, scene);
+        this.postRender.call(this, gl, scene);
         return;
       }
     } else {
-      Ngl.WrDock.prototype.postRender.call(this, gl, scene);
+      this.postRender.call(this, gl, scene);
       return;
     }
   }
@@ -185,7 +185,7 @@ Ngl.WrPanel.prototype.render = function(gl, scene) {
 
   gl.drawElements(gl.TRIANGLES, this.numIndices, gl.UNSIGNED_SHORT, 0);
 
-  Ngl.WrDock.prototype.postRender.call(this, gl, scene);
+  this.postRender.call(this, gl, scene);
 };
 
 /***
