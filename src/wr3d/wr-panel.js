@@ -13,8 +13,7 @@ All Rights Reserved.
 'use strict';
 
 Ngl.WrPanel = function(canvas, config) {
-  Ngl.WrDock.call(this);
-  this.config = _.cloneDeep(config);
+  Ngl.WrDock.call(this, config);
   this.canvasInitialized = false;
   this.canvas = canvas;
   this.canvas.setPanel(this);

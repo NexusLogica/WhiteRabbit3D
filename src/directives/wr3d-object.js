@@ -1,10 +1,10 @@
 /**********************************************************************
 
- File     : wr3d-dock.js
+ File     : wr3d-object.js
  Project  : N Simulator Library
  Purpose  : Source file for a WhiteRabbit3D style.
  Revisions: Original definition by Lawrence Gunn.
-            2014/11/28
+            2014/12/18
 
  Copyright (c) 2014 by Lawrence Gunn
  All Rights Reserved.
@@ -12,13 +12,12 @@
  */
 'use strict';
 
-Ngl.nextWr3dDockId = 0;
-
-angular.module('wr3dApp').directive('wr3dDock', [function() {
+angular.module('wr3dApp').directive('wr3dObject', [function() {
   return {
     restrict: 'E',
     scope: { },
     controller: ['$scope', '$element', '$attrs', '$timeout', '$parse', function ($scope, $element, $attrs, $timeout, $parse) {
+      $scope.wr3d = { type: 'wr3dObject' };
 
       $scope.noShow = false;
       if($attrs.hasOwnProperty('wr3dDisplay')) {
@@ -34,9 +33,8 @@ angular.module('wr3dApp').directive('wr3dDock', [function() {
       // TODO: Find a proper value for 'top'
       $element.css({ 'display': 'none' });
 
-      $scope.hostId = Ngl.nextWr3dDockId;
-      Ngl.nextWr3dDockId++;
-      $scope.styleSelectors = [];
+      $scope.hostId = Ngl.nextWr3dObjectId;
+      Ngl.nextWr3dObjectId++;
 
     }],
     link: function($scope, $element, $attrs, $ctrl) {
@@ -46,8 +44,6 @@ angular.module('wr3dApp').directive('wr3dDock', [function() {
       }
 
       $element.data('wr3d', $scope);
-
-      $scope.wr3d = { type: 'wr3dDock' };
 
       var getWrStyleSelectors = function() {
         var className = $element.attr('class');
@@ -70,12 +66,42 @@ angular.module('wr3dApp').directive('wr3dDock', [function() {
           $scope.wrStyle = _.merge($scope.wrStyle, style);
         });
 
-        $scope.dock = new Ngl.WrDock($scope.wrStyle);
-        hostContainer.scene.add($scope.dock);
-        $scope.dock.initialize(hostContainer.scene.gl, hostContainer.scene);
+        var objectTypeString = $scope.wrStyle['-wr3d-object3d'];
+        if(!_.isEmpty(objectTypeString)) {
+          var properties = Ngl.parseBracketedStyle(objectTypeString);
+          if(!_.isEmpty(properties.type)) {
+            switch(properties.type) {
+              case 'cube':
+              case 'cuboid': {
+                $scope.wrObject = new Ngl.Cuboid($scope.wrStyle);
+              }
+            }
+
+            var parent = getParentWrScope();
+            if(parent.wr3d.type === "wr3dDock") {
+              var parentDock = parent.dock;
+              hostContainer.scene.add($scope.wrObject);
+              //parentDock.add($scope.wrObject);
+            }
+          }
+        }
       });
 
-      $element.addClass('wr3d-dock');
+      var getParentWrScope = function() {
+        var elem = $element;
+        while(true) {
+          if(elem.parent().length === 0) {
+            return undefined;
+          }
+          if(elem.parent().data('wr3d')) {
+            var parentScope = elem.parent().data('wr3d');
+            return parentScope;
+          }
+          elem = elem.parent();
+        }
+      };
+
+      $element.addClass('wr3d-object');
     }
   };
 }]);

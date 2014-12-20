@@ -43,3 +43,9 @@ Ngl.Dock.prototype.postRender = function(gl, scene) {
   }
   this.transformUpdated = false;
 };
+
+Ngl.Dock.prototype.add = function(obj) {
+  this.children.push(obj);
+  obj.parent = this;
+};
+

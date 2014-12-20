@@ -12,8 +12,11 @@ All Rights Reserved.
 */
 'use strict';
 
-Ngl.WrDock = function(position, size) {
+Ngl.WrDock = function(config) {
+  this.config = _.cloneDeep(config);
+
   Ngl.Dock.call(this);
+
   this.pixelSize = 1.0;
   this.wrTransform = mat4.create();
   this.wrTransformScaled = mat4.create();
@@ -42,7 +45,7 @@ Ngl.WrDock.prototype.configureFromStyles = function(gl, scene) {
   // Position from an anchor position.
   this.screenAnchor = this.parseAnchor();
   if(this.screenAnchor) {
-    this.transform = this.anchorToScreen(scene);
+    this.anchorToScreen(scene);
   }
 
   // Parse position3d.
@@ -89,9 +92,9 @@ Ngl.WrDock.prototype.configureFromStyles = function(gl, scene) {
 Ngl.WrDock.prototype.parseAnchor = function() {
   var screenAnchor = this.config['-wr3d-screen-anchor'];
   if (!_.isEmpty(screenAnchor)) {
-    var anp = screenAnchor.split();
+    var anp = screenAnchor.split(/\s+/g);
     if (anp.length === 2) {
-      var zIndex = (_.isNumber(anp[0]) ? 0 : 1);
+      var zIndex = ($.isNumeric(anp[0]) ? 0 : 1);
       var z = parseFloat(anp[zIndex]);
       var anchor = Ngl.Placement.map[anp[zIndex === 0 ? 1 : 0]];
       if (!_.isUndefined(anchor)) {
@@ -104,6 +107,8 @@ Ngl.WrDock.prototype.parseAnchor = function() {
 
 Ngl.WrDock.prototype.parseSurfaces = function() {
 
+  this.config.surface3d = Ngl.parseBracketedStyleList(this.config['-wr3d-surface3d']);
+
   this.instructionLength = 4;
   this.instructions = new Int32Array(this.instructionLength);
   var i;
@@ -112,8 +117,6 @@ Ngl.WrDock.prototype.parseSurfaces = function() {
   this.flagsLength = 4;
   this.flags = new Int32Array(this.flagsLength);
   for(var j=0; i<this.flagsLength; i++) { this.instructions[i] = 0; }
-
-  this.config.surface3d = this.parseSurface3d(this.config['-wr3d-surface3d']);
 
   if(!this.config.surface3d || this.config.surface3d.length === 0) {
     this.config.surface3d = [];
@@ -140,29 +143,6 @@ Ngl.WrDock.prototype.parseSurfaces = function() {
       }
     }
   }
-};
-
-Ngl.WrDock.prototype.parseSurface3d = function(surface3d) {
-  var parsed = [];
-  if(!_.isEmpty(surface3d)) {
-    var regex = /\([^)]+\)+?/g;
-    var matches = surface3d.match(regex);
-    for (var i = 0; i < matches.length; i++) {
-      var surface = {};
-      var m = matches[i];
-      m = m.replace(/^\s*\(/, '');
-      m = m.replace(/\)\s*$/, '');
-      var s = m.split(',');
-      for (var j = 0; j < s.length; j++) {
-        var keyval = s[j].split(':');
-        var key = $.trim(keyval[0]);
-        var val = $.trim(keyval[1]);
-        surface[key] = val;
-      }
-      parsed.push(surface);
-    }
-  }
-  return parsed;
 };
 
 Ngl.WrDock.prototype.render = function(gl, scene) {
@@ -224,7 +204,8 @@ Ngl.WrDock.prototype.onPositioningRecalculated = function() {
 //* Fun WR3D Stuff
 //*****************
 
-Ngl.WrDock.prototype.anchorToScreen = function(scene, placement, z) {
+Ngl.WrDock.prototype.anchorToScreen = function(scene) {
+  var z = this.screenAnchor.z;
   if(z === 0.0) {
     Ngl.log('ERROR: Ngl.WrDock.anchorToScreen: Z is zero');
     return;
@@ -235,7 +216,7 @@ Ngl.WrDock.prototype.anchorToScreen = function(scene, placement, z) {
   var h2 = 0.5*scene.gl.drawingBufferHeight;
 
   var x, y;
-  switch(placement) {
+  switch(this.screenAnchor.anchor) {
     case Ngl.Placement.UPPER_LEFT: {
       x = -w2;
       y =  h2;

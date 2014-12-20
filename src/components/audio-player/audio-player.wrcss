@@ -13,7 +13,13 @@ All Rights Reserved.
 
 .page-anchor {
   /* screen-anchor implies it's root is the camera frame */
-  -wr3d-screen-anchor: 1.2 upper-left;
+  /* -wr3d-screen-anchor: 1.2 upper-left; */
+  -wr3d-screen-anchor: 1.2 center;
+}
+
+.anchor-cube {
+  -wr3d-object3d: ( type: cube, size: 80  px, color: #FF0000 );
+  -wr3d-position3d: rotateY(30deg);
 }
 
 .song-title {

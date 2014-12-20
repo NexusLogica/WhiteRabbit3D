@@ -18,11 +18,14 @@ Ngl.VertexShaders   = Ngl.VertexShaders   || {};
 Ngl.VertexShaders.flatVertexShader = "                                      \n\
   // A basic flat vertex shader, hello world'esque.                         \n\
   uniform mat4 projectionViewMatrix;                                        \n\
-  attribute vec2 position;                                                  \n\
+  attribute vec3 position;                                                  \n\
+  uniform float size;                                                       \n\
+  uniform float pixelSize;                                                  \n\
                                                                             \n\
   void main() {                                                             \n\
-    vec4 sizedPosition = vec4(position[0], position[1], 0.0, 1.0);          \n\
-    gl_Position = projectionViewMatrix*sizedPosition;                       \n\
+    float scaling = size*pixelSize;                                         \n\
+    vec4 scaledPosition = vec4(position[0]*scaling, position[1]*scaling, position[2]*scaling, 1.0); \n\
+    gl_Position = projectionViewMatrix*scaledPosition;                     \n\
   }";
 
 Ngl.FragmentShaders.flatFragmentShader = '                                  \n\
@@ -31,6 +34,7 @@ Ngl.FragmentShaders.flatFragmentShader = '                                  \n\
                                                                             \n\
   void main() {                                                             \n\
     gl_FragColor = surfaceColor;                                            \n\
+    gl_FragColor = vec4(255.0/255.0, 0.0/255.0, 0.0/255.0, 1.0);            \n\
   }';
 
 Ngl.VertexShaders.textureVertexShader = '                                   \n\

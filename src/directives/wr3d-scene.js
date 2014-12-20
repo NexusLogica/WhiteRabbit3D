@@ -16,6 +16,7 @@ angular.module('wr3dApp').directive('wr3dScene', [function() {
   return {
     restrict: 'E',
     controller: ['$scope', '$element', '$attrs', '$http', function ($scope, $element, $attrs, $http) {
+      $scope.wr3d = { type: 'wr3dScene' };
 
       $scope.hostList = [];
       $scope.styleListPending = [];
@@ -85,14 +86,14 @@ angular.module('wr3dApp').directive('wr3dScene', [function() {
           _.merge($scope.styles, styleObj.styleJson.children);
         });
 
-        _.forEach($scope.hostList, function(host) {
-          debugger;
-          host.getStyles($scope);
-        });
+        $scope.$broadcast('wr3d-scene:get-styles', $scope);
       };
 
       $scope.getStyle = function(selector) {
-        return $scope.styles[selector].attributes;
+        if($scope.styles.hasOwnProperty(selector)) {
+          return $scope.styles[selector].attributes;
+        }
+        return {};
       };
 
     }],

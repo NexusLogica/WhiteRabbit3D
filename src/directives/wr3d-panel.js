@@ -17,7 +17,7 @@ Ngl.nextWr3dPanelId = 0;
 angular.module('wr3dApp').directive('wr3dPanel', [function() {
   return {
     restrict: 'E',
-    scope: {},
+    scope: { },
     controller: ['$scope', '$element', '$attrs', '$timeout', '$parse', function ($scope, $element, $attrs, $timeout, $parse) {
       $scope.componentName = 'wr3dPanel';
 
@@ -46,6 +46,8 @@ angular.module('wr3dApp').directive('wr3dPanel', [function() {
         return;
       }
 
+      $element.data('wr3d', $scope);
+
       var getWrStyleSelectors = function() {
         var className = $element.find('>div').attr('class');
         if (className) {
@@ -60,7 +62,7 @@ angular.module('wr3dApp').directive('wr3dPanel', [function() {
 
       $scope.$emit('wr3d:notify-scene', $scope);
 
-      $scope.getStyles = function(hostContainer) {
+      $scope.$on('wr3d-scene:get-styles', function(event, hostContainer) {
         $scope.wrStyle = {};
         _.forEach($scope.styleSelectors, function(id) {
           var style = hostContainer.getStyle(id);
@@ -70,7 +72,7 @@ angular.module('wr3dApp').directive('wr3dPanel', [function() {
         $scope.canvas = new Ngl.HtmlCanvas($element, $scope.wrStyle);
         $scope.panel = new Ngl.WrPanel($scope.canvas, $scope.wrStyle);
         hostContainer.scene.add($scope.panel);
-      };
+      });
 
       $element.addClass('wr3d-panel');
     }

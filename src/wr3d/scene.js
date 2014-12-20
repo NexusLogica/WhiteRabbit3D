@@ -417,6 +417,41 @@ Ngl.floatAndUnitFromString = function(str) {
   return { value: value, units: units };
 };
 
+Ngl.parseBracketedStyleList = function(style) {
+  try {
+    var parsed = [];
+    if (!_.isEmpty(style)) {
+      var regex = /\([^)]+\)+?/g;
+      var matches = style.match(regex);
+      for (var i = 0; i < matches.length; i++) {
+        var group = Ngl.parseBracketedStyle(matches[i]);
+        parsed.push(group);
+      }
+    }
+    return parsed;
+  } catch(err) {
+    return undefined;
+  }
+};
+
+Ngl.parseBracketedStyle = function(style) {
+  try {
+    var group = {};
+    var m = style.replace(/^\s*\(/, '');
+    m = m.replace(/\)\s*$/, '');
+    var s = m.split(',');
+    for (var j = 0; j < s.length; j++) {
+      var keyval = s[j].split(':');
+      var key = $.trim(keyval[0]);
+      var val = $.trim(keyval[1]);
+      group[key] = val;
+    }
+    return group;
+  } catch(err) {
+    return undefined;
+  }
+};
+
 Ngl.toCamelCase = function(str) {
   return str.replace(/-([a-z])/g, function (g) {
     return g[1].toUpperCase();
