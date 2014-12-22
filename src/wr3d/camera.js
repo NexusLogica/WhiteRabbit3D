@@ -13,30 +13,27 @@ All Rights Reserved.
 'use strict';
 
 Ngl.Camera = function() {
+  Ngl.Dock.call(this);
+  this.name = 'camera';
   this.cameraTransformUpdated = true;
 
   this.nearFrustrum = 0.1;
   this.farFrustrum = 10000.0;
   this.verticalViewAngle = 30.0; // degrees
 
-  this.cameraTransform = mat4.create();
   this.inverseCameraTransform = mat4.create();
-  mat4.translate(this.cameraTransform, this.cameraTransform, vec3.fromValues(0.0, 0.0, 1.25 ));
-  mat4.invert(this.inverseCameraTransform, this.cameraTransform);
+  mat4.translate(this.transform, this.transform, vec3.fromValues(0.0, 0.0, 1.25 ));
+  mat4.invert(this.inverseCameraTransform, this.transform);
+  this.workingTransform = mat4.create(); // a temporary matrix for calculations.
 
-
-  this.va = vec3.create();
-  this.vb = vec3.create();
-  this.vc = vec3.create();
-  this.vr = vec3.create();
-  this.vu = vec3.create();
-  this.vn = vec3.create();
-  this.m  = mat4.create();
-  this.projectionMatrix = mat4.create();
-  this.selectProjectionMatrix = mat4.create();
+  this.projectionTransform = mat4.create();
 };
 
-Ngl.Camera.prototype.initialize = function(gl, canvas) {
+Ngl.Camera.prototype = Object.create(Ngl.Dock.prototype);
+
+Ngl.Camera.prototype.initialize = function(gl, scene) {
+  Ngl.Dock.prototype.initialize.call(this, gl, scene);
+
   this.width  = gl.drawingBufferWidth;    // width in pixels
   this.height = gl.drawingBufferHeight;   // height in pixels
 
@@ -44,11 +41,15 @@ Ngl.Camera.prototype.initialize = function(gl, canvas) {
   var yHalf = this.nearFrustrum*Math.tan(this.verticalViewAngle*Math.PI/180.0);
   var xHalf = yHalf*this.width/this.height;
 
-  this.projectionMatrix = mat4.create();
-  mat4.perspective(this.projectionMatrix, this.verticalViewAngle*Math.PI/180.0, this.width/this.height, this.nearFrustrum, this.farFrustrum);
+  this.projectionTransform = mat4.create();
+  mat4.perspective(this.projectionTransform, this.verticalViewAngle*Math.PI/180.0, this.width/this.height, this.nearFrustrum, this.farFrustrum);
+};
+
+Ngl.Camera.prototype.getPixelSizeAtPosition = function(viewTransform) {
+  return this.getPixelSizeAtCameraZ(viewTransform[14]);
 };
 
 Ngl.Camera.prototype.getPixelSizeAtCameraZ = function(cameraZ) {
   var widthAtFrustrum = 2.0*Math.tan(0.5*0.01745329251*this.verticalViewAngle);
-  return cameraZ*widthAtFrustrum/this.height;
+  return Math.abs(cameraZ*widthAtFrustrum/this.height);
 };

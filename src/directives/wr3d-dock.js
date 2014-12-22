@@ -71,7 +71,11 @@ angular.module('wr3dApp').directive('wr3dDock', [function() {
         });
 
         $scope.dock = new Ngl.WrDock($scope.wrStyle);
-        hostContainer.scene.add($scope.dock);
+        if($attrs.wrName) {
+          $scope.dock.name = $attrs.wrName;
+        }
+
+        hostContainer.scene.camera.add($scope.dock);
         $scope.dock.initialize(hostContainer.scene.gl, hostContainer.scene);
       });
 

@@ -14,7 +14,7 @@ All Rights Reserved.
 .page-anchor {
   /* screen-anchor implies it's root is the camera frame */
   /* -wr3d-screen-anchor: 1.2 upper-left; */
-  -wr3d-screen-anchor: 1.2 center;
+  -wr3d-screen-anchor: 1.25 center;
 }
 
 .anchor-cube {

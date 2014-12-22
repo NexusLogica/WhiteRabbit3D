@@ -17,7 +17,7 @@ Ngl.VertexShaders   = Ngl.VertexShaders   || {};
 
 Ngl.VertexShaders.flatVertexShader = "                                      \n\
   // A basic flat vertex shader, hello world'esque.                         \n\
-  uniform mat4 projectionViewMatrix;                                        \n\
+  uniform mat4 projectionViewTransform;                                     \n\
   attribute vec3 position;                                                  \n\
   uniform float size;                                                       \n\
   uniform float pixelSize;                                                  \n\
@@ -25,7 +25,7 @@ Ngl.VertexShaders.flatVertexShader = "                                      \n\
   void main() {                                                             \n\
     float scaling = size*pixelSize;                                         \n\
     vec4 scaledPosition = vec4(position[0]*scaling, position[1]*scaling, position[2]*scaling, 1.0); \n\
-    gl_Position = projectionViewMatrix*scaledPosition;                     \n\
+    gl_Position = projectionViewTransform*scaledPosition;                     \n\
   }";
 
 Ngl.FragmentShaders.flatFragmentShader = '                                  \n\
@@ -49,7 +49,7 @@ Ngl.VertexShaders.textureVertexShader = '                                   \n\
                                                                             \n\
   const float NXGR_PI = 3.141592653589;                                     \n\
   const float NXGR_E  = 2.718281828459;                                     \n\
-  uniform mat4 projectionViewMatrix;                                        \n\
+  uniform mat4 projectionViewTransform;                                     \n\
   uniform vec3 size;                                                        \n\
   uniform float pixelSize;                                                  \n\
   uniform ivec4 flags;                                                      \n\
@@ -113,7 +113,7 @@ Ngl.VertexShaders.textureVertexShader = '                                   \n\
       }                                                                     \n\
     }                                                                       \n\
                                                                             \n\
-    gl_Position = projectionViewMatrix*sizedPosition;                       \n\
+    gl_Position = projectionViewTransform*sizedPosition;                    \n\
   }';
 
 Ngl.FragmentShaders.textureColorSelectFragmentShader = '                    \n\

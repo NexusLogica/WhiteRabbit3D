@@ -4,8 +4,8 @@
 
   <wr3d-style wr-import="src/components/audio-player/audio-player.wrcss"></wr3d-style>
 
-  <wr3d-dock class="page-anchor">
-    <wr3d-object class="anchor-cube"></wr3d-object>
+  <wr3d-dock class="page-anchor" wr-name="main-dock">
+    <wr3d-object class="anchor-cube" wr-name="box"></wr3d-object>
   </wr3d-dock>
 
   <wr3d-panel wr3d-display="false">
@@ -20,7 +20,7 @@
     </div>
   </wr3d-panel>
 
-  <wr3d-panel wr3d-display="true">
+  <wr3d-panel wr3d-display="true" wr-name="next-panel">
     <div class="main-content">
       <div>
         <div class="inline">Hi there</div>

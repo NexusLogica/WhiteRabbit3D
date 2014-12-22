@@ -77,11 +77,14 @@ angular.module('wr3dApp').directive('wr3dObject', [function() {
               }
             }
 
+            if($attrs.wrName) {
+              $scope.wrObject.name = $attrs.wrName;
+            }
+
             var parent = getParentWrScope();
             if(parent.wr3d.type === "wr3dDock") {
               var parentDock = parent.dock;
-              hostContainer.scene.add($scope.wrObject);
-              //parentDock.add($scope.wrObject);
+              parentDock.add($scope.wrObject);
             }
           }
         }

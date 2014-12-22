@@ -18,6 +18,7 @@ Ngl.WrDock = function(config) {
   Ngl.Dock.call(this);
 
   this.pixelSize = 1.0;
+  this.pixelSizeReference = Ngl.MetricReference.PARENT;
   this.wrTransform = mat4.create();
   this.wrTransformScaled = mat4.create();
   this.wrTransformAndTranform = mat4.create();
@@ -28,7 +29,6 @@ Ngl.WrDock.prototype = Object.create(Ngl.Dock.prototype);
 
 Ngl.WrDock.prototype.initialize = function(gl, scene) {
   Ngl.Dock.prototype.initialize.call(this, gl, scene);
-  this.initialized = true;
 
   this.configureFromStyles(gl, scene);
   this.parseSurfaces();
@@ -145,11 +145,6 @@ Ngl.WrDock.prototype.parseSurfaces = function() {
   }
 };
 
-Ngl.WrDock.prototype.render = function(gl, scene) {
-  this.preRender(gl, scene);
-  this.postRender(gl, scene);
-};
-
 Ngl.WrDock.prototype.preRender = function(gl, scene) {
   if(!this.initialized) {
     this.initialize(gl, scene);
@@ -162,16 +157,17 @@ Ngl.WrDock.prototype.preRender = function(gl, scene) {
 
 Ngl.WrDock.prototype.calculatePositioning = function(gl, scene) {
   if(this.recalculatePosition) {
-    this.updateTransformWithoutWrTransform(scene);
-    this.transformUpdated = true;
+    if(this.pixelSizeReference === Ngl.MetricReference.PARENT && this.parent.pixelSize !== undefined) {
+      this.pixelSize = this.parent.pixelSize;
+    } else {
+      this.updateTransformWithoutWrTransform(scene);
+      this.transformUpdated = true;
 
-    var cameraZ = Math.abs(this.worldTransform[14]);
-    this.pixelSize = scene.camera.getPixelSizeAtCameraZ(cameraZ);
-
-    if(this.scaling3d === Ngl.Scaling.screen) {
-      this.wrScaleFactor = this.pixelSize;
-      this.totalScaling = this.wrScaleFactor*this.magnification;
+      this.pixelSize = scene.camera.getPixelSizeAtPosition(this.viewTransform);
     }
+
+    this.wrScaleFactor = this.pixelSize;
+    this.totalScaling = this.wrScaleFactor*this.magnification;
 
     this.onPositioningRecalculated();
     this.recalculatePosition = false;
@@ -186,14 +182,14 @@ Ngl.WrDock.prototype.updateTransform = function(scene) {
     this.wrTransformScaled[14] *= this.totalScaling;
 
     mat4.multiply(this.wrTransformAndTranform, this.wrTransformScaled,  this.transform);
-    mat4.multiply(this.worldTransform, this.parent.worldTransform,  this.wrTransformAndTranform);
-    mat4.multiply(this.projectionModelView, scene.camera.projectionMatrix, this.worldTransform);
+    mat4.multiply(this.viewTransform, this.parent.viewTransform,  this.wrTransformAndTranform);
+    mat4.multiply(this.projectionViewTransform, scene.camera.projectionTransform, this.viewTransform);
   }
 };
 
 
 Ngl.WrDock.prototype.updateTransformWithoutWrTransform = function(scene) {
-  mat4.multiply(this.worldTransform, this.parent.worldTransform,  this.transform);
+  mat4.multiply(this.viewTransform, this.parent.viewTransform,  this.transform);
 };
 
 Ngl.WrDock.prototype.onPositioningRecalculated = function() {
@@ -243,15 +239,16 @@ Ngl.WrDock.prototype.anchorToScreen = function(scene) {
       break;
     }
     default: {
-      Ngl.log('ERROR: Ngl.WrDock.anchorToScreen: Invalid option '+placement);
+      Ngl.log('ERROR: Ngl.WrDock.anchorToScreen: Invalid option '+this.screenAnchor.anchor);
       return;
     }
   }
 
   mat4.identity(this.transform);
 ////////////////  mat4.rotateX(this.transform, this.transform, Math.PI);
-  mat4.translate(this.transform, this.transform, vec3.fromValues(x/pixelSize, y/pixelSize, z));
+  mat4.translate(this.transform, this.transform, vec3.fromValues(x/pixelSize, y/pixelSize, -z));
   this.transformUpdated = true;
+  this.recalculatePosition = true;
 };
 
 /***

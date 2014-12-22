@@ -20,9 +20,8 @@ Ngl.Scene = function() {
   this.transformUpdated = true;
 
   this.transform = mat4.create();
-  this.worldTransform = mat4.create();
+  this.viewTransform = mat4.create();
 
-  this.selectProjectionMatrix = mat4.create();
   this.selectTextureWidth = 1;
   this.selectTextureHeight = 1;
   this.selectionPixel = new Uint8Array(4);
@@ -33,8 +32,6 @@ Ngl.Scene = function() {
   this.wrNextColor = new Ngl.IntegerColor(128, 0, 0);
 
   this.clearColor = vec4.fromValues(0.0, 0.0, 0.0, 1.0);
-
-  this.camera = new Ngl.Camera();
 
   this.rawMouseEvents = [];
   this.mouseEventQueue = [];
@@ -55,7 +52,9 @@ Ngl.Scene.prototype.initialize = function(canvas) {
   this.gl = this.canvasElement.get(0).getContext('experimental-webgl', { preserveDrawingBuffer: true } );
   var gl = this.gl;
 
-  this.camera.initialize(gl, canvas);
+  this.camera = new Ngl.Camera();
+  this.add(this.camera);
+  this.camera.initialize(gl, this);
 
   // Load shaders
   this.shaders = {};
@@ -215,11 +214,11 @@ Ngl.Scene.prototype.render = function() {
   }
 
   if(this.transformUpdated) {
-    mat4.multiply(this.worldTransform, this.camera.inverseCameraTransform, this.transform);
+    mat4.multiply(this.viewTransform, this.camera.inverseCameraTransform, this.transform);
   }
 
   for(var i = 0; i<this.children.length; i++) {
-    this.children[i].render(gl, this, this);
+    this.children[i].render(gl, this);
   }
 
   this.transformUpdated = false;
@@ -509,6 +508,14 @@ Ngl.Placement.map = {
   'bottom-right': 2,
   'bottom-left': 3,
   'center': 4
+};
+
+Ngl.MetricReference = Ngl.MetricReference || {};
+Ngl.MetricReference.PARENT = 0;
+Ngl.MetricReference.SCREEN = 1;
+Ngl.MetricReference.map = {
+  'parent': 0,
+  'screen': 1
 };
 
 // *** Utility functions ***

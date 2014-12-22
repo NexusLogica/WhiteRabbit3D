@@ -17,12 +17,17 @@ Ngl.Dock = function(position, size) {
   this.children = [];
   this.transformUpdated = true;
   this.transform = mat4.create();
-  this.worldTransform = mat4.create();
-  this.projectionModelView = mat4.create();
+  this.viewTransform = mat4.create();
+  this.projectionViewTransform = mat4.create();
 };
 
 Ngl.Dock.prototype.initialize = function(gl, scene) {
   this.initialized = true;
+};
+
+Ngl.Dock.prototype.render = function(gl, scene) {
+  this.preRender(gl, scene);
+  this.postRender(gl, scene);
 };
 
 Ngl.Dock.prototype.preRender = function(gl, scene) {
@@ -32,8 +37,8 @@ Ngl.Dock.prototype.preRender = function(gl, scene) {
 
   if(this.parent.transformUpdated || this.transformUpdated) {
     this.transformUpdated = true;
-    mat4.multiply(this.worldTransform, this.parent.worldTransform,  this.transform);
-    mat4.multiply(this.projectionModelView, scene.camera.projectionMatrix, this.worldTransform);
+    mat4.multiply(this.viewTransform, this.parent.viewTransform,  this.transform);
+    mat4.multiply(this.projectionViewTransform, scene.camera.projectionTransform, this.viewTransform);
   }
 };
 

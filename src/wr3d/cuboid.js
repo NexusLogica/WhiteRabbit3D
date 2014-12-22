@@ -104,7 +104,7 @@ Ngl.Cuboid.prototype.render = function(gl, scene, parent) {
   gl.useProgram(this.program);
   gl.uniform1f(this.sizeLocation, this.size);
   gl.uniform1f(this.pixelSizeLocation, this.pixelSize);
-  gl.uniformMatrix4fv(this.projectionViewMatrixLocation, gl.FALSE, this.projectionModelView);
+  gl.uniformMatrix4fv(this.projectionViewMatrixLocation, gl.FALSE, this.projectionViewTransform);
   /////////gl.uniform4fv(this.surfaceColorLocation, scene.renderForSelect ? this.selectColor : this.color);
   gl.uniform4fv(this.surfaceColorLocation, this.surfaceColor);
 

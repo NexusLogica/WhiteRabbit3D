@@ -71,6 +71,9 @@ angular.module('wr3dApp').directive('wr3dPanel', [function() {
 
         $scope.canvas = new Ngl.HtmlCanvas($element, $scope.wrStyle);
         $scope.panel = new Ngl.WrPanel($scope.canvas, $scope.wrStyle);
+        if($attrs.wrName) {
+          $scope.panel.name = $attrs.wrName;
+        }
         hostContainer.scene.add($scope.panel);
       });
 

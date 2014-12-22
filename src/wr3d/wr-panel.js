@@ -84,7 +84,7 @@ Ngl.WrPanel.prototype.finalizeInitialization = function(gl, scene) {
 
     this['positionLocation'+prog.ext] = gl.getAttribLocation(program, 'position');
     this['sizeLocation'+prog.ext] = gl.getUniformLocation(program, 'size');
-    this['projectionMatrixLocation'+prog.ext] = gl.getUniformLocation(program, 'projectionViewMatrix');
+    this['projectionViewTransformLocation'+prog.ext] = gl.getUniformLocation(program, 'projectionViewTransform');
     this['textureLocation'+prog.ext] = gl.getAttribLocation(program, 'texCoord');
     this['selectionTextureLocation'+prog.ext] = gl.getAttribLocation(program, 'selectionTexCoord');
     this['flagsLocation'+prog.ext] = gl.getUniformLocation(program, 'flags');
@@ -154,7 +154,7 @@ Ngl.WrPanel.prototype.render = function(gl, scene) {
 
   gl.useProgram(this['program'+renderType]);
 
-  gl.uniformMatrix4fv(this['projectionMatrixLocation'+renderType], gl.FALSE, this.projectionModelView);
+  gl.uniformMatrix4fv(this['projectionViewTransformLocation'+renderType], gl.FALSE, this.projectionViewTransform);
   gl.uniform3fv(this['sizeLocation'+renderType], this.size);
   gl.uniform2fv(this['textureScaleLocation'+renderType], renderType === 'Ts' ? this.selectionTextureScale : this.textureScale);
   gl.uniform4iv(this['flagsLocation'+renderType], this.flags);
