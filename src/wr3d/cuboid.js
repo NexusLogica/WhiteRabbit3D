@@ -75,7 +75,7 @@ Ngl.Cuboid.prototype.initialize = function(gl, scene) {
   this.positionLocation = gl.getAttribLocation(this.program, 'position');
   this.sizeLocation = gl.getUniformLocation(this.program, 'size');
   this.pixelSizeLocation = gl.getUniformLocation(this.program, 'pixelSize');
-  this.projectionViewMatrixLocation = gl.getUniformLocation(this.program, 'projectionViewMatrix');
+  this.projectionViewTransformLocation = gl.getUniformLocation(this.program, 'projectionViewTransform');
   this.surfaceColorLocation = gl.getUniformLocation(this.program, 'surfaceColor');
 };
 
@@ -104,7 +104,7 @@ Ngl.Cuboid.prototype.render = function(gl, scene, parent) {
   gl.useProgram(this.program);
   gl.uniform1f(this.sizeLocation, this.size);
   gl.uniform1f(this.pixelSizeLocation, this.pixelSize);
-  gl.uniformMatrix4fv(this.projectionViewMatrixLocation, gl.FALSE, this.projectionViewTransform);
+  gl.uniformMatrix4fv(this.projectionViewTransformLocation, gl.FALSE, this.projectionViewTransform);
   /////////gl.uniform4fv(this.surfaceColorLocation, scene.renderForSelect ? this.selectColor : this.color);
   gl.uniform4fv(this.surfaceColorLocation, this.surfaceColor);
 

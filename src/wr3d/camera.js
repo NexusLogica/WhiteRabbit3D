@@ -45,6 +45,12 @@ Ngl.Camera.prototype.initialize = function(gl, scene) {
   mat4.perspective(this.projectionTransform, this.verticalViewAngle*Math.PI/180.0, this.width/this.height, this.nearFrustrum, this.farFrustrum);
 };
 
+Ngl.Camera.prototype.preRender = function(gl, scene) {
+  if(!this.initialized) {
+    this.initialize(gl, scene);
+  }
+};
+
 Ngl.Camera.prototype.getPixelSizeAtPosition = function(viewTransform) {
   return this.getPixelSizeAtCameraZ(viewTransform[14]);
 };
