@@ -43,7 +43,6 @@ Ngl.HtmlCanvas.prototype.load = function(gl) {
     onrendered: function(canvas) {
       var element = $('.html2canvas-canvas').get(0);
       _this.updateCanvas = canvas;
-      //element.appendChild(canvas);
       _this.createTexturemap(gl, canvas);
       var end = new Date();
       Ngl.log("*** Time = "+(end.getTime()-start.getTime()));

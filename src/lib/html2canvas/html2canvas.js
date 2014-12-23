@@ -28,7 +28,308 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  SOFTWARE.
  */
-!function(){var a,b,c,d;!function(){var e={},f={};a=function(a,b,c){e[a]={deps:b,callback:c}},d=c=b=function(a){function c(b){if("."!==b.charAt(0))return b;for(var c=b.split("/"),d=a.split("/").slice(0,-1),e=0,f=c.length;f>e;e++){var g=c[e];if(".."===g)d.pop();else{if("."===g)continue;d.push(g)}}return d.join("/")}if(d._eak_seen=e,f[a])return f[a];if(f[a]={},!e[a])throw new Error("Could not find module "+a);for(var g,h=e[a],i=h.deps,j=h.callback,k=[],l=0,m=i.length;m>l;l++)"exports"===i[l]?k.push(g={}):k.push(b(c(i[l])));var n=j.apply(this,k);return f[a]=g||n}}(),a("promise/all",["./utils","exports"],function(a,b){"use strict";function c(a){var b=this;if(!d(a))throw new TypeError("You must pass an array to all.");return new b(function(b,c){function d(a){return function(b){f(a,b)}}function f(a,c){h[a]=c,0===--i&&b(h)}var g,h=[],i=a.length;0===i&&b([]);for(var j=0;j<a.length;j++)g=a[j],g&&e(g.then)?g.then(d(j),c):f(j,g)})}var d=a.isArray,e=a.isFunction;b.all=c}),a("promise/asap",["exports"],function(a){"use strict";function b(){return function(){process.nextTick(e)}}function c(){var a=0,b=new i(e),c=document.createTextNode("");return b.observe(c,{characterData:!0}),function(){c.data=a=++a%2}}function d(){return function(){j.setTimeout(e,1)}}function e(){for(var a=0;a<k.length;a++){var b=k[a],c=b[0],d=b[1];c(d)}k=[]}function f(a,b){var c=k.push([a,b]);1===c&&g()}var g,h="undefined"!=typeof window?window:{},i=h.MutationObserver||h.WebKitMutationObserver,j="undefined"!=typeof global?global:this,k=[];g="undefined"!=typeof process&&"[object process]"==={}.toString.call(process)?b():i?c():d(),a.asap=f}),a("promise/cast",["exports"],function(a){"use strict";function b(a){if(a&&"object"==typeof a&&a.constructor===this)return a;var b=this;return new b(function(b){b(a)})}a.cast=b}),a("promise/config",["exports"],function(a){"use strict";function b(a,b){return 2!==arguments.length?c[a]:(c[a]=b,void 0)}var c={instrument:!1};a.config=c,a.configure=b}),a("promise/polyfill",["./promise","./utils","exports"],function(a,b,c){"use strict";function d(){var a="Promise"in window&&"cast"in window.Promise&&"resolve"in window.Promise&&"reject"in window.Promise&&"all"in window.Promise&&"race"in window.Promise&&function(){var a;return new window.Promise(function(b){a=b}),f(a)}();a||(window.Promise=e)}var e=a.Promise,f=b.isFunction;c.polyfill=d}),a("promise/promise",["./config","./utils","./cast","./all","./race","./resolve","./reject","./asap","exports"],function(a,b,c,d,e,f,g,h,i){"use strict";function j(a){if(!w(a))throw new TypeError("You must pass a resolver function as the first argument to the promise constructor");if(!(this instanceof j))throw new TypeError("Failed to construct 'Promise': Please use the 'new' operator, this object constructor cannot be called as a function.");this._subscribers=[],k(a,this)}function k(a,b){function c(a){p(b,a)}function d(a){r(b,a)}try{a(c,d)}catch(e){d(e)}}function l(a,b,c,d){var e,f,g,h,i=w(c);if(i)try{e=c(d),g=!0}catch(j){h=!0,f=j}else e=d,g=!0;o(b,e)||(i&&g?p(b,e):h?r(b,f):a===F?p(b,e):a===G&&r(b,e))}function m(a,b,c,d){var e=a._subscribers,f=e.length;e[f]=b,e[f+F]=c,e[f+G]=d}function n(a,b){for(var c,d,e=a._subscribers,f=a._detail,g=0;g<e.length;g+=3)c=e[g],d=e[g+b],l(b,c,d,f);a._subscribers=null}function o(a,b){var c,d=null;try{if(a===b)throw new TypeError("A promises callback cannot return that same promise.");if(v(b)&&(d=b.then,w(d)))return d.call(b,function(d){return c?!0:(c=!0,b!==d?p(a,d):q(a,d),void 0)},function(b){return c?!0:(c=!0,r(a,b),void 0)}),!0}catch(e){return c?!0:(r(a,e),!0)}return!1}function p(a,b){a===b?q(a,b):o(a,b)||q(a,b)}function q(a,b){a._state===D&&(a._state=E,a._detail=b,u.async(s,a))}function r(a,b){a._state===D&&(a._state=E,a._detail=b,u.async(t,a))}function s(a){n(a,a._state=F)}function t(a){n(a,a._state=G)}var u=a.config,v=(a.configure,b.objectOrFunction),w=b.isFunction,x=(b.now,c.cast),y=d.all,z=e.race,A=f.resolve,B=g.reject,C=h.asap;u.async=C;var D=void 0,E=0,F=1,G=2;j.prototype={constructor:j,_state:void 0,_detail:void 0,_subscribers:void 0,then:function(a,b){var c=this,d=new this.constructor(function(){});if(this._state){var e=arguments;u.async(function(){l(c._state,d,e[c._state-1],c._detail)})}else m(this,d,a,b);return d},"catch":function(a){return this.then(null,a)}},j.all=y,j.cast=x,j.race=z,j.resolve=A,j.reject=B,i.Promise=j}),a("promise/race",["./utils","exports"],function(a,b){"use strict";function c(a){var b=this;if(!d(a))throw new TypeError("You must pass an array to race.");return new b(function(b,c){for(var d,e=0;e<a.length;e++)d=a[e],d&&"function"==typeof d.then?d.then(b,c):b(d)})}var d=a.isArray;b.race=c}),a("promise/reject",["exports"],function(a){"use strict";function b(a){var b=this;return new b(function(b,c){c(a)})}a.reject=b}),a("promise/resolve",["exports"],function(a){"use strict";function b(a){var b=this;return new b(function(b){b(a)})}a.resolve=b}),a("promise/utils",["exports"],function(a){"use strict";function b(a){return c(a)||"object"==typeof a&&null!==a}function c(a){return"function"==typeof a}function d(a){return"[object Array]"===Object.prototype.toString.call(a)}var e=Date.now||function(){return(new Date).getTime()};a.objectOrFunction=b,a.isFunction=c,a.isArray=d,a.now=e}),b("promise/polyfill").polyfill()}();
+
+! function() {
+  var a, b, c, d;
+  ! function() {
+    var e = {},
+      f = {};
+    a = function(a, b, c) {
+      e[a] = {
+        deps: b,
+        callback: c
+      }
+    }, d = c = b = function(a) {
+      function c(b) {
+        if ("." !== b.charAt(0)) return b;
+        for (var c = b.split("/"), d = a.split("/").slice(0, -1), e = 0, f = c.length; f > e; e++) {
+          var g = c[e];
+          if (".." === g) d.pop();
+          else {
+            if ("." === g) continue;
+            d.push(g)
+          }
+        }
+        return d.join("/")
+      }
+      if (d._eak_seen = e, f[a]) return f[a];
+      if (f[a] = {}, !e[a]) throw new Error("Could not find module " + a);
+      for (var g, h = e[a], i = h.deps, j = h.callback, k = [], l = 0, m = i.length; m > l; l++) "exports" === i[l] ? k.push(g = {}) : k.push(b(c(i[l])));
+      var n = j.apply(this, k);
+      return f[a] = g || n
+    }
+  }(), a("promise/all", ["./utils", "exports"], function(a, b) {
+    "use strict";
+
+    function c(a) {
+      var b = this;
+      if (!d(a)) throw new TypeError("You must pass an array to all.");
+      return new b(function(b, c) {
+        function d(a) {
+          return function(b) {
+            f(a, b)
+          }
+        }
+
+        function f(a, c) {
+          h[a] = c, 0 === --i && b(h)
+        }
+        var g, h = [],
+          i = a.length;
+        0 === i && b([]);
+        for (var j = 0; j < a.length; j++) g = a[j], g && e(g.then) ? g.then(d(j), c) : f(j, g)
+      })
+    }
+    var d = a.isArray,
+      e = a.isFunction;
+    b.all = c
+  }), a("promise/asap", ["exports"], function(a) {
+    "use strict";
+
+    function b() {
+      return function() {
+        process.nextTick(e)
+      }
+    }
+
+    function c() {
+      var a = 0,
+        b = new i(e),
+        c = document.createTextNode("");
+      return b.observe(c, {
+        characterData: !0
+      }),
+        function() {
+          c.data = a = ++a % 2
+        }
+    }
+
+    function d() {
+      return function() {
+        j.setTimeout(e, 1)
+      }
+    }
+
+    function e() {
+      for (var a = 0; a < k.length; a++) {
+        var b = k[a],
+          c = b[0],
+          d = b[1];
+        c(d)
+      }
+      k = []
+    }
+
+    function f(a, b) {
+      var c = k.push([a, b]);
+      1 === c && g()
+    }
+    var g, h = "undefined" != typeof window ? window : {},
+      i = h.MutationObserver || h.WebKitMutationObserver,
+      j = "undefined" != typeof global ? global : this,
+      k = [];
+    g = "undefined" != typeof process && "[object process]" === {}.toString.call(process) ? b() : i ? c() : d(), a.asap = f
+  }), a("promise/cast", ["exports"], function(a) {
+    "use strict";
+
+    function b(a) {
+      if (a && "object" == typeof a && a.constructor === this) return a;
+      var b = this;
+      return new b(function(b) {
+        b(a)
+      })
+    }
+    a.cast = b
+  }), a("promise/config", ["exports"], function(a) {
+    "use strict";
+
+    function b(a, b) {
+      return 2 !== arguments.length ? c[a] : (c[a] = b, void 0)
+    }
+    var c = {
+      instrument: !1
+    };
+    a.config = c, a.configure = b
+  }), a("promise/polyfill", ["./promise", "./utils", "exports"], function(a, b, c) {
+    "use strict";
+
+    function d() {
+      var a = "Promise" in window && "cast" in window.Promise && "resolve" in window.Promise && "reject" in window.Promise && "all" in window.Promise && "race" in window.Promise && function() {
+          var a;
+          return new window.Promise(function(b) {
+            a = b
+          }), f(a)
+        }();
+      a || (window.Promise = e)
+    }
+    var e = a.Promise,
+      f = b.isFunction;
+    c.polyfill = d
+  }), a("promise/promise", ["./config", "./utils", "./cast", "./all", "./race", "./resolve", "./reject", "./asap", "exports"], function(a, b, c, d, e, f, g, h, i) {
+    "use strict";
+
+    function j(a) {
+      if (!w(a)) throw new TypeError("You must pass a resolver function as the first argument to the promise constructor");
+      if (!(this instanceof j)) throw new TypeError("Failed to construct 'Promise': Please use the 'new' operator, this object constructor cannot be called as a function.");
+      this._subscribers = [], k(a, this)
+    }
+
+    function k(a, b) {
+      function c(a) {
+        p(b, a)
+      }
+
+      function d(a) {
+        r(b, a)
+      }
+      try {
+        a(c, d)
+      } catch (e) {
+        d(e)
+      }
+    }
+
+    function l(a, b, c, d) {
+      var e, f, g, h, i = w(c);
+      if (i) try {
+        e = c(d), g = !0
+      } catch (j) {
+        h = !0, f = j
+      } else e = d, g = !0;
+      o(b, e) || (i && g ? p(b, e) : h ? r(b, f) : a === F ? p(b, e) : a === G && r(b, e))
+    }
+
+    function m(a, b, c, d) {
+      var e = a._subscribers,
+        f = e.length;
+      e[f] = b, e[f + F] = c, e[f + G] = d
+    }
+
+    function n(a, b) {
+      for (var c, d, e = a._subscribers, f = a._detail, g = 0; g < e.length; g += 3) c = e[g], d = e[g + b], l(b, c, d, f);
+      a._subscribers = null
+    }
+
+    function o(a, b) {
+      var c, d = null;
+      try {
+        if (a === b) throw new TypeError("A promises callback cannot return that same promise.");
+        if (v(b) && (d = b.then, w(d))) return d.call(b, function(d) {
+          return c ? !0 : (c = !0, b !== d ? p(a, d) : q(a, d), void 0)
+        }, function(b) {
+          return c ? !0 : (c = !0, r(a, b), void 0)
+        }), !0
+      } catch (e) {
+        return c ? !0 : (r(a, e), !0)
+      }
+      return !1
+    }
+
+    function p(a, b) {
+      a === b ? q(a, b) : o(a, b) || q(a, b)
+    }
+
+    function q(a, b) {
+      a._state === D && (a._state = E, a._detail = b, u.async(s, a))
+    }
+
+    function r(a, b) {
+      a._state === D && (a._state = E, a._detail = b, u.async(t, a))
+    }
+
+    function s(a) {
+      n(a, a._state = F)
+    }
+
+    function t(a) {
+      n(a, a._state = G)
+    }
+    var u = a.config,
+      v = (a.configure, b.objectOrFunction),
+      w = b.isFunction,
+      x = (b.now, c.cast),
+      y = d.all,
+      z = e.race,
+      A = f.resolve,
+      B = g.reject,
+      C = h.asap;
+    u.async = C;
+    var D = void 0,
+      E = 0,
+      F = 1,
+      G = 2;
+    j.prototype = {
+      constructor: j,
+      _state: void 0,
+      _detail: void 0,
+      _subscribers: void 0,
+      then: function(a, b) {
+        var c = this,
+          d = new this.constructor(function() {});
+        if (this._state) {
+          var e = arguments;
+          u.async(function() {
+            l(c._state, d, e[c._state - 1], c._detail)
+          })
+        } else m(this, d, a, b);
+        return d
+      },
+      "catch": function(a) {
+        return this.then(null, a)
+      }
+    }, j.all = y, j.cast = x, j.race = z, j.resolve = A, j.reject = B, i.Promise = j
+  }), a("promise/race", ["./utils", "exports"], function(a, b) {
+    "use strict";
+
+    function c(a) {
+      var b = this;
+      if (!d(a)) throw new TypeError("You must pass an array to race.");
+      return new b(function(b, c) {
+        for (var d, e = 0; e < a.length; e++) d = a[e], d && "function" == typeof d.then ? d.then(b, c) : b(d)
+      })
+    }
+    var d = a.isArray;
+    b.race = c
+  }), a("promise/reject", ["exports"], function(a) {
+    "use strict";
+
+    function b(a) {
+      var b = this;
+      return new b(function(b, c) {
+        c(a)
+      })
+    }
+    a.reject = b
+  }), a("promise/resolve", ["exports"], function(a) {
+    "use strict";
+
+    function b(a) {
+      var b = this;
+      return new b(function(b) {
+        b(a)
+      })
+    }
+    a.resolve = b
+  }), a("promise/utils", ["exports"], function(a) {
+    "use strict";
+
+    function b(a) {
+      return c(a) || "object" == typeof a && null !== a
+    }
+
+    function c(a) {
+      return "function" == typeof a
+    }
+
+    function d(a) {
+      return "[object Array]" === Object.prototype.toString.call(a)
+    }
+    var e = Date.now || function() {
+        return (new Date).getTime()
+      };
+    a.objectOrFunction = b, a.isFunction = c, a.isArray = d, a.now = e
+  }), b("promise/polyfill").polyfill()
+}();
 
 if (typeof(Object.create) !== "function" || typeof(document.createElement("canvas").getContext) !== "function") {
     window.html2canvas = function() {
@@ -569,9 +870,18 @@ if (typeof(Object.create) !== "function" || typeof(document.createElement("canva
 var html2canvasNodeAttribute = "data-html2canvas-node";
 var html2canvasCanvasCloneAttribute = "data-html2canvas-canvas-clone";
 var html2canvasCanvasCloneIndex = 0;
-var wr3dHtml2CanvasOffset = undefined;
 
-function wr3dGetBoundingClientRect(node) {
+
+function WR3DHTml2CanvasContext() {
+  this.offset = undefined;
+};
+
+WR3DHTml2CanvasContext.prototype.setOffset = function(offset) {
+  this.offset = offset;
+  this.test = 'LAG';
+};
+
+WR3DHTml2CanvasContext.prototype.getBounds = function(node) {
   if (node.getBoundingClientRect) {
     var tempClientRect = node.getBoundingClientRect();
     var clientRect = {
@@ -583,21 +893,21 @@ function wr3dGetBoundingClientRect(node) {
       height: tempClientRect.height
     };
 
-    if(!_.isUndefined(wr3dHtml2CanvasOffset)) {
-      clientRect.left -= wr3dHtml2CanvasOffset.left;
-      clientRect.right -= wr3dHtml2CanvasOffset.left;
-      clientRect.top -= wr3dHtml2CanvasOffset.top;
-      clientRect.bottom -= wr3dHtml2CanvasOffset.top;
+    if(!_.isUndefined(this.offset)) {
+      clientRect.left -= this.offset.left;
+      clientRect.right -= this.offset.left;
+      clientRect.top -= this.offset.top;
+      clientRect.bottom -= this.offset.top;
     }
 //    Ngl.log('*** node='+$(node).attr('class')+' rect x,y:'+clientRect.left+','+clientRect.top+'  w,h: '+(clientRect.right-clientRect.left)+','+(clientRect.bottom-clientRect.top));
     return clientRect;
   }
   return {};
-}
+};
 
 window.html2canvas = function(nodeList, options) {
     options = options || {};
-    if (options.logging) {
+    if (options.logging || true) {
         window.html2canvas.logging = true;
         window.html2canvas.start = Date.now();
     }
@@ -663,13 +973,15 @@ function renderDocument(document, options, windowWidth, windowHeight) {
   function renderWindow(node, clonedWindow, options, windowWidth, windowHeight) {
     var support = new Support(clonedWindow.document);
     var imageLoader = new ImageLoader(options, support);
-    var bounds = getBounds(node);
-    wr3dHtml2CanvasOffset = _.cloneDeep(bounds);
+    var wr3dContext = new WR3DHTml2CanvasContext();
+    wr3dContext.setOffset(wr3dContext.getBounds(node));
+//    var bounds = getBounds(node);
+//    wr3dHtml2CanvasOffset = _.cloneDeep(bounds);
 
     var width = options.type === "view" ? windowWidth : node.offsetWidth;
     var height = options.type === "view" ? windowHeight : node.offsetHeight;
     var renderer = new CanvasRenderer(width, height, imageLoader, options, document);
-    var parser = new NodeParser(node, renderer, support, imageLoader, options);
+    var parser = new NodeParser(wr3dContext, node, renderer, support, imageLoader, options);
     return parser.ready.then(function() {
         log("Finished rendering");
 
@@ -911,11 +1223,11 @@ FontMetrics.prototype.getMetrics = function(family, size) {
     return this.data[family + "-" + size];
 };
 
-function FrameContainer(container, sameOrigin, options) {
+function FrameContainer(wr3dContext, container, sameOrigin, options) {
     this.image = null;
     this.src = container;
     var self = this;
-    var bounds = getBounds(container);
+    var bounds = getBounds(wr3dContext, container);
     this.promise = (!sameOrigin ? this.proxyLoad(options.proxy, bounds, options) : new Promise(function(resolve) {
         if (container.contentWindow.document.URL === "about:blank" || container.contentWindow.document.documentElement == null) {
             container.contentWindow.onload = container.onload = function() {
@@ -1422,8 +1734,8 @@ NodeContainer.prototype.parseTransformMatrix = function() {
     return this.transformMatrix;
 };
 
-NodeContainer.prototype.parseBounds = function() {
-    return this.bounds || (this.bounds = this.hasTransform() ? offsetBounds(this.node) : getBounds(this.node));
+NodeContainer.prototype.parseBounds = function(wr3dContext) {
+    return this.bounds || (this.bounds = this.hasTransform() ? offsetBounds(this.node) : getBounds(wr3dContext, this.node));
 };
 
 NodeContainer.prototype.hasTransform = function() {
@@ -1562,9 +1874,12 @@ function asFloat(str) {
     return parseFloat(str);
 }
 
-function getBounds(node) {
+function getBounds(wr3dContext, node) {
+if(wr3dContext.test !== 'LAG') {
+  debugger;
+}
     if (node.getBoundingClientRect) {
-        var clientRect = wr3dGetBoundingClientRect(node);
+        var clientRect = wr3dContext.getBounds(node);
         var width = node.offsetWidth == null ? clientRect.width : node.offsetWidth;
         return {
             top: clientRect.top,
@@ -1591,7 +1906,7 @@ function offsetBounds(node) {
     };
 }
 
-function NodeParser(element, renderer, support, imageLoader, options) {
+function NodeParser(wr3dContext, element, renderer, support, imageLoader, options) {
     log("Starting NodeParser");
     this.renderer = renderer;
     this.options = options;
@@ -1614,7 +1929,7 @@ function NodeParser(element, renderer, support, imageLoader, options) {
     this.fontMetrics = new FontMetrics();
     log("Fetched nodes, total:", this.nodes.length);
     log("Calculate overflow clips");
-    this.calculateOverflowClips();
+    this.calculateOverflowClips(wr3dContext);
     log("Start fetching images");
     this.images = imageLoader.fetch(this.nodes.filter(isElement));
     this.ready = this.images.ready.then(bind(function() {
@@ -1633,7 +1948,7 @@ function NodeParser(element, renderer, support, imageLoader, options) {
                 options.async.call(this, this.renderQueue, resolve);
             } else if (this.renderQueue.length > 0){
                 this.renderIndex = 0;
-                this.asyncRenderer(this.renderQueue, resolve);
+                this.asyncRenderer(wr3dContext, this.renderQueue, resolve);
             } else {
                 resolve();
             }
@@ -1641,13 +1956,13 @@ function NodeParser(element, renderer, support, imageLoader, options) {
     }, this));
 }
 
-NodeParser.prototype.calculateOverflowClips = function() {
+NodeParser.prototype.calculateOverflowClips = function(wr3dContext) {
     this.nodes.forEach(function(container) {
         if (isElement(container)) {
             if (isPseudoElement(container)) {
                 container.appendToDOM();
             }
-            container.borders = this.parseBorders(container);
+            container.borders = this.parseBorders(wr3dContext, container);
             var clip = (container.css('overflow') === "hidden") ? [container.borders.clip] : [];
             var cssClip = container.parseClip();
             if (cssClip && ["absolute", "fixed"].indexOf(container.css('position')) !== -1) {
@@ -1676,16 +1991,16 @@ function hasParentClip(container) {
     return container.parent && container.parent.clip.length;
 }
 
-NodeParser.prototype.asyncRenderer = function(queue, resolve, asyncTimer) {
+NodeParser.prototype.asyncRenderer = function(wr3dContext, queue, resolve, asyncTimer) {
     asyncTimer = asyncTimer || Date.now();
-    this.paint(queue[this.renderIndex++]);
+    this.paint(wr3dContext, queue[this.renderIndex++]);
     if (queue.length === this.renderIndex) {
         resolve();
     } else if (asyncTimer + 20 > Date.now()) {
-        this.asyncRenderer(queue, resolve, asyncTimer);
+        this.asyncRenderer(wr3dContext, queue, resolve, asyncTimer);
     } else {
         setTimeout(bind(function() {
-            this.asyncRenderer(queue, resolve);
+            this.asyncRenderer(wr3dContext, queue, resolve);
         }, this), 0);
     }
 };
@@ -1802,15 +2117,15 @@ NodeParser.prototype.sortStackingContexts = function(stack) {
     stack.contexts.forEach(this.sortStackingContexts, this);
 };
 
-NodeParser.prototype.parseTextBounds = function(container) {
+NodeParser.prototype.parseTextBounds = function(wr3dContext, container) {
     return function(text, index, textList) {
         if (container.parent.css("textDecoration").substr(0, 4) !== "none" || text.trim().length !== 0) {
             if (this.support.rangeBounds && !container.parent.hasTransform()) {
                 var offset = textList.slice(0, index).join("").length;
-                return this.getRangeBounds(container.node, offset, text.length);
+                return this.getRangeBounds(wr3dContext, container.node, offset, text.length);
             } else if (container.node && typeof(container.node.data) === "string") {
                 var replacementNode = container.node.splitText(text.length);
-                var bounds = this.getWrapperBounds(container.node, container.parent.hasTransform());
+                var bounds = this.getWrapperBounds(wr3dContext, container.node, container.parent.hasTransform());
                 container.node = replacementNode;
                 return bounds;
             }
@@ -1821,23 +2136,23 @@ NodeParser.prototype.parseTextBounds = function(container) {
     };
 };
 
-NodeParser.prototype.getWrapperBounds = function(node, transform) {
+NodeParser.prototype.getWrapperBounds = function(wr3dContext, node, transform) {
     var wrapper = node.ownerDocument.createElement('html2canvaswrapper');
     var parent = node.parentNode,
         backupText = node.cloneNode(true);
 
     wrapper.appendChild(node.cloneNode(true));
     parent.replaceChild(wrapper, node);
-    var bounds = transform ? offsetBounds(wrapper) : getBounds(wrapper);
+    var bounds = transform ? offsetBounds(wrapper) : getBounds(wr3dContext, wrapper);
     parent.replaceChild(backupText, wrapper);
     return bounds;
 };
 
-NodeParser.prototype.getRangeBounds = function(node, offset, length) {
+NodeParser.prototype.getRangeBounds = function(wr3dContext, node, offset, length) {
     var range = this.range || (this.range = node.ownerDocument.createRange());
     range.setStart(node, offset);
     range.setEnd(node, offset + length);
-    return wr3dGetBoundingClientRect(range);
+    return wr3dContext.getBounds(range);
 };
 
 function ClearTransform() {}
@@ -1863,7 +2178,7 @@ NodeParser.prototype.parse = function(stack) {
         }, this);
 };
 
-NodeParser.prototype.paint = function(container) {
+NodeParser.prototype.paint = function(wr3dContext, container) {
     try {
         if (container instanceof ClearTransform) {
             this.renderer.ctx.restore();
@@ -1871,19 +2186,19 @@ NodeParser.prototype.paint = function(container) {
             if (isPseudoElement(container.parent)) {
                 container.parent.appendToDOM();
             }
-            this.paintText(container);
+            this.paintText(wr3dContext, container);
             if (isPseudoElement(container.parent)) {
                 container.parent.cleanDOM();
             }
         } else {
-            this.paintNode(container);
+            this.paintNode(wr3dContext, container);
         }
     } catch(e) {
         log(e);
     }
 };
 
-NodeParser.prototype.paintNode = function(container) {
+NodeParser.prototype.paintNode = function(wr3dContext, container) {
     if (isStackingContext(container)) {
         this.renderer.setOpacity(container.opacity);
         this.renderer.ctx.save();
@@ -1892,7 +2207,7 @@ NodeParser.prototype.paintNode = function(container) {
         }
     }
 
-    var bounds = container.parseBounds();
+    var bounds = container.parseBounds(wr3dContext);
     this.renderer.clip(container.backgroundClip, function() {
         this.renderer.renderBackground(container, bounds, container.borders.borders.map(getWidth));
     }, this);
@@ -1926,13 +2241,13 @@ NodeParser.prototype.paintNode = function(container) {
         case "SELECT":
         case "INPUT":
         case "TEXTAREA":
-            this.paintFormValue(container);
+            this.paintFormValue(wr3dContext, container);
             break;
         }
     }, this);
 };
 
-NodeParser.prototype.paintFormValue = function(container) {
+NodeParser.prototype.paintFormValue = function(wr3dContext, container) {
     if (container.getValue().length > 0) {
         var document = container.node.ownerDocument;
         var wrapper = document.createElement('html2canvaswrapper');
@@ -1955,12 +2270,12 @@ NodeParser.prototype.paintFormValue = function(container) {
         wrapper.style.top = bounds.top + "px";
         wrapper.textContent = container.getValue();
         document.body.appendChild(wrapper);
-        this.paintText(new TextContainer(wrapper.firstChild, container));
+        this.paintText(wr3dContext, new TextContainer(wrapper.firstChild, container));
         document.body.removeChild(wrapper);
     }
 };
 
-NodeParser.prototype.paintText = function(container) {
+NodeParser.prototype.paintText = function(wr3dContext, container) {
     container.applyTextTransform();
     var characters = window.html2canvas.punycode.ucs2.decode(container.node.data);
     var textList = (!this.options.letterRendering || noLetterSpacing(container)) && !hasUnicode(container.node.data) ? getWords(characters) : characters.map(function(character) {
@@ -1981,7 +2296,7 @@ NodeParser.prototype.paintText = function(container) {
     }
 
     this.renderer.clip(container.parent.clip, function() {
-        textList.map(this.parseTextBounds(container), this).forEach(function(bounds, index) {
+        textList.map(this.parseTextBounds(wr3dContext, container), this).forEach(function(bounds, index) {
             if (bounds) {
                 this.renderer.text(textList[index], bounds.left, bounds.bottom);
                 this.renderTextDecoration(container.parent, bounds, this.fontMetrics.getMetrics(family, size));
@@ -2007,8 +2322,8 @@ NodeParser.prototype.renderTextDecoration = function(container, bounds, metrics)
     }
 };
 
-NodeParser.prototype.parseBorders = function(container) {
-    var nodeBounds = container.parseBounds();
+NodeParser.prototype.parseBorders = function(wr3dContext, container) {
+    var nodeBounds = container.parseBounds(wr3dContext);
     var radius = getBorderRadiusData(container);
     var borders = ["Top", "Right", "Bottom", "Left"].map(function(side) {
         return {
@@ -2628,7 +2943,7 @@ Support.prototype.testRangeBounds = function(document) {
             document.body.appendChild(testElement);
 
             range.selectNode(testElement);
-            rangeBounds = wr3dGetBoundingClientRect(range);
+            rangeBounds = range.getBoundingClientRect();
             rangeHeight = rangeBounds.height;
 
             if (rangeHeight === 123) {
