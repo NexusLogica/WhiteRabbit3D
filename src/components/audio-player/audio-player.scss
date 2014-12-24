@@ -44,7 +44,7 @@ All Rights Reserved.
     }
   }
 
-  .main-content {
+  .content-panel {
     background-color: rgba(0, 0, 0, 0.0);
     padding: 2px;
     >div {
@@ -58,6 +58,9 @@ All Rights Reserved.
       .btn {
         font-size: 26px;
       }
+    }
+    &.child-content > div {
+      cbackground-color: rgba(255, 0, 0, 1.0);
     }
   }
 }

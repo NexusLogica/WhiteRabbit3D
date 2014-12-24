@@ -47,6 +47,7 @@ angular.module('wr3dApp').directive('wr3dPanel', [function() {
       }
 
       $element.data('wr3d', $scope);
+      $element.find('>div').data('wr3d', $scope);
 
       var getWrStyleSelectors = function() {
         var className = $element.find('>div').attr('class');
@@ -71,10 +72,20 @@ angular.module('wr3dApp').directive('wr3dPanel', [function() {
 
         $scope.canvas = new Ngl.HtmlCanvas($element, $scope.wrStyle);
         $scope.panel = new Ngl.WrPanel($scope.canvas, $scope.wrStyle);
+        $scope.wrObject = $scope.panel;
         if($attrs.wrName) {
           $scope.panel.name = $attrs.wrName;
         }
-        hostContainer.scene.add($scope.panel);
+
+        var parentString = $scope.wrStyle['-wr3d-parent3d'];
+        if(!_.isEmpty(parentString)) {
+          var wr3dScope = $(parentString).data('wr3d');
+          if(wr3dScope && wr3dScope.wrObject) {
+            wr3dScope.wrObject.add($scope.panel);
+          }
+        } else {
+          hostContainer.scene.add($scope.panel);
+        }
       });
 
       $element.addClass('wr3d-panel');

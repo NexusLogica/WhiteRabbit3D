@@ -221,7 +221,7 @@ Ngl.WrPanel.prototype.createMesh = function(scene, numCols, numRows) {
 
   var y = 0.0;
   var xInc = 1.0/(numCols-1);
-  var yInc = -1.0/(numRows-1);
+  var yInc = 1.0/(numRows-1);
   var i = 0;
   for(var j = 0; j < numRows; j++) {
     var tmX  = tmStartX;

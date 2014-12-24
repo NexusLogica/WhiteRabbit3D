@@ -21,7 +21,16 @@
   </wr3d-panel>
 
   <wr3d-panel wr3d-display="true" wr-name="next-panel">
-    <div class="main-content">
+    <div class="main-content content-panel">
+      <div>
+        <div class="inline">Hi there</div>
+        <button class="btn" ng-click="onNext()" ng-bind="buttonText"></button>
+      </div>
+    </div>
+  </wr3d-panel>
+
+  <wr3d-panel wr3d-display="true" wr-name="other-next-panel">
+    <div class="child-content content-panel">
       <div>
         <div class="inline">Hi there</div>
         <button class="btn" ng-click="onNext()" ng-bind="buttonText"></button>

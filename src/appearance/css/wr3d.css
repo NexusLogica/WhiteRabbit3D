@@ -734,10 +734,10 @@ body {
   .audio-container .song-title .btn {
     background-color: rgba(200, 200, 200, 0.1);
     border: 1px gray solid; }
-  .audio-container .main-content {
+  .audio-container .content-panel {
     background-color: transparent;
     padding: 2px; }
-    .audio-container .main-content > div {
+    .audio-container .content-panel > div {
       border: darkgray 2px solid;
       padding: 10px;
       font-size: 38px;
@@ -747,8 +747,10 @@ body {
       -moz-border-radius: 20px;
       width: 300px;
       height: 200px; }
-      .audio-container .main-content > div .btn {
+      .audio-container .content-panel > div .btn {
         font-size: 26px; }
+    .audio-container .content-panel.child-content > div {
+      cbackground-color: red; }
 
 /**********************************************************************
 
