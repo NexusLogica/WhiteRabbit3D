@@ -18,29 +18,37 @@ All Rights Reserved.
 }
 
 .anchor-cube {
-  -wr3d-object3d: ( type: cube, size: 80  px, color: #FF0000 );
-  -wr3d-position3d: rotateY(30deg);
+  -wr3d-object3d: ( type: cube, size: 10  px, color: #FF0000 );
+  -wr3d-position3d: rotateY(0deg);
 }
 
-.song-title {
-  x-wr3d-parent3d:   .page-anchor;
-  -wr3d-position3d: rotateX(180deg) translate(100px, 0px, 100px) rotateY(-30deg);
+.latin-panel {
+  -wr3d-parent3d:   main-dock;
+  -wr3d-position3d: translate(100px, 0px, 100px) rotateY(-30deg);
   -wr3d-display3d:  surface;
   -wr3d-scaling3d:  screen;
-  -wr3d-surface3d: ( type: circular, radiusOuter: 300px, angle: full );
+  -wr3d-surface3d: ( type: circular, radiusOuter: 200px, angle: full );
 }
 
 .main-content {
-  -wr3d-host:       .wr3d-host.song-title-host;
-  -wr3d-position3d: rotateX(180deg) translate(100px, 0px, 0px) rotateY(-30deg);
+  -wr3d-parent3d:   main-dock;
+  -wr3d-position3d: translate(-200px, -100px, 0px) rotateY(30deg);
   -wr3d-display3d:  surface;
   -wr3d-scaling3d:  screen;
   -wr3d-surface3d: ( type: rectangular );
 }
 
 .child-content {
-  -wr3d-parent3d:  .main-content;
-  -wr3d-position3d: translate(300px, -400px, 600px) rotateY(60deg);
+  -wr3d-parent3d:   main-content;
+  -wr3d-position3d: translate(300px, -200px, 200px) rotateY(45deg);
+  -wr3d-display3d:  surface;
+  -wr3d-scaling3d:  screen;
+  -wr3d-surface3d: ( type: rectangular );
+}
+
+.anchor-panel {
+  -wr3d-parent3d:   main-dock;
+  -wr3d-position3d: rotateX(0deg) translate(200px, 200px, 0px);
   -wr3d-display3d:  surface;
   -wr3d-scaling3d:  screen;
   -wr3d-surface3d: ( type: rectangular );

@@ -85,7 +85,7 @@ Ngl.VertexShaders.textureVertexShader = '                                   \n\
     float radius = radiusOuter-pos.y/pixelSize;                             \n\
     float xPixels = pos.x/pixelSize;                                        \n\
                                                                             \n\
-    float angle = xPixels/radiusOuter+90.0/180.0*NXGR_PI;                  \n\
+    float angle = xPixels/radiusOuter-90.0/180.0*NXGR_PI;                  \n\
     radius = radiusOuter*pow(NXGR_E, -(radiusOuter-radius)/radiusOuter);    \n\
     float x = radius*cos(angle)*pixelSize;                                  \n\
     float y = radius*sin(angle)*pixelSize;                                  \n\

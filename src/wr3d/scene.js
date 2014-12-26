@@ -28,6 +28,7 @@ Ngl.Scene = function() {
   this.doSelect = false;
 
   this.wrObjects = [];
+  this.wrObjectsById = {};
   this.wrObjectsByColorHash = {};
   this.wrNextColor = new Ngl.IntegerColor(128, 0, 0);
 
@@ -85,6 +86,7 @@ Ngl.Scene.prototype.initialize = function(canvas) {
 Ngl.Scene.prototype.add = function(obj) {
   this.children.push(obj);
   obj.parent = this;
+
 };
 
 Ngl.Scene.prototype.setClearColor = function(color) {
@@ -230,9 +232,17 @@ Ngl.Scene.prototype.setSelectionCallback = function(callback) {
 
 Ngl.Scene.prototype.addWrObject = function(wrObject) {
   this.wrObjects.push(wrObject);
+  if(this.wrObjectsById[wrObject.id]) {
+    Ngl.log('WARNING: Duplicate WR3D object id: '+wrObject.id);
+  }
+  this.wrObjectsById[wrObject.id] = wrObject;
   wrObject.selectColor = this.wrNextColor.toFloatVector();
   this.wrObjectsByColorHash[this.wrNextColor.toString()] = wrObject;
   this.wrNextColor.increment();
+};
+
+Ngl.Scene.prototype.getWrObjectById = function(id) {
+  return this.wrObjectsById[id];
 };
 
 Ngl.Scene.prototype.doSelectOnNextRender = function() {

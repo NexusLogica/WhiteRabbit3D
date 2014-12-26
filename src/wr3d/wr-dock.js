@@ -12,10 +12,14 @@ All Rights Reserved.
 */
 'use strict';
 
+Ngl.nextDockId = 1;
+
 Ngl.WrDock = function(config) {
   this.config = _.cloneDeep(config);
 
   Ngl.Dock.call(this);
+  this.id = "Wr3d-Anonymous-"+Ngl.nextDockId;
+  Ngl.nextDockId++;
 
   this.pixelSize = 1.0;
   this.pixelSizeReference = Ngl.MetricReference.PARENT;
@@ -29,6 +33,7 @@ Ngl.WrDock.prototype = Object.create(Ngl.Dock.prototype);
 
 Ngl.WrDock.prototype.initialize = function(gl, scene) {
   Ngl.Dock.prototype.initialize.call(this, gl, scene);
+  scene.addWrObject(this);
 
   this.configureFromStyles(gl, scene);
   this.parseSurfaces();
@@ -46,6 +51,13 @@ Ngl.WrDock.prototype.configureFromStyles = function(gl, scene) {
   this.screenAnchor = this.parseAnchor();
   if(this.screenAnchor) {
     this.anchorToScreen(scene);
+  } else if(this.config['-wr3d-parent3d']) {
+    var parent = scene.getWrObjectById(this.config['-wr3d-parent3d']);
+    if(parent) {
+      parent.add(this);
+    } else {
+      Ngl.log('ERROR: Unable to find parent object with id: '+this.config['-wr3d-parent3d']);
+    }
   }
 
   // Parse position3d.
@@ -118,13 +130,16 @@ Ngl.WrDock.prototype.parseSurfaces = function() {
   this.flags = new Int32Array(this.flagsLength);
   for(var j=0; i<this.flagsLength; i++) { this.instructions[i] = 0; }
 
+  var surface = null;
   if(!this.config.surface3d || this.config.surface3d.length === 0) {
-    this.config.surface3d = [];
-    this.config.surface3d.push(new Ngl.Surface.Rectangular());
+    surface = new Ngl.Surface.Rectangular();
+    this.surfaces.push(surface);
+    surface.configure(this, '( type: rectangular )');
+    this.instructions[0] = 1;
   } else {
     for(i=0; i<this.config.surface3d.length; i++) {
       var conf = this.config.surface3d[i];
-      var surface = null;
+      surface = null;
       switch(conf.type.toLowerCase()) {
         case 'rectangular': {
           surface = new Ngl.Surface.Rectangular();
@@ -155,7 +170,20 @@ Ngl.WrDock.prototype.preRender = function(gl, scene) {
   this.updateTransform(scene);
 };
 
+Ngl.WrDock.prototype.postRender = function(gl, scene) {
+  for(var i = 0; i<this.children.length; i++) {
+    this.children[i].render(gl, scene);
+  }
+  this.transformUpdated = false;
+  this.recalculatePosition = false;
+};
+
 Ngl.WrDock.prototype.calculatePositioning = function(gl, scene) {
+
+  if(this.parent.recalculatePosition) {
+    this.recalculatePosition = true;
+  }
+
   if(this.recalculatePosition) {
     if(this.pixelSizeReference === Ngl.MetricReference.PARENT && this.parent.pixelSize !== undefined) {
       this.pixelSize = this.parent.pixelSize;
@@ -170,7 +198,6 @@ Ngl.WrDock.prototype.calculatePositioning = function(gl, scene) {
     this.totalScaling = this.wrScaleFactor*this.magnification;
 
     this.onPositioningRecalculated();
-    this.recalculatePosition = false;
   }
 };
 
@@ -244,9 +271,11 @@ Ngl.WrDock.prototype.anchorToScreen = function(scene) {
     }
   }
 
+  scene.camera.add(this);
+
   mat4.identity(this.transform);
-////////////////  mat4.rotateX(this.transform, this.transform, Math.PI);
-  mat4.translate(this.transform, this.transform, vec3.fromValues(x/pixelSize, y/pixelSize, -z));
+  mat4.translate(this.transform, this.transform, vec3.fromValues(x*pixelSize, y*pixelSize, -z));
+  mat4.rotateX(this.transform, this.transform, Math.PI);
   this.transformUpdated = true;
   this.recalculatePosition = true;
 };

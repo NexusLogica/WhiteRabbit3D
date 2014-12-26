@@ -4,11 +4,11 @@
 
   <wr3d-style wr-import="src/components/audio-player/audio-player.wrcss"></wr3d-style>
 
-  <wr3d-dock class="page-anchor" wr-name="main-dock">
-    <wr3d-object class="anchor-cube" wr-name="box"></wr3d-object>
+  <wr3d-dock wr-class="page-anchor" wr-id="main-dock">
+    <wr3d-object wr-class="anchor-cube" wr-id="box"></wr3d-object>
   </wr3d-dock>
 
-  <wr3d-panel wr3d-display="true" wr-name="latin-panel">
+  <wr3d-panel wr-class="latin-panel" wr-display="true" wr-id="latin-panel">
     <div class="song-title">
       <div>
         <div class="inline">Hi there</div>
@@ -20,19 +20,29 @@
     </div>
   </wr3d-panel>
 
-  <wr3d-panel wr3d-display="true" wr-name="next-panel">
+  <wr3d-panel wr-display="true" wr-id="main-content" wr-class="main-content">
     <div class="main-content content-panel">
       <div>
-        <div class="inline">Hi there</div>
+        <div class="inline">Hi there. This is the main content.</div>
         <button class="btn" ng-click="onNext()" ng-bind="buttonText"></button>
       </div>
     </div>
   </wr3d-panel>
 
-  <wr3d-panel wr3d-display="true" wr-name="other-next-panel">
+  <wr3d-panel wr-display="true" wr-class="child-content" wr-id="other-next-panel">
     <div class="child-content content-panel">
       <div>
-        <div class="inline">Hi there</div>
+        <div class="inline">Hi there from the other next panel that has no 3d styles.</div>
+        <button class="btn" ng-click="onNext()" ng-bind="buttonText"></button>
+      </div>
+    </div>
+  </wr3d-panel>
+
+
+  <wr3d-panel wr-display="true" wr-class="anchor-panel" wr-id="anchor-panel">
+    <div class="anchor-panel content-panel">
+      <div>
+        <div class="inline">Blah</div>
         <button class="btn" ng-click="onNext()" ng-bind="buttonText"></button>
       </div>
     </div>

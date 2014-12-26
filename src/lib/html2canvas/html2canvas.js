@@ -907,7 +907,7 @@ WR3DHTml2CanvasContext.prototype.getBounds = function(node) {
 
 window.html2canvas = function(nodeList, options) {
     options = options || {};
-    if (options.logging || true) {
+    if (options.logging) {
         window.html2canvas.logging = true;
         window.html2canvas.start = Date.now();
     }

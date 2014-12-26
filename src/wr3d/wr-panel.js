@@ -25,7 +25,6 @@ Ngl.WrPanel.prototype.constructor = Ngl.WrPanel;
 
 Ngl.WrPanel.prototype.initialize = function(gl, scene) {
   Ngl.WrDock.prototype.initialize.call(this, gl, scene);
-  scene.addWrObject(this);
 
   var _this = this;
 

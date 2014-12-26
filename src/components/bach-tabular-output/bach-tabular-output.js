@@ -39,6 +39,10 @@ angular.module('wr3dApp').directive('bachTabularOutput', [function() {
         return $.trim(name.replace(/\|/g, ''));
       };
 
+      $scope.cleanUnits = function(units) {
+        return $.trim(units.replace(/\|/g, ''));
+      };
+
     }],
     link: function($scope, $element, $attrs, $ctrl) {
     }

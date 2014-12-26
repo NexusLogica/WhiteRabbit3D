@@ -11,10 +11,9 @@
         </th>
       </tr>
       <tr>
-        <th><i ng-bind="data.independent.name"></i></th>
+        <th><i>(<span ng-bind="data.independent.units"></span>)</i></th>
         <th ng-repeat="y in data.dependent">
-          <i ng-show="!isAbs(y.name)" ng-bind="y.name"></i>
-          <span ng-show="isAbs(y.name)">|&nbsp;<i ng-bind="cleanName(y.name)"></i>&nbsp;|</span>
+          <i>(<span ng-bind="y.units"></span>)</i>
         </th>
       </tr>
       </thead>

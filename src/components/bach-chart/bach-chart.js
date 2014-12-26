@@ -25,7 +25,6 @@ angular.module('wr3dApp').directive('bachChart', [function() {
       $scope.showStatus = false;
 
       $scope.$watch('data', function(newVal, oldVal) {
-        debugger;
         if (newVal) {
           $scope.plot();
         }
