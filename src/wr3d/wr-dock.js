@@ -56,10 +56,8 @@ Ngl.WrDock.prototype.style = function(styleName) {
   if(arguments.length === 1) {
     return this.config[styleName];
   } else {
-    debugger;
-    var value = arguments[1];
-    this.config[styleName] = value;
-    this.updateFromStyle(styleName);
+    this.config[styleName] = arguments[1];
+    this.processStyle(styleName);
   }
 };
 
@@ -76,6 +74,7 @@ Ngl.WrDock.prototype.processStyle = function(styleName) {
     case '-wr3d-surface3d':       this.processSurface3d(); break;
   }
   this.recalculatePosition = true;
+  this.transformUpdated = true;
 };
 
 Ngl.WrDock.prototype.processParent3d = function() {
@@ -118,13 +117,14 @@ Ngl.WrDock.prototype.processMagnification3d = function() {
 };
 
 Ngl.WrDock.prototype.processPosition3d = function() {
-  var _this = this;
+  mat4.identity(this.wrTransform);
+
   var rotDeg;
   var position3d = this.config['-wr3d-position3d'];
   if (!_.isEmpty(position3d)) {
     var posGroups = (position3d + ' ').split(/\)\s+/g);
-    _.forEach(posGroups, function (pg) {
-      pg = $.trim(pg);
+    for(var i = 0; i<posGroups.length; i++) {
+      var pg = $.trim(posGroups[i]);
       var posType = pg.substr(0, pg.indexOf('('));
       var posValue = pg.substr(pg.indexOf('(') + 1);
       if (!_.isEmpty(posType)) {
@@ -132,25 +132,25 @@ Ngl.WrDock.prototype.processPosition3d = function() {
           case 'translate':
           {
             var posVec = Ngl.vecFromString(posValue);
-            mat4.translate(_this.wrTransform, _this.wrTransform, posVec);
+            mat4.translate(this.wrTransform, this.wrTransform, posVec);
             break;
           }
           case 'rotateX':
           {
             rotDeg = Ngl.floatAndUnitFromString(posValue);
-            mat4.rotateX(_this.wrTransform, _this.wrTransform, Ngl.radians(rotDeg.value));
+            mat4.rotateX(this.wrTransform, this.wrTransform, Ngl.radians(rotDeg.value));
             break;
           }
           case 'rotateY':
           {
             rotDeg = Ngl.floatAndUnitFromString(posValue);
-            mat4.rotateY(_this.wrTransform, _this.wrTransform, Ngl.radians(rotDeg.value));
+            mat4.rotateY(this.wrTransform, this.wrTransform, Ngl.radians(rotDeg.value));
             break;
           }
           case 'rotateZ':
           {
             rotDeg = Ngl.floatAndUnitFromString(posValue);
-            mat4.rotateZ(_this.wrTransform, _this.wrTransform, Ngl.radians(rotDeg.value));
+            mat4.rotateZ(this.wrTransform, this.wrTransform, Ngl.radians(rotDeg.value));
             break;
           }
           default:
@@ -159,7 +159,7 @@ Ngl.WrDock.prototype.processPosition3d = function() {
           }
         }
       }
-    });
+    }
   }
 };
 

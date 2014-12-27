@@ -32,7 +32,7 @@ All Rights Reserved.
 
 .main-content {
   -wr3d-parent3d:   main-dock;
-  -wr3d-position3d: translate(-200px, -100px, 0px) rotateY(30deg);
+  -wr3d-position3d: translate(100px, -100px, 0px) rotateY(0deg);
   -wr3d-display3d:  surface;
   -wr3d-scaling3d:  screen;
   -wr3d-surface3d: ( type: rectangular );
@@ -40,7 +40,7 @@ All Rights Reserved.
 
 .child-content {
   -wr3d-parent3d:   main-content;
-  -wr3d-position3d: translate(300px, -200px, 200px) rotateY(45deg);
+  -wr3d-position3d: translate(100px, -200px, 100px) rotateY(0deg);
   -wr3d-display3d:  surface;
   -wr3d-scaling3d:  screen;
   -wr3d-surface3d: ( type: rectangular );

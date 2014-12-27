@@ -39,6 +39,7 @@ Ngl.Scene = function() {
   this.currentMouseOverPanel = undefined;
   this.processingMouseEvent = false;
   this.currentEvent = undefined;
+  this.transitions = [];
 };
 
 Ngl.Scene.prototype.initialize = function(canvas) {
@@ -192,6 +193,7 @@ Ngl.Scene.prototype.render = function() {
 
   var gl = this.gl;
   this.processMouseEvents();
+  this.processTransitions();
 
   this.renderForSelect = false;
   this.renderForSelectColor = false;
@@ -266,6 +268,21 @@ Ngl.Scene.prototype.setRenderMode = function(mode) {
       this.renderForSelectColor = false;
       this.renderForSelectTexture = true;
       break;
+  }
+};
+
+Ngl.Scene.prototype.addTransition = function(transition) {
+  this.transitions.push(transition);
+  return this.time;
+};
+
+Ngl.Scene.prototype.processTransitions = function() {
+  for(var i=0; i<this.transitions.length; i++) {
+    var status = this.transitions[i].beforeRender(this, this.time);
+    if(!status) {
+      this.transitions.splice(i, 1);
+      i--;
+    }
   }
 };
 
