@@ -14,7 +14,7 @@ All Rights Reserved.
 .page-anchor {
   /* screen-anchor implies it's root is the camera frame */
   /* -wr3d-screen-anchor: 1.2 upper-left; */
-  -wr3d-screen-anchor: 1.25 center;
+  -wr3d-parent3d: screen 1.25 center;
 }
 
 .anchor-cube {
@@ -46,9 +46,9 @@ All Rights Reserved.
   -wr3d-surface3d: ( type: rectangular );
 }
 
-.anchor-panel {
-  -wr3d-parent3d:   main-dock;
-  -wr3d-position3d: rotateX(0deg) translate(200px, 200px, 0px);
+.child-panel {
+  -wr3d-parent3d:   main-content;
+  -wr3d-position3d: rotateX(0deg) translate(0px, 0px, 0px);
   -wr3d-display3d:  surface;
   -wr3d-scaling3d:  screen;
   -wr3d-surface3d: ( type: rectangular );

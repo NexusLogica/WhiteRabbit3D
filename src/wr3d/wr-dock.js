@@ -15,10 +15,11 @@ All Rights Reserved.
 Ngl.nextDockId = 1;
 
 Ngl.WrDock = function(config) {
-  this.config = _.cloneDeep(config);
+  this.config = { '-wr3d-surface3d': '( type: rectangular )' };
+  this.config = _.merge(this.config, config);
 
   Ngl.Dock.call(this);
-  this.id = "Wr3d-Anonymous-"+Ngl.nextDockId;
+  this.id = "Wr3d-Anonymous-" + Ngl.nextDockId;
   Ngl.nextDockId++;
 
   this.pixelSize = 1.0;
@@ -27,72 +28,133 @@ Ngl.WrDock = function(config) {
   this.wrTransformScaled = mat4.create();
   this.wrTransformAndTranform = mat4.create();
   this.surfaces = [];
+
+  this.wrScaleFactor = 1.0;
+  this.totalScaling = 1.0;
+  this.magnification = 1.0;
+  this.screenAnchor = {};
 };
 
 Ngl.WrDock.prototype = Object.create(Ngl.Dock.prototype);
 
 Ngl.WrDock.prototype.initialize = function(gl, scene) {
+  this.scene = scene;
   Ngl.Dock.prototype.initialize.call(this, gl, scene);
+
   scene.addWrObject(this);
 
-  this.configureFromStyles(gl, scene);
-  this.parseSurfaces();
+  this.configureFromStyles();
 };
 
-Ngl.WrDock.prototype.configureFromStyles = function(gl, scene) {
-  // Scaling
-  this.scaling3d = _.isUndefined(this.config['-wr3d-scaling3d']) ? Ngl.Scaling.parent : Ngl.Scaling[this.config['-wr3d-scaling3d'].toLowerCase()];
-  this.recalculatePosition = true;
-  this.wrScaleFactor = 1.0;
-  this.magnification = _.isUndefined(this.config['-wr3d-magnification3d']) ? 1.0 : this.config['-wr3d-magnification3d'];
-  this.totalScaling = 1.0;
+Ngl.WrDock.prototype.configureFromStyles = function() {
+  _.forIn(this.config, function(value, key) {
+    this.processStyle(key);
+  }, this);
+};
 
-  // Position from an anchor position.
-  this.screenAnchor = this.parseAnchor();
-  if(this.screenAnchor) {
-    this.anchorToScreen(scene);
-  } else if(this.config['-wr3d-parent3d']) {
-    var parent = scene.getWrObjectById(this.config['-wr3d-parent3d']);
+Ngl.WrDock.prototype.style = function(styleName) {
+  if(arguments.length === 1) {
+    return this.config[styleName];
+  } else {
+    debugger;
+    var value = arguments[1];
+    this.config[styleName] = value;
+    this.updateFromStyle(styleName);
+  }
+};
+
+/***
+ * This is an internal method. Use the style() function.
+ * @param styleName
+ */
+Ngl.WrDock.prototype.processStyle = function(styleName) {
+  switch(styleName) {
+    case '-wr3d-position3d':      this.processPosition3d(); break;
+    case '-wr3d-scaling3d':       this.processScaling3d(); break;
+    case '-wr3d-magnification3d': this.processMagnification3d(); break;
+    case '-wr3d-parent3d':        this.processParent3d(); break;
+    case '-wr3d-surface3d':       this.processSurface3d(); break;
+  }
+  this.recalculatePosition = true;
+};
+
+Ngl.WrDock.prototype.processParent3d = function() {
+  var parent3d = this.config['-wr3d-parent3d'];
+  var regex = /\W*screen\W*/i;
+  if(regex.test(parent3d)) {
+    var words = parent3d.split(/\s+/g);
+    this.screenAnchor.z = 1.0;
+    this.screenAnchor.anchor = 'upper-left';
+
+    for(var i=0; i<words.length; i++) {
+      var word = words[i].toLowerCase();
+      if(word !== 'screen') {
+        if($.isNumeric(word)) {
+          this.screenAnchor.z = parseFloat(word);
+        } else {
+          this.screenAnchor.anchor = Ngl.Placement.map[word];
+        }
+      }
+    }
+    this.anchorToScreen(this.scene);
+  } else {
+    var parent = this.scene.getWrObjectById(this.config['-wr3d-parent3d']);
     if(parent) {
       parent.add(this);
     } else {
       Ngl.log('ERROR: Unable to find parent object with id: '+this.config['-wr3d-parent3d']);
     }
   }
+};
 
-  // Parse position3d.
+Ngl.WrDock.prototype.processScaling3d = function() {
+  this.scaling3d = Ngl.Scaling.parent;
+  if(!_.isUndefined(this.config['-wr3d-scaling3d'])) {
+    this.scaling3d = Ngl.Scaling[this.config['-wr3d-scaling3d'].toLowerCase()];
+  }
+};
+Ngl.WrDock.prototype.processMagnification3d = function() {
+  this.magnification = _.isUndefined(this.config['-wr3d-magnification3d']) ? 1.0 : this.config['-wr3d-magnification3d'];
+};
+
+Ngl.WrDock.prototype.processPosition3d = function() {
   var _this = this;
   var rotDeg;
   var position3d = this.config['-wr3d-position3d'];
-  if(!_.isEmpty(position3d)) {
-    var posGroups = (position3d+' ').split(/\)\s+/g);
-    _.forEach(posGroups, function(pg) {
+  if (!_.isEmpty(position3d)) {
+    var posGroups = (position3d + ' ').split(/\)\s+/g);
+    _.forEach(posGroups, function (pg) {
       pg = $.trim(pg);
       var posType = pg.substr(0, pg.indexOf('('));
-      var posValue = pg.substr(pg.indexOf('(')+1);
-      if(!_.isEmpty(posType)) {
+      var posValue = pg.substr(pg.indexOf('(') + 1);
+      if (!_.isEmpty(posType)) {
         switch (posType) {
-          case 'translate': {
+          case 'translate':
+          {
             var posVec = Ngl.vecFromString(posValue);
             mat4.translate(_this.wrTransform, _this.wrTransform, posVec);
             break;
           }
-          case 'rotateX': {
+          case 'rotateX':
+          {
             rotDeg = Ngl.floatAndUnitFromString(posValue);
             mat4.rotateX(_this.wrTransform, _this.wrTransform, Ngl.radians(rotDeg.value));
             break;
           }
-          case 'rotateY': {
+          case 'rotateY':
+          {
             rotDeg = Ngl.floatAndUnitFromString(posValue);
             mat4.rotateY(_this.wrTransform, _this.wrTransform, Ngl.radians(rotDeg.value));
             break;
           }
-          case 'rotateZ': {
+          case 'rotateZ':
+          {
             rotDeg = Ngl.floatAndUnitFromString(posValue);
             mat4.rotateZ(_this.wrTransform, _this.wrTransform, Ngl.radians(rotDeg.value));
             break;
           }
-          default: {
+          default:
+          {
             Ngl.log('ERROR: Invalid wr3d CSS type ' + posType);
           }
         }
@@ -101,25 +163,9 @@ Ngl.WrDock.prototype.configureFromStyles = function(gl, scene) {
   }
 };
 
-Ngl.WrDock.prototype.parseAnchor = function() {
-  var screenAnchor = this.config['-wr3d-screen-anchor'];
-  if (!_.isEmpty(screenAnchor)) {
-    var anp = screenAnchor.split(/\s+/g);
-    if (anp.length === 2) {
-      var zIndex = ($.isNumeric(anp[0]) ? 0 : 1);
-      var z = parseFloat(anp[zIndex]);
-      var anchor = Ngl.Placement.map[anp[zIndex === 0 ? 1 : 0]];
-      if (!_.isUndefined(anchor)) {
-        return {z: z, anchor: anchor};
-      }
-    }
-    return undefined;
-  }
-};
+Ngl.WrDock.prototype.processSurface3d = function() {
 
-Ngl.WrDock.prototype.parseSurfaces = function() {
-
-  this.config.surface3d = Ngl.parseBracketedStyleList(this.config['-wr3d-surface3d']);
+  var surface3d = Ngl.parseBracketedStyleList(this.config['-wr3d-surface3d']);
 
   this.instructionLength = 4;
   this.instructions = new Int32Array(this.instructionLength);
@@ -131,14 +177,14 @@ Ngl.WrDock.prototype.parseSurfaces = function() {
   for(var j=0; i<this.flagsLength; i++) { this.instructions[i] = 0; }
 
   var surface = null;
-  if(!this.config.surface3d || this.config.surface3d.length === 0) {
+  if(!surface3d || surface3d.length === 0) {
     surface = new Ngl.Surface.Rectangular();
     this.surfaces.push(surface);
     surface.configure(this, '( type: rectangular )');
     this.instructions[0] = 1;
   } else {
-    for(i=0; i<this.config.surface3d.length; i++) {
-      var conf = this.config.surface3d[i];
+    for(i=0; i<surface3d.length; i++) {
+      var conf = surface3d[i];
       surface = null;
       switch(conf.type.toLowerCase()) {
         case 'rectangular': {

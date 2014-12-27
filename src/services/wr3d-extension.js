@@ -97,15 +97,14 @@ angular.module('wr3dApp').service('Wr3dExtension', ['$parse', function($parse) {
 
       // Find the parent object. If there is none specified in the style info then place attach it to their parent. If
       // the parent is the scene then dock it to the scene.
-      if(!$scope.wrStyle.hasOwnProperty('-wr3d-parent3d') && !$scope.wrStyle.hasOwnProperty('-wr3d-screen-anchor')) {
+      if(!$scope.wrStyle.hasOwnProperty('-wr3d-parent3d')) {
         var parent = getParentWrScope($element);
         if(parent.wr3d) {
           if(parent.wr3d.scene) {
-            $scope.wr3d.wrObject.config['-wr3d-screen-anchor'] = '1.00 center';
+            $scope.wr3d.wrObject.config['-wr3d-parent3d'] = 'screen 1.00 center';
           }
           else if(parent.wr3d.wrObject) {
-            var parentDock = parent.wr3d.wrObject;
-            parentDock.add($scope.wr3d.wrObject);
+            $scope.wr3d.wrObject.config['-wr3d-parent3d'] = parent.wr3d.wrObject.id;
           }
         }
       }
