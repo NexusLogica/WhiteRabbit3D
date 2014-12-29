@@ -200,7 +200,7 @@ Ngl.WrDock.prototype.processSurface3d = function() {
       }
       if(surface) {
         this.surfaces.push(surface);
-        surface.configure(this, conf);
+        surface.style(conf);
       }
     }
   }

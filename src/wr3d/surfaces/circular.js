@@ -25,10 +25,52 @@ Ngl.Surface.Circular = function() {
   mat4.rotateZ(this.after, this.after, Ngl.radians(0.0));
 };
 
-Ngl.Surface.Circular.prototype.configure = function(dock, surface3dConfig) {
-  this.config = surface3dConfig;
-  this.radiusOuter = parseFloat(this.config.radiusOuter);
-  this.mat[0] = this.radiusOuter;
+Ngl.Surface.Circular.prototype.style = function(surface3dConfig) {
+  if(arguments.length === 0) {
+    return this.config;
+  } else {
+    this.config = surface3dConfig;
+
+    this.radiusOuterType = 'auto';
+    var r = this.config['radius-outer'];
+    if(!_.isUndefined(r)) {
+      if(isNaN(parseFloat(r))) {
+        this.radiusOuterType = r;
+      } else {
+        this.radiusOuterType = 'provided';
+        this.radiusOuter = parseFloat(r);
+      }
+    }
+
+    this.radiusInnerType = 'auto';
+    r = this.config['radius-inner'];
+    if(!_.isUndefined(r)) {
+      if(isNaN(parseFloat(r))) {
+        this.radiusInnerType = r;
+      } else {
+        this.radiusInnerType = 'provided';
+        this.radiusInner = parseFloat(r);
+      }
+    }
+
+    this.angle = _.isUndefined(this.config.angle) ? 'auto' : this.config.angle === 'full' ? 360.0 : parseFloat(this.config.angle);
+
+    this.mat[0] = this.radiusOuter;
+  }
+};
+
+Ngl.Surface.Circular.prototype.configureData = function() {
+  // Cases:
+  //   1) radius-outer and angle defined: stretch the width of element to match.
+  //   2) radius-inner and angle defined: stretch the top element width to match.
+  //   3) angle defined: work out radiusOuter
+  //   4) radiusOuter defined: calculate angle
+  //   5) radiusInner defined: calculate angle
+  //   6) radiusInner and radiusOuter defined: calculate angle and scaling
+  if(this.radiusOuterType === 'provided') {
+
+  }
+
 };
 
 /***
@@ -40,22 +82,11 @@ Ngl.Surface.Circular.prototype.configure = function(dock, surface3dConfig) {
  * @param top
  */
 Ngl.Surface.Circular.prototype.configureHTML = function(panel, host, top) {
-  // Cases:
-  //   1) radiusOuter and angle defined: stretch the top element width to match.
-  //   2) angle defined: work out radiusOuter
-  //   3) radiusOuter defined: nothing to do
   var textureInfo = {};
   textureInfo.canvasWidth = top.width();
   textureInfo.canvasHeight = top.height();
 
-
-  if(!_.isUndefined(this.config.angle) && !_.isUndefined(this.config.radiusOuter)) {
-    this.radiusOuter = parseFloat(this.config.radiusOuter);
-    if(this.config.angle === 'full') {
-      this.angle = 360.0;
-    } else {
-      this.angle = parseFloat(this.config.angle);
-    }
+  if(this.radiusOuterType === 'full' || this.angle === 360.0) {
     textureInfo.canvasWidth = 2.0*Math.PI*this.radiusOuter;
   }
 

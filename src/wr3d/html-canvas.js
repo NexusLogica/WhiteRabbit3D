@@ -178,7 +178,7 @@ Ngl.HtmlCanvas.prototype.findElementUnderXyPosition = function(scene, x, y) {
   if(leaving.length) {
     _.forEach(leaving, function (layout) {
       //if(!loggedLine) { loggedLine = true; Ngl.log('********************************'); }
-      Ngl.log('Leaving '+layout.element.className);
+      // Ngl.log('Leaving '+layout.element.className);
       var eLeave = {
         eventType: 'mouseleave',
         clientX: e.clientX,

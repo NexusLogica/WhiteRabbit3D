@@ -28,7 +28,7 @@ Ngl.Surface.Rectangular = function() {
   mat4.rotateZ(this.after, this.after, Ngl.radians(0.0));
 };
 
-Ngl.Surface.Rectangular.prototype.configure = function(dock, surface3dConfig) {
+Ngl.Surface.Rectangular.prototype.style = function(surface3dConfig) {
   this.config = surface3dConfig;
 };
 
