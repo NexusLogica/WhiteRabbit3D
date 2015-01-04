@@ -23,19 +23,88 @@ angular.module('wr3dApp').directive('bachChart', [function() {
       ComponentExtensions.initialize(this, 'bachChart', $scope, $element, $attrs);
 
       $scope.showStatus = false;
+      $scope.plotData = [];
+
+      var processData = function() {
+        $scope.dependentState = [];
+        $scope.dependentAdditional = [];
+        _.forEach($scope.data.state.dependent, function(dep) {
+          $scope.dependentState.push({ name: dep.name, units: dep.units, active: false });
+        });
+        _.forEach($scope.data.additional.dependent, function(dep) {
+          $scope.dependentAdditional.push({ name: dep.name, units: dep.units, active: false });
+        });
+      };
+
+      var processPlotData = function() {
+        $scope.plotData = [];
+        $scope.plotLabels = [ $scope.data.state.independent.name ];
+
+        var times = $scope.data.state.independent.values;
+        for(var i=0; i<times.length; i++) {
+          $scope.plotData.push([ times[i] ]);
+        }
+
+        _.forEach($scope.data.state.dependent, function (dep) {
+          var found = _.find($scope.dependentState, function (d) {
+            return (d.name === dep.name);
+          });
+          if(found.active) {
+
+            var data = dep.values;
+            for (var i = 0; i < data.length; i++) {
+              $scope.plotData[i].push(data[i]);
+            }
+            $scope.plotLabels.push(dep.name);
+          }
+        });
+      };
 
       $scope.$watch('data', function(newVal, oldVal) {
         if (newVal) {
-          $scope.plot();
+          processData();
         }
       });
 
+      $scope.onStateClick = function(item) {
+        item.active = !item.active;
+        $scope.plot();
+      };
+
       $scope.plot = function() {
+        processPlotData();
+
+        $scope.chart = new Dygraph($('div.plot').get(0), $scope.plotData, { labels: $scope.plotLabels });
+
+        /**** uvChart
+        var graphdef = { categories: [], dataset: {} };
+
+        for(var i=0; i<$scope.plotData.length; i++) {
+          var item = $scope.plotData[i];
+          if(item.active) {
+            graphdef.categories.push(item.name);
+            graphdef.dataset[item.name] = item.data;
+          }
+        }
+
+        var configuration = {
+          meta: {
+            position: "div.plot"
+          }
+        };
+
+        if($scope.chart) {
+          $('#uv-'+$scope.chart.id).remove();
+        }
+        $scope.chart = uv.chart('Line', graphdef, configuration);
+debugger;
+ *****/
+        /*
         var data = {
           un: "LawrenceGunn",
           key: "5dqpclk0mw",
           origin: "plot",
-          platform: "lisp",
+          platform: "javascript",
           args: JSON.stringify([[0, 1, 2], [3, 4, 5], [1, 2, 3], [6, 6, 5]]),
           kwargs: JSON.stringify({
             "filename": "plot from api",
@@ -66,6 +135,7 @@ angular.module('wr3dApp').directive('bachChart', [function() {
           console.log('ERROR: '+err)
 
         });
+*/
       };
 
     }],

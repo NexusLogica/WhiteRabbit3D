@@ -19,6 +19,8 @@
     "cssjson": "git://github.com/aramk/CSSJSON",
     "rasterizeHTML": "git://github.com/cburgmer/rasterizeHTML.js",
     "html2canvas": "git://github.com/niklasvh/html2canvas",
-    "sprintf": "git://github.com/alexei/sprintf.js"
+    "sprintf": "git://github.com/alexei/sprintf.js",
+    "d3": "git://github.com/mbostock/d3",
+    "dygraphs": "1.1.0"
   }
 }

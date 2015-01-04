@@ -1,26 +1,32 @@
 <div class="bach-tabular-output-container">
 
-  <div class="data-table">
-    <table>
-      <thead>
-      <tr>
-        <th><i ng-bind="data.independent.name"></i></th>
-        <th ng-repeat="y in data.dependent">
-          <i ng-show="!isAbs(y.name)" ng-bind="y.name"></i>
-          <span ng-show="isAbs(y.name)">|&nbsp;<i ng-bind="cleanName(y.name)"></i>&nbsp;|</span>
-        </th>
-      </tr>
-      <tr>
-        <th><i>(<span ng-bind="data.independent.units"></span>)</i></th>
-        <th ng-repeat="y in data.dependent">
-          <i>(<span ng-bind="y.units"></span>)</i>
-        </th>
-      </tr>
-      </thead>
-      <tr ng-repeat="x in data.independent.values">
-        <td ng-bind="format(x)"></td>
-        <td ng-repeat="y in data.dependent" ng-bind="format(y.values[$index])"></td>
-      </tr>
-    </table>
-  </div>
+  <tabset>
+    <tab heading="{{dataSource.name}}" ng-repeat="dataSource in dataSources">
+      <div class="data-table">
+        <table>
+          <thead>
+          <tr>
+            <th ng-click="onIndependentColumnSelect($index)"><i ng-bind="dataSource.original.independent.name"></i></th>
+            <th ng-repeat="y in dataSource.original.dependent" ng-click="onDependentColumnSelect($index)">
+              <i ng-show="!isAbs(y.name)" ng-bind="y.name"></i>
+              <span ng-show="isAbs(y.name)">|&nbsp;<i ng-bind="cleanName(y.name)"></i>&nbsp;|</span>
+            </th>
+          </tr>
+          <tr>
+            <th ng-click="onIndependentColumnSelect($index)"><i>(<span ng-bind="dataSource.original.independent.units"></span>)</i></th>
+            <th ng-repeat="y in dataSource.original.dependent"  ng-click="onDependentColumnSelect($index)">
+              <i>(<span ng-bind="y.units"></span>)</i>
+            </th>
+          </tr>
+          </thead>
+          <tr ng-repeat="row in dataSource.data">
+            <td ng-repeat="val in row track by $index" ng-bind="format(val, $index)" ng-click="onDataSelect($index-1)"></td>
+          </tr>
+        </table>
+      </div>
+    </tab>
+    <tab heading="Chart">
+      <bach-chart ng-show="data" simulation-data="data" expose-to-parent="chartDisplay"></bach-chart>
+    </tab>
+  </tabset>
 </div>

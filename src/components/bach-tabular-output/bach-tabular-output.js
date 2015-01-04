@@ -24,7 +24,10 @@ angular.module('wr3dApp').directive('bachTabularOutput', [function() {
 
       $scope.showStatus = false;
 
-      $scope.format = function(val) {
+      $scope.format = function(val, index) {
+        if(index === 5) {
+          return sprintf('%5.5f', val);
+        }
         return sprintf('%5.5e', val);
       };
 
@@ -42,6 +45,33 @@ angular.module('wr3dApp').directive('bachTabularOutput', [function() {
       $scope.cleanUnits = function(units) {
         return $.trim(units.replace(/\|/g, ''));
       };
+
+      $scope.onDependentSelect = function(row, column) {
+        //debugger;
+      };
+
+      var combineDataToMatrix = function(source) {
+        var rows = [];
+        var t = source.independent.values;
+        var d = source.dependent;
+        var numDep = d.length;
+        for (var i = 0; i < t.length; i++) {
+          var ar = [t[i]];
+          for (var j = 0; j < numDep; j++) {
+            ar.push(d[j].values[i]);
+          }
+          rows.push(ar);
+        }
+        return rows;
+      };
+
+      $scope.$watch('data', function(newValue) {
+        if(newValue) {
+          $scope.dataSources = [
+            { name: "State data", data: combineDataToMatrix($scope.data.state), original: $scope.data.state  },
+            { name: "Additional data", data: combineDataToMatrix($scope.data.additional), original: $scope.data.additional } ];
+        }
+      });
 
     }],
     link: function($scope, $element, $attrs, $ctrl) {

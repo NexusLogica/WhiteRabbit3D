@@ -1068,12 +1068,24 @@ All Rights Reserved.
   width: 100%;
   clear: both;
   color: white; }
+  .bach-chart-container .dependent-selection {
+    display: inline-block;
+    vertical-align: top; }
+    .bach-chart-container .dependent-selection ul {
+      list-style: none; }
+      .bach-chart-container .dependent-selection ul li {
+        margin: 4px 2px;
+        border: gray 1px solid;
+        padding: 2px 15px;
+        border-radius: 3px;
+        background-color: #cccccc; }
+        .bach-chart-container .dependent-selection ul li.active {
+          background-color: #428bca; }
+      .bach-chart-container .dependent-selection ul .separator {
+        height: 5px; }
   .bach-chart-container .plot {
+    display: inline-block;
     width: 500px;
     margin: 0px auto 0px auto; }
-    .bach-chart-container .plot .plot-iframe {
-      width: 500px;
-      height: 400px;
-      border-style: none; }
 
 /*# sourceMappingURL=wr3d.css.map */

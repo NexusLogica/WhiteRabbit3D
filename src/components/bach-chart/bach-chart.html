@@ -1,5 +1,12 @@
 <div class="bach-chart-container">
 
+  <div class="dependent-selection">
+    <ul>
+      <li class="dependent-item" ng-repeat="item in dependentState" ng-class="{ active: item.active }" ng-click="onStateClick(item)">{{item.name}}</li>
+      <div class="separator"></div>
+      <li class="dependent-item" ng-repeat="item in dependentAdditional" ng-click="onAdditionalClick(item)">{{item.name}}</li>
+    </ul>
+  </div>
   <div class="plot">
   </div>
 </div>

@@ -37,6 +37,9 @@ $color-light: #f4d6bc;
 $color-lightest: #f8e4cc;
 $color-error: #eb881e;
 
+$button-active: #428bca;
+$button-gray: #cccccc;
+
 //$color-space: #F8F2EA
 $color-space: lighten($color-lightest, 9.5%);
 $color-body: lighten($color-lightest, 11%);

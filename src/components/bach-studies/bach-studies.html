@@ -1,15 +1,13 @@
 <div class="bach-studies-container container-fluid">
   <div class="run-container row">
-    <div class="status">
-      <div class="success" ng-show="success && showStatus">Success</div>
-      <div class="error" ng-show="!success && showStatus">Error</div>
-    </div>
 
     <betatron-input></betatron-input>
 
-    <bach-tabular-output ng-show="simulation.data" simulation-data="simulation.data"></bach-tabular-output>
-
-    <bach-chart ng-show="simulation.data" simulation-data="simulation.data"></bach-chart>
+    <bach-tabular-output ng-show="simulation.data" simulation-data="simulation.data" expose-to-parent="dataDisplay"></bach-tabular-output>
+    <div class="status" ng-hide="simulation.data">
+      <div class="success" ng-show="success && showStatus">Success</div>
+      <div class="error" ng-show="!success && showStatus">Error</div>
+    </div>
 
   </div>
 </div>

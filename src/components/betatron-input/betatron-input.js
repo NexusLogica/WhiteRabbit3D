@@ -56,7 +56,7 @@ angular.module('wr3dApp').directive('betatronInput', [function() {
               validate: function(s) { if(Math.abs(s) > 1.0) { return "The speed must be less than the speed of light"; } }
             },
             {
-              arg: "dBdtheta",
+              arg: "fieldIncrease",
               name: "Field change rate",
               description: "Rate of change of the magnetic field in terms of fractional change   per rotation",
               units: "T/s",
