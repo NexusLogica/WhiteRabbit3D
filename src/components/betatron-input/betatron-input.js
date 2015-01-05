@@ -57,8 +57,8 @@ angular.module('wr3dApp').directive('betatronInput', [function() {
             },
             {
               arg: "fieldIncrease",
-              name: "Field change rate",
-              description: "Rate of change of the magnetic field in terms of fractional change   per rotation",
+              name: "Field change rate per rotation",
+              description: "Rate of change of the magnetic field in terms of fractional change per rotation",
               units: "T/s",
               default: 0.0,
               min: -1.0,

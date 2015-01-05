@@ -1067,7 +1067,8 @@ All Rights Reserved.
 .bach-chart-container {
   width: 100%;
   clear: both;
-  color: white; }
+  color: white;
+  margin: 14px 10px 10px 14px; }
   .bach-chart-container .dependent-selection {
     display: inline-block;
     vertical-align: top; }
@@ -1083,9 +1084,19 @@ All Rights Reserved.
           background-color: #428bca; }
       .bach-chart-container .dependent-selection ul .separator {
         height: 5px; }
-  .bach-chart-container .plot {
+  .bach-chart-container .plot-container {
     display: inline-block;
-    width: 500px;
-    margin: 0px auto 0px auto; }
+    margin-left: 14px;
+    margin-top: 4px;
+    padding: 20px 20px;
+    background-color: #e5e5e5;
+    border-radius: 3px;
+    color: black; }
+    .bach-chart-container .plot-container .plot {
+      display: inline-block;
+      width: 500px;
+      height: 300px; }
+      .bach-chart-container .plot-container .plot .dygraph-legend {
+        background-color: #e5e5e5; }
 
 /*# sourceMappingURL=wr3d.css.map */

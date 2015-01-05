@@ -39,11 +39,14 @@ angular.module('wr3dApp').directive('bachChart', [function() {
       var processPlotData = function() {
         $scope.plotData = [];
         $scope.plotLabels = [ $scope.data.state.independent.name ];
+        $scope.series = {};
 
         var times = $scope.data.state.independent.values;
         for(var i=0; i<times.length; i++) {
           $scope.plotData.push([ times[i] ]);
         }
+
+        var numSeries = 0;
 
         _.forEach($scope.data.state.dependent, function (dep) {
           var found = _.find($scope.dependentState, function (d) {
@@ -56,6 +59,24 @@ angular.module('wr3dApp').directive('bachChart', [function() {
               $scope.plotData[i].push(data[i]);
             }
             $scope.plotLabels.push(dep.name);
+            $scope.series[dep.name] = { xplotter: smoothPlotter, axis: (numSeries > 0 ? "y2" : "y1") };
+            numSeries++;
+          }
+        });
+
+        _.forEach($scope.data.additional.dependent, function (dep) {
+          var found = _.find($scope.dependentAdditional, function (d) {
+            return (d.name === dep.name);
+          });
+          if(found.active) {
+
+            var data = dep.values;
+            for (var i = 0; i < data.length; i++) {
+              $scope.plotData[i].push(data[i]);
+            }
+            $scope.plotLabels.push(dep.name);
+            $scope.series[dep.name] = { xplotter: smoothPlotter, axis: (numSeries > 0 ? "y2" : "y1") };
+            numSeries++;
           }
         });
       };
@@ -66,7 +87,7 @@ angular.module('wr3dApp').directive('bachChart', [function() {
         }
       });
 
-      $scope.onStateClick = function(item) {
+      $scope.onItemClick = function(item) {
         item.active = !item.active;
         $scope.plot();
       };
@@ -74,7 +95,15 @@ angular.module('wr3dApp').directive('bachChart', [function() {
       $scope.plot = function() {
         processPlotData();
 
-        $scope.chart = new Dygraph($('div.plot').get(0), $scope.plotData, { labels: $scope.plotLabels });
+        $scope.chart = new Dygraph(
+          $('div.plot').get(0),
+          $scope.plotData,
+          {
+            labels: $scope.plotLabels,
+            series: $scope.series,
+            showRoller: false,
+            labelsDivStyles: { "backgroundColor": "#e5e5e5" }
+          });
 
         /**** uvChart
         var graphdef = { categories: [], dataset: {} };

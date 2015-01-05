@@ -18,6 +18,7 @@ All Rights Reserved.
   width: 100%;
   clear: both;
   color: white;
+  margin: 14px 10px 10px 14px;
   .dependent-selection {
     display: inline-block;
     vertical-align: top;
@@ -39,10 +40,22 @@ All Rights Reserved.
     }
 
   }
-  .plot {
+  .plot-container {
     display: inline-block;
-    width: 500px;
-    margin: 0px auto 0px auto;
+    margin-left: 14px;
+    margin-top: 4px;
+    padding: 20px 20px;
+    background-color: #e5e5e5;
+    border-radius: 3px;
+    color: black;
+    .plot {
+      display: inline-block;
+      width: 500px;
+      height: 300px;
+      .dygraph-legend {
+        background-color: #e5e5e5;
+      }
+    }
   }
 
 };
