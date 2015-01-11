@@ -162,9 +162,9 @@ Ngl.WrPanel.prototype.render = function(gl, scene) {
   gl.uniform4fv(this['surfaceColorLocation'+renderType], renderType === 'Cs' ? this.selectColor : this.surfaceColor);
 
   // Attach surface data to the shader.
-  var surfaceLocation = this['surfaceLocations'+renderType];
-  for(var i=0; i<this.surfaces.length; i++) {
-    this.surfaces[i].attachToShader(gl, scene, surfaceLocation[i]);
+  var numLocationsUsed = 1;
+  for(var i=0; i<this.surfaces.length; i += numLocationsUsed) {
+    numLocationsUsed = this.surfaces[i].attachToShader(gl, scene, this['surfaceLocations'+renderType], i);
   }
 
   gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexArrayBuffer);

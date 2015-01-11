@@ -69,16 +69,13 @@ angular.module('wr3dApp').service('Wr3dExtension', ['$parse', function($parse) {
     });
 
     if($scope.wr3d.wr3dComponentName === 'wr3dObject') {
-      var objectTypeString = $scope.wrStyle['object3d'];
-      if (!_.isEmpty(objectTypeString)) {
-        var properties = Ngl.parseBracketedStyle(objectTypeString);
-        if (!_.isEmpty(properties.type)) {
-          switch (properties.type) {
-            case 'cube':
-            case 'cuboid':
-            {
-              $scope.wr3d.wrObject = new Ngl.Cuboid($scope.wrStyle);
-            }
+      var objectType = $scope.wrStyle['object3d'];
+      if(objectType && !_.isEmpty(objectType.type)) {
+        switch (objectType.type) {
+          case 'cube':
+          case 'cuboid':
+          {
+            $scope.wr3d.wrObject = new Ngl.Cuboid($scope.wrStyle);
           }
         }
       }

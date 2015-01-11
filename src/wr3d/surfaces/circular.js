@@ -102,9 +102,11 @@ Ngl.Surface.Circular.prototype.configureHTML = function(panel, host, top) {
 };
 
 
-Ngl.Surface.Circular.prototype.attachToShader = function(gl, scene, locations) {
-  gl.uniformMatrix4fv(locations.mat, gl.FALSE, this.mat);
-  gl.uniformMatrix4fv(locations.before, gl.FALSE, this.before);
-  gl.uniformMatrix4fv(locations.after, gl.FALSE, this.after);
-  gl.uniform4iv(locations.ivec, this.ivec);
+Ngl.Surface.Circular.prototype.attachToShader = function(gl, scene, locations, indexOfNextLocationToUse) {
+  var location = locations[indexOfNextLocationToUse];
+  gl.uniformMatrix4fv(location.mat, gl.FALSE, this.mat);
+  gl.uniformMatrix4fv(location.before, gl.FALSE, this.before);
+  gl.uniformMatrix4fv(location.after, gl.FALSE, this.after);
+  gl.uniform4iv(location.ivec, this.ivec);
+  return 1; // return the number of locations actually used.
 };

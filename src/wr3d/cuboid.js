@@ -82,7 +82,7 @@ Ngl.Cuboid.prototype.initialize = function(gl, scene) {
 Ngl.Cuboid.prototype.configureFromStyles = function(gl, scene) {
   Ngl.WrDock.prototype.configureFromStyles.call(this, gl, scene);
 
-  this.config.objectConfig = Ngl.parseBracketedStyle(this.config['object3d']);
+  this.config.objectConfig = this.config['object3d'];
   if(this.config.objectConfig.hasOwnProperty('size')) {
     var sizeObj = Ngl.floatAndUnitFromString(this.config.objectConfig.size);
     if(sizeObj) {

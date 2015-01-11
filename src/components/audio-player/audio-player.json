@@ -20,8 +20,7 @@
     "surface3d": [{
       "type": "circular",
       "radius-outer": "200px",
-      "angle": "full",
-      "before": "translate(100px, -100px, 0px)"
+      "angle": "full"
     }]
   },
 
