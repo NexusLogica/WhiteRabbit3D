@@ -18,6 +18,37 @@ All Rights Reserved.
   width: 100%;
   clear: both;
   color: white;
+  position:relative;
+
+  .bach-title {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 70px;
+    position: absolute;
+    color: gray;
+    left: 15px;
+    top: 15px;
+    opacity: 0.125;
+    line-height: 38px;
+    >div {
+      display: inline-block;
+      vertical-align: top;
+    }
+    .lower {
+      margin-top:-4px;
+      font-size: 85%;
+    }
+  }
+
+  .study-type-select {
+    margin-top: 15px;
+    label {
+      display: inline-block;
+    }
+    select {
+      display: inline-block;
+    }
+  }
+
   .run-container {
     width: 900px;
     margin: 50px auto 100px auto;

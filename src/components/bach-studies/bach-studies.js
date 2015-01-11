@@ -22,6 +22,13 @@ angular.module('wr3dApp').directive('bachStudies', [function() {
       $scope.showStatus = false;
       $scope.simulation = { };
 
+      $scope.studyTypes = [
+        { value: 'betatron', name: 'Betatron' },
+        { value: 'twoElectronRelativity', name: 'Two Electron Relativity'}
+      ];
+
+      $scope.study = $scope.studyTypes[1];
+
       var runOnServer = function(config) {
         $scope.showStatus = false;
         var url = 'http://localhost:3006?do='+encodeURIComponent(JSON.stringify(config));

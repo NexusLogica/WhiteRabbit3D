@@ -1,5 +1,27 @@
 <div class="bach-studies-container container-fluid">
-  <div class="run-container row">
+
+  <div class="bach-title"><div class="higher">B</div><div class="lower">ACH</div></div>
+
+  <form role="form" class="form-horizontal inputs row-fluid study-type-select">
+    <row>
+      <div class="form-group run-type">
+        <label class="col-sm-offset-2 col-sm-3 control-label" for="study-type-select">
+          Study type:
+        </label>
+        <div class="col-sm-2">
+          <select
+              id="study-type-select"
+              class="form-control"
+              ng-init="study.type = study.type || studyTypes[1]"
+              ng-model="study.type"
+              ng-options="study.name for study in studyTypes">
+          </select>
+        </div>
+      </div>
+    </row>
+  </form>
+
+  <div ng-show="study.type.value === 'betatron'" class="run-container row">
 
     <betatron-input></betatron-input>
 
@@ -8,6 +30,13 @@
       <div class="success" ng-show="success && showStatus">Success</div>
       <div class="error" ng-show="!success && showStatus">Error</div>
     </div>
+
+  </div>
+
+  <div ng-show="study.type.value === 'twoElectronRelativity'" class="run-container row">
+
+    <two-electron-input></two-electron-input>
+
 
   </div>
 </div>

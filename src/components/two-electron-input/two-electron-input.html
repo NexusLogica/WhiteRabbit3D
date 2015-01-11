@@ -1,0 +1,45 @@
+<div class="two-electron-input-container">
+
+  <form role="form"  class="form-horizontal inputs row-fluid">
+    <row>
+      <div class="form-group run-type">
+        <label class="col-sm-offset-3 col-sm-3 control-label" for="run-type-select">
+          Simulation type:
+        </label>
+        <div class="col-sm-4">
+          <select id="run-type-select" class="form-control">
+            <option ng-repeat="(simName, simType) in simTypes">{{simType.name}}</option>
+          </select>
+        </div>
+      </div>
+    </row>
+    <row>
+      <div class="form-group" ng-repeat="inputType in simTypes[targetType].inputs">
+        <label class="col-sm-offset-3 col-sm-3 control-label" for="{{'input'+$index}}">
+          <span ng-bind="inputType.name"></span><span ng-show="inputType.units.length > 0">&nbsp;</span><span ng-bind="formatUnits(inputType.units)"></span>:
+        </label>
+        <div class="col-sm-4">
+          <input type="number"
+                 class="form-control"
+                 id="{{'input'+$index}}"
+                 placeholder="{{inputType.inputVarName}}"
+                 ng-model="model[inputType.arg]"
+                 min="{{inputType.min}}"
+                 max="{{inputType.max}}"
+                 step="{{inputType.step}}"
+                 data-toggle="popover"
+                 data-content="{{inputType.description}}">
+        </div>
+      </div>
+    </row>
+    <div class="form-group run-button">
+      <label class="col-sm-offset-3 col-sm-3 control-label">
+      </label>
+      <div class="col-sm-4">
+        <a class="btn btn-primary btn-lg" role="button" ng-click="run()">
+          Run
+        </a>
+      </div>
+    </div>
+  </form>
+</div>

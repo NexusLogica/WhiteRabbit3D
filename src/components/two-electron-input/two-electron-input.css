@@ -1,0 +1,67 @@
+/**********************************************************************
+
+File     : two-electron-input.scss
+Project  : N Simulator Library
+Purpose  : Source file for two electron relativity simulation input component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2015/01/10
+
+Copyright (c) 2015 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+/**********************************************************************
+
+File     : core.scss
+Project  : N Simulator Library
+Purpose  : Source file for a core SCSS/CSS file.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+input::-webkit-input-placeholder {
+  color: #dddddd; }
+
+input::-moz-placeholder {
+  color: #dddddd; }
+
+input::-moz-placeholder {
+  color: #dddddd; }
+
+input:-ms-input-placeholder {
+  color: #dddddd; }
+
+/**********************************************************************
+
+File     : mixins.scss
+Project  : N Simulator Library
+Purpose  : Source file for a mixin SCSS/CSS file.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+.two-electron-input-container {
+  width: 100%;
+  clear: both;
+  color: white; }
+  .two-electron-input-container .form-group.run-type {
+    margin-bottom: 35px; }
+  .two-electron-input-container form.inputs input {
+    color: #444444; }
+  .two-electron-input-container .form-group.run-button {
+    margin-top: 45px; }
+  .two-electron-input-container .popover {
+    color: black;
+    width: 200px;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    background-color: #e5e5e5; }
+    .two-electron-input-container .popover .arrow::after {
+      border-right-color: #e5e5e5; }

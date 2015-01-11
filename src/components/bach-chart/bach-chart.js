@@ -28,12 +28,16 @@ angular.module('wr3dApp').directive('bachChart', [function() {
       var processData = function() {
         $scope.dependentState = [];
         $scope.dependentAdditional = [];
-        _.forEach($scope.data.state.dependent, function(dep) {
-          $scope.dependentState.push({ name: dep.name, units: dep.units, active: false });
-        });
-        _.forEach($scope.data.additional.dependent, function(dep) {
-          $scope.dependentAdditional.push({ name: dep.name, units: dep.units, active: false });
-        });
+        if($scope.data.state) {
+          _.forEach($scope.data.state.dependent, function (dep) {
+            $scope.dependentState.push({name: dep.name, units: dep.units, active: false});
+          });
+        }
+        if($scope.data.additional) {
+          _.forEach($scope.data.additional.dependent, function (dep) {
+            $scope.dependentAdditional.push({name: dep.name, units: dep.units, active: false});
+          });
+        }
       };
 
       var processPlotData = function() {

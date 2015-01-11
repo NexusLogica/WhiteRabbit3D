@@ -67,9 +67,21 @@ angular.module('wr3dApp').directive('bachTabularOutput', [function() {
 
       $scope.$watch('data', function(newValue) {
         if(newValue) {
-          $scope.dataSources = [
-            { name: "State data", data: combineDataToMatrix($scope.data.state), original: $scope.data.state  },
-            { name: "Additional data", data: combineDataToMatrix($scope.data.additional), original: $scope.data.additional } ];
+          $scope.dataSources = [];
+          if($scope.data.state) {
+            $scope.dataSources.push({
+              name: "State data",
+              data: combineDataToMatrix($scope.data.state),
+              original: $scope.data.state
+            });
+          }
+          if($scope.data.additional) {
+            $scope.dataSources.push({
+              name: "Additional data",
+              data: combineDataToMatrix($scope.data.additional),
+              original: $scope.data.additional
+            });
+          }
         }
       });
 
