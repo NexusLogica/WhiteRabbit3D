@@ -28,7 +28,7 @@ angular.module('wr3dApp').directive('wr3dStyle', [function() {
       if(url) {
         $http.get(url).success(function (data) {
 
-          $scope.styleJson = CSSJSON.toJSON(data);
+          $scope.styleJson = data;
           Ngl.log($scope.styleJson);
           $scope.$emit('wr-style:notify-style-load-complete', $scope, true);
 

@@ -69,7 +69,7 @@ angular.module('wr3dApp').service('Wr3dExtension', ['$parse', function($parse) {
     });
 
     if($scope.wr3d.wr3dComponentName === 'wr3dObject') {
-      var objectTypeString = $scope.wrStyle['-wr3d-object3d'];
+      var objectTypeString = $scope.wrStyle['object3d'];
       if (!_.isEmpty(objectTypeString)) {
         var properties = Ngl.parseBracketedStyle(objectTypeString);
         if (!_.isEmpty(properties.type)) {
@@ -97,14 +97,14 @@ angular.module('wr3dApp').service('Wr3dExtension', ['$parse', function($parse) {
 
       // Find the parent object. If there is none specified in the style info then place attach it to their parent. If
       // the parent is the scene then dock it to the scene.
-      if(!$scope.wrStyle.hasOwnProperty('-wr3d-parent3d')) {
+      if(!$scope.wrStyle.hasOwnProperty('parent3d')) {
         var parent = getParentWrScope($element);
         if(parent.wr3d) {
           if(parent.wr3d.scene) {
-            $scope.wr3d.wrObject.config['-wr3d-parent3d'] = 'screen 1.00 center';
+            $scope.wr3d.wrObject.config['parent3d'] = 'screen 1.00 center';
           }
           else if(parent.wr3d.wrObject) {
-            $scope.wr3d.wrObject.config['-wr3d-parent3d'] = parent.wr3d.wrObject.id;
+            $scope.wr3d.wrObject.config['parent3d'] = parent.wr3d.wrObject.id;
           }
         }
       }
@@ -118,9 +118,6 @@ angular.module('wr3dApp').service('Wr3dExtension', ['$parse', function($parse) {
     var className = $attrs.wrClass;
     if (className) {
       $scope.wr3d.styleSelectors = className.split(' ').reverse();
-      for(var i=0; i < $scope.wr3d.styleSelectors.length; i++) {
-        $scope.wr3d.styleSelectors[i] = '.'+$scope.wr3d.styleSelectors[i];
-      }
     }
   };
 

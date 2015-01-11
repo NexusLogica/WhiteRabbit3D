@@ -85,7 +85,7 @@ angular.module('wr3dApp').directive('wr3dScene', [function() {
         Ngl.log('Num styles loaded: '+$scope.wr3d.styleListLoaded.length);
 
         _.forEach($scope.wr3d.styleListLoaded, function(styleObj) {
-          _.merge($scope.wr3d.styles, styleObj.styleJson.children);
+          _.merge($scope.wr3d.styles, styleObj.styleJson);
         });
 
         $scope.$broadcast('wr3d-scene:get-styles', $scope);
@@ -93,7 +93,7 @@ angular.module('wr3dApp').directive('wr3dScene', [function() {
 
       $scope.getStyle = function(selector) {
         if($scope.wr3d.styles.hasOwnProperty(selector)) {
-          return $scope.wr3d.styles[selector].attributes;
+          return $scope.wr3d.styles[selector];
         }
         return {};
       };

@@ -32,7 +32,7 @@ angular.module('wr3dApp').directive('audioPlayer', [function() {
           startValue: -60.0*$scope.direction,
           endValue: 60.0*$scope.direction,
           func: function(fraction) { return fraction; },
-          style: '-wr3d-position3d',
+          style: 'position3d',
           styleString: 'translate(100px, -100px, 0px) rotateY(${0}deg)',
           target: target
         };
