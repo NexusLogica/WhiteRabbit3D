@@ -91,6 +91,22 @@ Ngl.VertexShaders.textureVertexShader = '                                   \n\
     return surfaceDataArray[dataIndex].transformAfter*vec4(x, y, z, 1.0);   \n\
   }                                                                         \n\
                                                                             \n\
+  vec4 cylindricalWarp(int dataIndex, vec4 posIn) {                         \n\
+    vec4 pos = surfaceDataArray[dataIndex].transformBefore*posIn;           \n\
+                                                                            \n\
+    // surface data:                                                        \n\
+    //   0,0: outer radius - radius in pixels.                              \n\
+    float referenceRadius = pixelSize*surfaceDataArray[dataIndex].floatData[0][0];    \n\
+                                                                            \n\
+    float angle = pos.x/referenceRadius;                                    \n\
+    float radius = referenceRadius*pow(NXGR_E, -pos.y/referenceRadius);     \n\
+    float x = radius*cos(angle);                                            \n\
+    float y = radius*sin(angle);                                            \n\
+    float z = pos.z;                                                        \n\
+                                                                            \n\
+    return surfaceDataArray[dataIndex].transformAfter*vec4(x, y, z, 1.0);   \n\
+  }                                                                         \n\
+                                                                            \n\
   void main() {                                                             \n\
     if(flags[0] == 0) {                                                     \n\
       texCoordVarying.x = texCoord.x;                                       \n\
@@ -107,6 +123,8 @@ Ngl.VertexShaders.textureVertexShader = '                                   \n\
         break;                                                              \n\
       } else if(instructions[i] == 2) {                                     \n\
         sizedPosition = circularWarp(i, sizedPosition);                     \n\
+      } else if(instructions[i] == 3) {                                     \n\
+        sizedPosition = cylindricalWarp(i, sizedPosition);                  \n\
       }                                                                     \n\
     }                                                                       \n\
                                                                             \n\

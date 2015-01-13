@@ -13,20 +13,11 @@ All Rights Reserved.
 'use strict';
 
 Ngl.Surface.Rectangular = function() {
-//  this.radiusOuter = 250.0;
-  this.mat  = new Float32Array(16);
-  this.before = mat4.create();
-  this.after = mat4.create();
-  this.scaleX = 1.0;
-  this.scaleY = 1.0;
-  this.mat[0] = this.scaleX;
-  this.mat[1] = this.scaleY;
-
-  this.ivec = new Int32Array(4);
-
-  mat4.rotateZ(this.before, this.before, Ngl.radians(0.0));
-  mat4.rotateZ(this.after, this.after, Ngl.radians(0.0));
+  Ngl.Surface.SurfaceMorph.call(this);
+  this.shaders = [ Ngl.Surface.Shaders.RECTANGULAR ];
 };
+
+Ngl.Surface.Rectangular.prototype = Object.create(Ngl.Surface.SurfaceMorph.prototype);
 
 Ngl.Surface.Rectangular.prototype.style = function(surface3dConfig) {
   this.config = surface3dConfig;
@@ -68,18 +59,4 @@ Ngl.Surface.Rectangular.prototype.configureHTML = function(panel, host, top) {
   host.css('display', 'block').css('width', textureInfo.texturemapWidth+'px').css('height', textureInfo.texturemapHeight+'px'); //.css('background-color', 'green');
   top.css({'display': 'block', 'top': textureInfo.canvasTop+'px', 'left': textureInfo.canvasTop+'px'}).width(textureInfo.canvasWidth).height(textureInfo.canvasHeight);
   return textureInfo;
-};
-
-
-Ngl.Surface.Rectangular.prototype.attachToShader = function(gl, scene, locations, indexOfNextLocationToUse) {
-  var location = locations[indexOfNextLocationToUse];
-  gl.uniformMatrix4fv(location.mat, gl.FALSE, this.mat);
-  gl.uniformMatrix4fv(location.before, gl.FALSE, this.before);
-  gl.uniformMatrix4fv(location.after, gl.FALSE, this.after);
-  gl.uniform4iv(location.ivec, this.ivec);
-  return 1; // return the number of locations actually used.
-};
-
-Ngl.Surface.Rectangular.prototype.translate = function(trans, pixSizes) {
-
 };

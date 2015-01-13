@@ -14,13 +14,26 @@
 
   "latin-panel": {
     "parent3d": "main-dock",
-    "position3d": "translate(100px, 0px, 100px) rotateY(-30deg)",
+    "position3d": "translate(0px, 0px, 0px) rotateY(-30deg)",
     "display3d": "surface",
     "scaling3d": "screen",
     "surface3d": [{
       "type": "circular",
       "radius-outer": "200px",
       "angle": "full"
+    }]
+  },
+
+  "latin-cylinder": {
+    "parent3d": "main-dock",
+    "position3d": "translate(0px, 0px, 0px) rotateY(-30deg)",
+    "display3d": "surface",
+    "scaling3d": "screen",
+    "surface3d": [{
+      "type": "cylindrical",
+      "radius-outer": "50px",
+      "before": "translate(0px, 0px, 0px) rotate(90deg)",
+      "after": "translate(0px, 0px, 0px) rotate(90deg)"
     }]
   },
 

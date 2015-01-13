@@ -419,6 +419,75 @@ Ngl.pointFromPropString = function(properties, propName) {
   return point;
 };
 
+/***
+ * Takes a transform string, translates it, and applies it to a matrix.
+ * @method processTransformString
+ * @param matrix
+ * @param transformString
+ */
+Ngl.processTransformString = function(matrix, transformString) {
+  mat4.identity(matrix);
+  var rotDeg;
+
+  if (!_.isEmpty(transformString)) {
+    var posGroups = (transformString + ' ').split(/\)\s+/g);
+    for(var i = 0; i<posGroups.length; i++) {
+      var pg = $.trim(posGroups[i]);
+      var posType = pg.substr(0, pg.indexOf('('));
+      var posValue = pg.substr(pg.indexOf('(') + 1);
+      if (!_.isEmpty(posType)) {
+        switch (posType) {
+          //case 'scale':
+          //case 'skew':
+          //case 'skewX':
+          //case 'skewYZ':
+          //case 'skew':
+          //case 'translateX':
+          //case 'translateY':
+          //case 'translateZ':
+          case 'matrix':
+          {
+            var ar = posValue.split(',').map(parseFloat);
+            var trans = new Float32Array[ar];
+            mat4.translate(matrix, matrix, trans);
+            break;
+          }
+          case 'translate':
+          {
+            var posVec = Ngl.vecFromString(posValue);
+            mat4.translate(matrix, matrix, posVec);
+            break;
+          }
+          case 'rotateX':
+          {
+            rotDeg = Ngl.floatAndUnitFromString(posValue);
+            mat4.rotateX(matrix, matrix, Ngl.radians(rotDeg.value));
+            break;
+          }
+          case 'rotateY':
+          {
+            rotDeg = Ngl.floatAndUnitFromString(posValue);
+            mat4.rotateY(matrix, matrix, Ngl.radians(rotDeg.value));
+            break;
+          }
+          case 'rotateZ':
+          {
+            rotDeg = Ngl.floatAndUnitFromString(posValue);
+            mat4.rotateZ(matrix, matrix, Ngl.radians(rotDeg.value));
+            break;
+          }
+          default:
+          {
+            Ngl.log('ERROR: Ngl.processTransformString: Invalid wr3d CSS type ' + posType);
+          }
+        }
+      }
+    }
+  }
+};
+
+
+
 Ngl.vecFromString = function(str) {
   if(_.isEmpty(str)) { return null; }
 

@@ -104,8 +104,6 @@ Ngl.WrPanel.prototype.finalizeInitialization = function(gl, scene) {
   }, this);
 
   this.canvasInitialized = true;
-
-  this.setupVertexShaderWarping();
 };
 
 Ngl.WrPanel.prototype.onPositioningRecalculated = function() {
@@ -277,27 +275,6 @@ Ngl.WrPanel.prototype.createMesh = function(scene, numCols, numRows) {
     }
   }
   return { vertexData: vertexData, indexData: indexData, numIndices: numIndices };
-};
-
-Ngl.WrPanel.prototype.setupVertexShaderWarping = function() {
-  if(!this.config.hasOwnProperty('surfaceProperties3d')) { return; }
-  this.surfaceProperties = JSON.parse(this.config.surfaceProperties3d);
-
-  // We are using indexes 0 to 3 for surfaces.
-  for(var i=0; i<this.surfaceProperties.length; i++) {
-    var props = this.surfaceProperties[i];
-    switch(props.type) {
-      case 'rectangular': {
-        this.instructions[i] = 1;
-        break;
-      }
-      case 'circular': {
-        this.instructions[i] = 2;
-        break;
-      }
-    }
-  }
-
 };
 
 Ngl.WrPanel.prototype.dispatchMouseEvent = function(scene, targetData, event) {

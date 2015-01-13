@@ -177,11 +177,12 @@ Ngl.WrDock.prototype.processSurface3d = function() {
   for(var j=0; i<this.flagsLength; i++) { this.instructions[i] = 0; }
 
   var surface = null;
+  var instructionIndex = 0;
   if(!surface3d || surface3d.length === 0) {
     surface = new Ngl.Surface.Rectangular();
     this.surfaces.push(surface);
     surface.configure(this, [{ 'type': 'rectangular' }]);
-    this.instructions[0] = 1;
+    instructionIndex += surface.fillInstructions(this.instructions, instructionIndex);
   } else {
     for(i=0; i<surface3d.length; i++) {
       var conf = surface3d[i];
@@ -189,18 +190,21 @@ Ngl.WrDock.prototype.processSurface3d = function() {
       switch(conf.type.toLowerCase()) {
         case 'rectangular': {
           surface = new Ngl.Surface.Rectangular();
-          this.instructions[i] = 1;
           break;
         }
         case 'circular': {
           surface = new Ngl.Surface.Circular();
-          this.instructions[i] = 2;
+          break;
+        }
+        case 'cylindrical': {
+          surface = new Ngl.Surface.Cylindrical();
           break;
         }
       }
       if(surface) {
         this.surfaces.push(surface);
         surface.style(conf);
+        instructionIndex += surface.fillInstructions(this.instructions, instructionIndex);
       }
     }
   }
@@ -226,7 +230,7 @@ Ngl.WrDock.prototype.postRender = function(gl, scene) {
 
 Ngl.WrDock.prototype.calculatePositioning = function(gl, scene) {
 
-  if(this.parent.recalculatePosition) {
+  if(this.parent && this.parent.recalculatePosition) {
     this.recalculatePosition = true;
   }
 
@@ -248,6 +252,9 @@ Ngl.WrDock.prototype.calculatePositioning = function(gl, scene) {
 };
 
 Ngl.WrDock.prototype.updateTransform = function(scene) {
+  if(!this.parent) {
+    debugger;
+  }
   if(this.parent.transformUpdated || this.transformUpdated) {
     mat4.copy(this.wrTransformScaled, this.wrTransform);
     this.wrTransformScaled[12] *= this.totalScaling;

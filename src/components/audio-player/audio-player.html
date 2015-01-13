@@ -20,7 +20,19 @@
     </div>
   </wr3d-panel>
 
-  <wr3d-panel wr-display="true" wr-id="main-content" wr-class="main-content">
+  <wr3d-panel wr-class="latin-cylinder" wr-display="false" wr-id="latin-cylinder">
+    <div class="song-title">
+      <div>
+        <div class="inline">Hi there</div>
+        <button class="inline btn" ng-click="onNext()" ng-bind="buttonText"></button>
+        <div class="inline">
+          This is not at all latin. But it could be if I it is warped looking enough.
+        </div>
+      </div>
+    </div>
+  </wr3d-panel>
+
+  <wr3d-panel wr-display="false" wr-id="main-content" wr-class="main-content">
     <div class="main-content content-panel">
       <div>
         <div class="inline">Parent.</div>
@@ -29,7 +41,7 @@
     </div>
   </wr3d-panel>
 
-  <wr3d-panel wr-display="true" wr-class="child-content" wr-id="other-next-panel">
+  <wr3d-panel wr-display="false" wr-class="child-content" wr-id="other-next-panel">
     <div class="child-content content-panel">
       <div>
         <div class="inline">Child.</div>
