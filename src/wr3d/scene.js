@@ -427,8 +427,9 @@ Ngl.pointFromPropString = function(properties, propName) {
  */
 Ngl.processTransformString = function(matrix, transformString) {
   mat4.identity(matrix);
-  var rotDeg;
+  if(_.isEmpty(transformString)) { return; }
 
+  var rotDeg, ar;
   if (!_.isEmpty(transformString)) {
     var posGroups = (transformString + ' ').split(/\)\s+/g);
     for(var i = 0; i<posGroups.length; i++) {
@@ -447,15 +448,14 @@ Ngl.processTransformString = function(matrix, transformString) {
           //case 'translateZ':
           case 'matrix':
           {
-            var ar = posValue.split(',').map(parseFloat);
-            var trans = new Float32Array[ar];
-            mat4.translate(matrix, matrix, trans);
+            ar = posValue.split(',').map(parseFloat);
+            mat4.translate(matrix, matrix, new Float32Array(ar));
             break;
           }
           case 'translate':
           {
-            var posVec = Ngl.vecFromString(posValue);
-            mat4.translate(matrix, matrix, posVec);
+            ar = posValue.split(',').map(parseFloat);
+            mat4.translate(matrix, matrix, new Float32Array(ar));
             break;
           }
           case 'rotateX':
@@ -485,8 +485,6 @@ Ngl.processTransformString = function(matrix, transformString) {
     }
   }
 };
-
-
 
 Ngl.vecFromString = function(str) {
   if(_.isEmpty(str)) { return null; }

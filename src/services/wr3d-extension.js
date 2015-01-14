@@ -31,6 +31,12 @@ angular.module('wr3dApp').service('Wr3dExtension', ['$parse', function($parse) {
     var camelName = name.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
     $element.addClass(camelName);
 
+    $scope.notifyScene = function() {
+      if ($scope.wr3d.display) {
+        $scope.$emit('wr3d:notify-scene', $scope);
+      }
+    };
+
     $scope.wr3d.display = true;
     if($attrs.hasOwnProperty('wrDisplay')) {
       var template = $parse($attrs.wrDisplay);
@@ -38,6 +44,7 @@ angular.module('wr3dApp').service('Wr3dExtension', ['$parse', function($parse) {
       if(!value) {
         $scope.wr3d.display = false;
         $element.css({ display: 'none' });
+        return;
       }
     }
 
@@ -54,11 +61,6 @@ angular.module('wr3dApp').service('Wr3dExtension', ['$parse', function($parse) {
       onGetStyles(hostContainer, $scope, $element, $attrs);
     });
 
-    $scope.notifyScene = function() {
-      if ($scope.wr3d.display) {
-        $scope.$emit('wr3d:notify-scene', $scope);
-      }
-    };
   };
 
   var onGetStyles = function(hostContainer, $scope, $element, $attrs) {

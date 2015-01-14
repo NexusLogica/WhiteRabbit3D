@@ -91,7 +91,8 @@ Ngl.WrPanel.prototype.finalizeInitialization = function(gl, scene) {
     this['pixelSizeLocation'+prog.ext] = gl.getUniformLocation(program, 'pixelSize');
     this['surfaceColorLocation'+prog.ext] = gl.getUniformLocation(program, 'surfaceColor');
 
-    this['surfaceLocations'+prog.ext] = [];
+    var surfaceName = 'surfaceLocations'+prog.ext;
+    this[surfaceName] = [];
 
     for(var i=0; i<Ngl.MAX_NUM_SURFACES; i++) {
       this['surfaceLocations'+prog.ext].push({
@@ -100,6 +101,12 @@ Ngl.WrPanel.prototype.finalizeInitialization = function(gl, scene) {
         after: gl.getUniformLocation(program, 'surfaceDataArray['+i+'].transformAfter'),
         ivec: gl.getUniformLocation(program, 'surfaceDataArray['+i+'].integerData')
       });
+
+      // Verify the locations.
+      var locations = this[surfaceName][this[surfaceName].length-1];
+      if(!locations.mat || !locations.before || !locations.after || !locations.ivec) {
+        debugger;
+      }
     }
   }, this);
 

@@ -25,6 +25,8 @@ Ngl.Surface.Circular.prototype.style = function(surface3dConfig) {
   } else {
     this.config = surface3dConfig;
 
+    this.parseBeforeAfter();
+
     this.radiusOuterType = 'auto';
     var r = this.config['radius-outer'];
     if(!_.isUndefined(r)) {

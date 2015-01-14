@@ -15,12 +15,17 @@ All Rights Reserved.
 Ngl.Surface.Rectangular = function() {
   Ngl.Surface.SurfaceMorph.call(this);
   this.shaders = [ Ngl.Surface.Shaders.RECTANGULAR ];
+  this.mat[0] = 1.0;
+  this.mat[1] = 1.0;
+  this.mat[2] = 1.0;
 };
 
 Ngl.Surface.Rectangular.prototype = Object.create(Ngl.Surface.SurfaceMorph.prototype);
 
 Ngl.Surface.Rectangular.prototype.style = function(surface3dConfig) {
   this.config = surface3dConfig;
+
+  this.parseBeforeAfter();
 };
 
 /***

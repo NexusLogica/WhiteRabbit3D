@@ -14,26 +14,28 @@
 
   "latin-panel": {
     "parent3d": "main-dock",
-    "position3d": "translate(0px, 0px, 0px) rotateY(-30deg)",
+    "position3d": "translate(0px, 0px, 0px) rotateY(0deg)",
     "display3d": "surface",
     "scaling3d": "screen",
     "surface3d": [{
       "type": "circular",
+      "xtype": "rectangular",
       "radius-outer": "200px",
-      "angle": "full"
+      "angle": "full",
+      "before": "rotateX(75deg) rotateZ(5deg)",
+      "after": "translate(0px, 0px, 0px) rotateX(80deg)"
     }]
   },
 
   "latin-cylinder": {
-    "parent3d": "main-dock",
+    "xparent3d": "main-dock",
     "position3d": "translate(0px, 0px, 0px) rotateY(-30deg)",
     "display3d": "surface",
     "scaling3d": "screen",
     "surface3d": [{
       "type": "cylindrical",
       "radius-outer": "50px",
-      "before": "translate(0px, 0px, 0px) rotate(90deg)",
-      "after": "translate(0px, 0px, 0px) rotate(90deg)"
+      "before": "translate(0px, 0px, 0px) rotateX(10deg)"
     }]
   },
 
@@ -46,7 +48,7 @@
   },
 
   "child-content": {
-    "parent3d": "main-content",
+    "xparent3d": "main-content",
     "position3d": "translate(100px, -200px, 100px) rotateY(0deg)",
     "display3d": "surface",
     "scaling3d": "screen",
@@ -54,7 +56,7 @@
   },
 
   "child-panel": {
-    "parent3d": "main-content",
+    "xparent3d": "main-content",
     "position3d": "rotateX(0deg) translate(0px, 0px, 0px)",
     "display3d": "surface",
     "scaling3d": "screen",

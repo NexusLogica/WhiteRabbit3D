@@ -64,13 +64,13 @@ Ngl.VertexShaders.textureVertexShader = '                                   \n\
     vec4 pos = surfaceDataArray[dataIndex].transformBefore*posIn;           \n\
                                                                             \n\
     // surface data:                                                        \n\
-    //   0,0: outer radius - radius in pixels.                              \n\
     float scaleX = surfaceDataArray[dataIndex].floatData[0][0];             \n\
     float scaleY = surfaceDataArray[dataIndex].floatData[0][1];             \n\
+    float scaleZ = surfaceDataArray[dataIndex].floatData[0][1];             \n\
                                                                             \n\
-    float x = posIn.x*scaleX;                                               \n\
-    float y = posIn.y*scaleY;                                               \n\
-    float z = posIn.z;                                                      \n\
+    float x = pos.x*scaleX;                                                 \n\
+    float y = pos.y*scaleY;                                                 \n\
+    float z = pos.z*scaleZ;                                                 \n\
                                                                             \n\
     return surfaceDataArray[dataIndex].transformAfter*vec4(x, y, z, 1.0);   \n\
   }                                                                         \n\
@@ -121,6 +121,8 @@ Ngl.VertexShaders.textureVertexShader = '                                   \n\
     for(int i=0; i<4; i++) {                                                \n\
       if(instructions[i] == 0) {                                            \n\
         break;                                                              \n\
+      } else if(instructions[i] == 1) {                                     \n\
+        sizedPosition = rectangularWarp(i, sizedPosition);                  \n\
       } else if(instructions[i] == 2) {                                     \n\
         sizedPosition = circularWarp(i, sizedPosition);                     \n\
       } else if(instructions[i] == 3) {                                     \n\

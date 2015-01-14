@@ -42,6 +42,7 @@ Ngl.Surface.SurfaceMorph.prototype.fillInstructions = function(instructions, nex
 };
 
 Ngl.Surface.SurfaceMorph.prototype.parseBeforeAfter = function() {
-
+  Ngl.processTransformString(this.before, this.config.before);
+  Ngl.processTransformString(this.after, this.config.after);
 };
 
