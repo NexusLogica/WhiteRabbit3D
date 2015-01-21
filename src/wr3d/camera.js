@@ -17,8 +17,8 @@ Ngl.Camera = function() {
   this.name = 'camera';
   this.cameraTransformUpdated = true;
 
-  this.nearFrustrum = 0.1;
-  this.farFrustrum = 10000.0;
+  this.nearFrustrum = 0.001;
+  this.farFrustrum = 1000.0;
   this.verticalViewAngle = 30.0; // degrees
 
   this.inverseCameraTransform = mat4.create();

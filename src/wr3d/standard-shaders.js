@@ -51,7 +51,7 @@ Ngl.VertexShaders.textureVertexShader = '                                   \n\
   const float NXGR_E  = 2.718281828459;                                     \n\
   uniform mat4 projectionViewTransform;                                     \n\
   uniform vec3 size;                                                        \n\
-  uniform float pixelSize;                                                  \n\
+  uniform float pixelSize;  // pixels per spatial unit                      \n\
   uniform ivec4 flags;                                                      \n\
   uniform ivec4 instructions;                                               \n\
   attribute vec3 position;                                                  \n\
@@ -80,12 +80,14 @@ Ngl.VertexShaders.textureVertexShader = '                                   \n\
                                                                             \n\
     // surface data:                                                        \n\
     //   0,0: outer radius - radius in pixels.                              \n\
-    float referenceRadius = pixelSize*surfaceDataArray[dataIndex].floatData[0][0];    \n\
+    float referenceRadius = surfaceDataArray[dataIndex].floatData[0][0];    \n\
                                                                             \n\
     float angle = pos.x/referenceRadius;                                    \n\
-    float radius = referenceRadius*pow(NXGR_E, -pos.y/referenceRadius);     \n\
-    float x = radius*cos(angle);                                            \n\
-    float y = radius*sin(angle);                                            \n\
+    float radius = referenceRadius*pow(NXGR_E, -(referenceRadius-pos.y)/referenceRadius);     \n\
+    float x = posIn.x;//radius*cos(angle);                                            \n\
+ //   if(referenceRadius < 201.0) { x -= 1.0; }//radius*cos(angle);                                            \n\
+ //   if(pixelSize < 0.1) { x -= 1.0; }//radius*cos(angle);                                            \n\
+    float y = posIn.y+referenceRadius*0.001;//radius*sin(angle);                                            \n\
     float z = pos.z;                                                        \n\
                                                                             \n\
     return surfaceDataArray[dataIndex].transformAfter*vec4(x, y, z, 1.0);   \n\
@@ -96,7 +98,7 @@ Ngl.VertexShaders.textureVertexShader = '                                   \n\
                                                                             \n\
     // surface data:                                                        \n\
     //   0,0: outer radius - radius in pixels.                              \n\
-    float referenceRadius = pixelSize*surfaceDataArray[dataIndex].floatData[0][0];    \n\
+    float referenceRadius = surfaceDataArray[dataIndex].floatData[0][0];    \n\
                                                                             \n\
     float angle = pos.x/referenceRadius;                                    \n\
     float radius = referenceRadius*pow(NXGR_E, -pos.y/referenceRadius);     \n\
@@ -130,7 +132,11 @@ Ngl.VertexShaders.textureVertexShader = '                                   \n\
       }                                                                     \n\
     }                                                                       \n\
                                                                             \n\
-    gl_Position = projectionViewTransform*sizedPosition;                    \n\
+    float pix = pixelSize;                                                                        \n\
+    vec4 sp = vec4(pix*sizedPosition.x, pix*sizedPosition.y, pix*sizedPosition.z, 1.0);     \n\
+    //sp.z = sizedPosition.z;     \n\
+    //sp.y = -sp.y;     \n\
+    gl_Position = projectionViewTransform*sp;        \n\
   }';
 
 Ngl.FragmentShaders.textureColorSelectFragmentShader = '                    \n\

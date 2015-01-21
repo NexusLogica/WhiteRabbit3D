@@ -36,7 +36,7 @@ Ngl.Surface.SurfaceMorph.prototype.attachToShader = function(gl, scene, location
 
 Ngl.Surface.SurfaceMorph.prototype.fillInstructions = function(instructions, nextInstructionIndex) {
   for(var i=0; i<this.shaders.length; i++) {
-    instructions[nextInstructionIndex] = 1;
+    instructions[nextInstructionIndex] = this.shaders[i];
   }
   return this.shaders.length; // return the number of instructions actually used.
 };

@@ -244,7 +244,7 @@ Ngl.WrDock.prototype.calculatePositioning = function(gl, scene) {
       this.pixelSize = scene.camera.getPixelSizeAtPosition(this.viewTransform);
     }
 
-    this.wrScaleFactor = this.pixelSize;
+    this.wrScaleFactor = 1.0;
     this.totalScaling = this.wrScaleFactor*this.magnification;
 
     this.onPositioningRecalculated();
@@ -287,6 +287,7 @@ Ngl.WrDock.prototype.anchorToScreen = function(scene) {
     return;
   }
 
+  debugger;
   var pixelSize = scene.camera.getPixelSizeAtCameraZ(z);
   var w2 = 0.5*scene.gl.drawingBufferWidth;
   var h2 = 0.5*scene.gl.drawingBufferHeight;

@@ -22,8 +22,8 @@
       "xtype": "rectangular",
       "radius-outer": "200px",
       "angle": "full",
-      "before": "rotateX(75deg) rotateZ(5deg)",
-      "after": "translate(0px, 0px, 0px) rotateX(80deg)"
+      "xbefore": "rotateX(75deg) rotateZ(5deg)",
+      "xafter": "translate(0px, 0px, 0px) rotateX(80deg)"
     }]
   },
 
