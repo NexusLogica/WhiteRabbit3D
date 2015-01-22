@@ -16,9 +16,9 @@ Ngl.Dock = function(position, size) {
   this.initialized = false;
   this.children = [];
   this.transformUpdated = true;
-  this.transform = mat4.create();
-  this.viewTransform = mat4.create();
-  this.projectionViewTransform = mat4.create();
+  this.transform = mat4.create();        // The transform of self relative to parent.
+  this.viewTransform = mat4.create();    // The transform of self relative to the world.
+  this.projectionViewTransform = mat4.create(); // The transform of self relative to the world transformed by the projection matrix.
 };
 
 Ngl.Dock.prototype.initialize = function(gl, scene) {
@@ -37,8 +37,9 @@ Ngl.Dock.prototype.preRender = function(gl, scene) {
 
   if(this.parent.transformUpdated || this.transformUpdated) {
     this.transformUpdated = true;
-    mat4.multiply(this.viewTransform, this.parent.viewTransform,  this.transform);
-    mat4.multiply(this.projectionViewTransform, scene.camera.projectionTransform, this.viewTransform);
+    debugger;
+    mat4.multiply(this.viewTransform, this.parent.viewTransform,  this.transform); // Make the view transform the transform of world to self.
+    mat4.multiply(this.projectionViewTransform, scene.camera.projectionTransform, this.viewTransform); // Now project it.
   }
 };
 

@@ -66,7 +66,7 @@ Ngl.VertexShaders.textureVertexShader = '                                   \n\
     // surface data:                                                        \n\
     float scaleX = surfaceDataArray[dataIndex].floatData[0][0];             \n\
     float scaleY = surfaceDataArray[dataIndex].floatData[0][1];             \n\
-    float scaleZ = surfaceDataArray[dataIndex].floatData[0][1];             \n\
+    float scaleZ = surfaceDataArray[dataIndex].floatData[0][2];             \n\
                                                                             \n\
     float x = pos.x*scaleX;                                                 \n\
     float y = pos.y*scaleY;                                                 \n\
@@ -119,7 +119,7 @@ Ngl.VertexShaders.textureVertexShader = '                                   \n\
       texCoordVarying.y = selectionTexCoord.y;                              \n\
     }                                                                       \n\
                                                                             \n\
-    vec4 sizedPosition = vec4(size[0]*position[0], size[1]*position[1], position[2], 1.0); \n\
+    vec4 sizedPosition = vec4(size[0]*position[0], size[1]*position[1], size[2]*position[2], 1.0); \n\
     for(int i=0; i<4; i++) {                                                \n\
       if(instructions[i] == 0) {                                            \n\
         break;                                                              \n\

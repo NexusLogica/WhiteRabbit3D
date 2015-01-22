@@ -18,6 +18,7 @@ Ngl.Surface.Rectangular = function() {
   this.mat[0] = 1.0;
   this.mat[1] = 1.0;
   this.mat[2] = 1.0;
+  this.surfaceTransform = new Ngl.Surface.RectangularTransform();
 };
 
 Ngl.Surface.Rectangular.prototype = Object.create(Ngl.Surface.SurfaceMorph.prototype);
@@ -65,3 +66,4 @@ Ngl.Surface.Rectangular.prototype.configureHTML = function(panel, host, top) {
   top.css({'display': 'block', 'top': textureInfo.canvasTop+'px', 'left': textureInfo.canvasTop+'px'}).width(textureInfo.canvasWidth).height(textureInfo.canvasHeight);
   return textureInfo;
 };
+

@@ -49,7 +49,7 @@ Ngl.WrPanel.prototype.finalizeInitialization = function(gl, scene) {
   var h2 = this.height;
   w2 *= this.totalScaling;
   h2 *= this.totalScaling;
-  this.size = new Float32Array([w2, h2, 0.0]);
+  this.size = new Float32Array([w2, h2, 1.0]);
 
   // Texture coordinates.
   var scaleX = this.width/scene.selectionRenderer.width;
@@ -121,7 +121,24 @@ Ngl.WrPanel.prototype.onPositioningRecalculated = function() {
   this.size = new Float32Array([w2, h2, 0.0]);
 };
 
+Ngl.i = 0;
+
 Ngl.WrPanel.prototype.render = function(gl, scene) {
+  Ngl.i++;
+
+  if(Ngl.i === 100) {
+    console.log("**** "+this.name);
+    var vIn = vec3.create();
+    var vOut = vec3.create();
+
+    this.warpPoint(vIn, vOut);
+    debugger;
+
+    vIn[0] = 1.0;
+    this.warpPoint(vIn, vOut);
+    debugger;
+  }
+
   this.preRender.call(this, gl, scene);
 
   if(!this.canvasInitialized) {
@@ -189,6 +206,7 @@ Ngl.WrPanel.prototype.render = function(gl, scene) {
   gl.drawElements(gl.TRIANGLES, this.numIndices, gl.UNSIGNED_SHORT, 0);
 
   this.postRender.call(this, gl, scene);
+
 };
 
 /***

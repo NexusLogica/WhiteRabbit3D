@@ -46,3 +46,7 @@ Ngl.Surface.SurfaceMorph.prototype.parseBeforeAfter = function() {
   Ngl.processTransformString(this.after, this.config.after);
 };
 
+Ngl.Surface.SurfaceMorph.prototype.warpPoint = function(vecIn, vecOut) {
+  this.surfaceTransform.warpPoint(vecIn, vecOut, this.before, this.mat, this.after, this.ivec);
+}
+

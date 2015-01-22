@@ -27,7 +27,10 @@ Ngl.WrDock = function(config) {
   this.wrTransform = mat4.create();
   this.wrTransformScaled = mat4.create();
   this.wrTransformAndTranform = mat4.create();
+  this.wrTranslate = vec3.create();
+  this.wrTransformTranslated = mat4.create(); // A working matrix that translates this.transform by this.wrTranslate*this.pixelSize.
   this.surfaces = [];
+  this.workingVec3 = vec3.create();
 
   this.wrScaleFactor = 1.0;
   this.totalScaling = 1.0;
@@ -131,8 +134,7 @@ Ngl.WrDock.prototype.processPosition3d = function() {
         switch (posType) {
           case 'translate':
           {
-            var posVec = Ngl.vecFromString(posValue);
-            mat4.translate(this.wrTransform, this.wrTransform, posVec);
+            this.wrTranslate = Ngl.vecFromString(posValue);
             break;
           }
           case 'rotateX':
@@ -210,6 +212,12 @@ Ngl.WrDock.prototype.processSurface3d = function() {
   }
 };
 
+/***
+ * Override the Ngl.Dock version.
+ * @method preRender
+ * @param gl
+ * @param scene
+ */
 Ngl.WrDock.prototype.preRender = function(gl, scene) {
   if(!this.initialized) {
     this.initialize(gl, scene);
@@ -230,7 +238,7 @@ Ngl.WrDock.prototype.postRender = function(gl, scene) {
 
 Ngl.WrDock.prototype.calculatePositioning = function(gl, scene) {
 
-  if(this.parent && this.parent.recalculatePosition) {
+  if(this.parent.recalculatePosition) {
     this.recalculatePosition = true;
   }
 
@@ -238,6 +246,8 @@ Ngl.WrDock.prototype.calculatePositioning = function(gl, scene) {
     if(this.pixelSizeReference === Ngl.MetricReference.PARENT && this.parent.pixelSize !== undefined) {
       this.pixelSize = this.parent.pixelSize;
     } else {
+      // Use the parent world transform and the local transform to get the local world transform.
+      // This is used to determine the z from the camera which is then used to determine local pixel size.
       this.updateTransformWithoutWrTransform(scene);
       this.transformUpdated = true;
 
@@ -256,10 +266,11 @@ Ngl.WrDock.prototype.updateTransform = function(scene) {
     debugger;
   }
   if(this.parent.transformUpdated || this.transformUpdated) {
+
     mat4.copy(this.wrTransformScaled, this.wrTransform);
-    this.wrTransformScaled[12] *= this.totalScaling;
-    this.wrTransformScaled[13] *= this.totalScaling;
-    this.wrTransformScaled[14] *= this.totalScaling;
+    this.wrTransformScaled[12] += (this.totalScaling*this.wrTranslate[0]*this.pixelSize);
+    this.wrTransformScaled[13] += (this.totalScaling*this.wrTranslate[1]*this.pixelSize);
+    this.wrTransformScaled[14] += (this.totalScaling*this.wrTranslate[2]*this.pixelSize);
 
     mat4.multiply(this.wrTransformAndTranform, this.wrTransformScaled,  this.transform);
     mat4.multiply(this.viewTransform, this.parent.viewTransform,  this.wrTransformAndTranform);
@@ -287,7 +298,6 @@ Ngl.WrDock.prototype.anchorToScreen = function(scene) {
     return;
   }
 
-  debugger;
   var pixelSize = scene.camera.getPixelSizeAtCameraZ(z);
   var w2 = 0.5*scene.gl.drawingBufferWidth;
   var h2 = 0.5*scene.gl.drawingBufferHeight;
@@ -328,6 +338,7 @@ Ngl.WrDock.prototype.anchorToScreen = function(scene) {
   scene.camera.add(this);
 
   mat4.identity(this.transform);
+  // TODO: Need to get this correct. Probably have to add to wrTranslate.
   mat4.translate(this.transform, this.transform, vec3.fromValues(x*pixelSize, y*pixelSize, -z));
   mat4.rotateX(this.transform, this.transform, Math.PI);
   this.transformUpdated = true;
@@ -345,19 +356,21 @@ Ngl.WrDock.prototype.anchorToScreen = function(scene) {
  * @param p { vec4 } The position in pixel coordinates.
  * @returns {{pos: *, up: *, norm: *, pixSizes: *}}
  */
-Ngl.WrDock.prototype.getMetricsFromPoint = function(p) {
+Ngl.WrDock.prototype.warpPoint = function(vecIn, vecOut) {
 
-  var trans = mat4.create();
-  mat4.translate(trans, p);
-
-  var pixSizes = vec4.create();
+  vec3.set(vecOut, this.size[0]*vecIn[0], this.size[1]*vecIn[1], this.size[2]*vecIn[2]);
 
   for(var i=0; i<this.surfaces.length; i++) {
+    vec3.copy(this.workingVec3, vecOut);
     var surface = this.surfaces[i];
-    surface.translate(trans, pixSizes);
+    surface.warpPoint(this.workingVec3, vecOut);
   }
 
-  return { transform: trans, pixSizes: pixSizes, pixelMetric: this.pixelSize };
+  vecOut[0] *= this.pixelSize;
+  vecOut[1] *= this.pixelSize;
+  vecOut[2] *= this.pixelSize;
+
+  vec3.transformMat4(vecOut, vecOut, this.viewTransform);
 };
 
 /*************************************************************************
