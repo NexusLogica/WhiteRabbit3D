@@ -1,0 +1,59 @@
+/*
+Syntax error: File to import not found or unreadable: ../../css/core.scss.
+              Load path: /Users/lgunn/WhiteRabbit3D/src/components/threejs-canvas
+        on line 14 of threejs-canvas.scss
+
+9: Copyright (c) 2014 by Lawrence Gunn
+10: All Rights Reserved.
+11: 
+12: *\/
+13: 
+14: @import '../../css/core.scss';
+15: @import '../../css/mixins.scss';
+16: @import '../../css/common.scss';
+17: 
+18: 
+19: .pi-canvas3d {
+
+Backtrace:
+threejs-canvas.scss:14
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/import_node.rb:67:in `rescue in import'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/import_node.rb:45:in `import'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/import_node.rb:28:in `imported_file'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/import_node.rb:37:in `css_import?'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/perform.rb:217:in `visit_import'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/base.rb:37:in `visit'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/perform.rb:100:in `visit'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/base.rb:53:in `block in visit_children'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/base.rb:53:in `map'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/base.rb:53:in `visit_children'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/perform.rb:109:in `block in visit_children'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/perform.rb:121:in `with_environment'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/perform.rb:108:in `visit_children'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/base.rb:37:in `block in visit'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/perform.rb:128:in `visit_root'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/base.rb:37:in `visit'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/perform.rb:100:in `visit'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/perform.rb:7:in `visit'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/root_node.rb:20:in `render'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/engine.rb:315:in `_render'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/engine.rb:262:in `render'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/plugin/compiler.rb:362:in `update_stylesheet'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/plugin/compiler.rb:203:in `block in update_stylesheets'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/plugin/compiler.rb:201:in `each'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/plugin/compiler.rb:201:in `update_stylesheets'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/plugin.rb:81:in `update_stylesheets'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/exec.rb:443:in `watch_or_update'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/exec.rb:326:in `process_result'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/exec.rb:41:in `parse'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/exec.rb:21:in `parse!'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/bin/scss:13:in `<top (required)>'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/bin/scss:23:in `load'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/bin/scss:23:in `<main>'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/bin/ruby_executable_hooks:15:in `eval'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/bin/ruby_executable_hooks:15:in `<main>'
+*/
+body:before {
+  white-space: pre;
+  font-family: monospace;
+  content: "Syntax error: File to import not found or unreadable: ../../css/core.scss.\A               Load path: /Users/lgunn/WhiteRabbit3D/src/components/threejs-canvas\A         on line 14 of threejs-canvas.scss\A \A 9: Copyright (c) 2014 by Lawrence Gunn\A 10: All Rights Reserved.\A 11: \A 12: */\A 13: \A 14: @import '../../css/core.scss';\A 15: @import '../../css/mixins.scss';\A 16: @import '../../css/common.scss';\A 17: \A 18: \A 19: .pi-canvas3d {"; }

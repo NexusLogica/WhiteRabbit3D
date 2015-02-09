@@ -24,7 +24,7 @@ angular.module('wr3dApp').directive('bachStudies', [function() {
 
       $scope.studyTypes = [
         { value: 'betatron', name: 'Betatron' },
-        { value: 'twoElectronRelativity', name: 'Two Electron Relativity'}
+        { value: 'circuitField', name: 'Circuit Field Calculations'}
       ];
 
       $scope.study = $scope.studyTypes[1];

@@ -126,18 +126,26 @@ Ngl.i = 0;
 Ngl.WrPanel.prototype.render = function(gl, scene) {
   Ngl.i++;
 
-  if(Ngl.i === 100) {
-    console.log("**** "+this.name);
-    var vIn = vec3.create();
-    var vOut = vec3.create();
-
-    this.warpPoint(vIn, vOut);
-    debugger;
-
-    vIn[0] = 1.0;
-    this.warpPoint(vIn, vOut);
-    debugger;
-  }
+  //if(Ngl.i === 100) {
+  //  console.log("**** "+this.name);
+  //  var vIn = vec3.create();
+  //  var vOut = vec3.create();
+  //
+  //  this.warpPoint(vIn, vOut);
+  //
+  //  vIn[0] = 1.0;
+  //  this.warpPoint(vIn, vOut);
+  //}
+  //if(Ngl.i === 100) {
+  //  console.log("**** "+this.name);
+  //  var vIn = vec3.create();
+  //  var vOut = vec3.create();
+  //
+  //  this.warpPoint(vIn, vOut);
+  //
+  //  vIn[0] = 1.0;
+  //  this.warpPoint(vIn, vOut);
+  //}
 
   this.preRender.call(this, gl, scene);
 

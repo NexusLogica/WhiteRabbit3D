@@ -715,6 +715,9 @@ body {
 .pi-error {
   border-color: #eb881e; }
 
+body {
+  background-color: transparent !important; }
+
 .audio-container {
   width: 100%; }
   .audio-container .audio-canvas {
@@ -723,34 +726,33 @@ body {
     margin: 30px auto 30px auto;
     width: 800px;
     height: 600px; }
-  .audio-container .song-title > div {
-    border-bottom: gray 2px solid;
-    border-top: gray 2px solid;
-    color: darkgoldenrod;
-    font-size: 20px;
-    padding: 5px 0px 5px 0px; }
-  .audio-container .song-title .inline {
-    display: inline-block; }
-  .audio-container .song-title .btn {
-    background-color: rgba(200, 200, 200, 0.1);
-    border: 1px gray solid; }
+  .audio-container .song-title {
+    background-color: transparent; }
+    .audio-container .song-title > div {
+      background-color: transparent;
+      border-bottom: gray 2px solid;
+      border-top: gray 2px solid;
+      color: darkgoldenrod;
+      font-size: 20px;
+      padding: 5px 0px 5px 0px; }
+    .audio-container .song-title .inline {
+      background-color: transparent;
+      display: inline-block; }
+    .audio-container .song-title .btn {
+      background-color: transparent;
+      border: 1px gray solid; }
   .audio-container .content-panel {
-    background-color: rgba(0, 0, 0, 0);
-    padding: 2px; }
+    background-color: rgba(0, 0, 0, 0); }
     .audio-container .content-panel > div {
       border: darkgray 2px solid;
-      padding: 10px;
+      margin: 10px 10px;
+      box-sizing: border-box;
       font-size: 20px;
-      background-color: #e5e5e5;
       border-radius: 20px;
       -webkit-border-radius: 20px;
-      -moz-border-radius: 20px;
-      width: 300px;
-      height: 200px; }
+      -moz-border-radius: 20px; }
       .audio-container .content-panel > div .btn {
         font-size: 26px; }
-    .audio-container .content-panel.child-content > div {
-      cbackground-color: red; }
 
 /**********************************************************************
 
@@ -891,14 +893,26 @@ All Rights Reserved.
       margin-top: -4px;
       font-size: 85%; }
   .bach-studies-container .study-type-select {
+    text-align: right;
     margin-top: 15px; }
-    .bach-studies-container .study-type-select label {
-      display: inline-block; }
-    .bach-studies-container .study-type-select select {
-      display: inline-block; }
+    .bach-studies-container .study-type-select .run-type {
+      display: inline-block;
+      width: 410px;
+      margin-right: 2px; }
+      .bach-studies-container .study-type-select .run-type label {
+        display: inline-block;
+        width: 80px;
+        margin-right: 12px;
+        font-weight: normal;
+        color: #cccccc; }
+      .bach-studies-container .study-type-select .run-type .select-container {
+        display: inline-block;
+        width: 200px; }
+        .bach-studies-container .study-type-select .run-type .select-container select {
+          height: 30px; }
   .bach-studies-container .run-container {
     width: 900px;
-    margin: 50px auto 100px auto; }
+    margin: 15px auto 100px auto; }
     .bach-studies-container .run-container .button-container, .bach-studies-container .run-container .status {
       display: block;
       margin: 50px auto 50px auto;
@@ -1040,7 +1054,7 @@ All Rights Reserved.
 
 /**********************************************************************
 
-File     : two-electron-input.scss
+File     : circuit-field-input.scss
 Project  : N Simulator Library
 Purpose  : Source file for two electron relativity simulation input component SCSS files.
 Revisions: Original definition by Lawrence Gunn.
@@ -1086,25 +1100,44 @@ Copyright (c) 2014 by Lawrence Gunn
 All Rights Reserved.
 
 */
-.two-electron-input-container {
-  width: 100%;
+.circuit-field-input-container {
+  display: inline-block;
   clear: both;
-  color: white; }
-  .two-electron-input-container .form-group.run-type {
-    margin-bottom: 35px; }
-  .two-electron-input-container form.inputs input {
-    color: #444444; }
-  .two-electron-input-container .form-group.run-button {
-    margin-top: 45px; }
-  .two-electron-input-container .popover {
+  color: white;
+  width: 900px; }
+  .circuit-field-input-container form {
+    display: inline-block;
+    width: 440px; }
+    .circuit-field-input-container form label {
+      font-weight: normal; }
+    .circuit-field-input-container form .control-label {
+      display: inline-block;
+      width: 220px;
+      text-align: right;
+      margin-right: 10px; }
+    .circuit-field-input-container form .control-input {
+      display: inline-block;
+      width: 180px; }
+    .circuit-field-input-container form .form-group.run-type {
+      margin-bottom: 35px; }
+    .circuit-field-input-container form form.inputs input {
+      color: #444444; }
+  .circuit-field-input-container .popover {
     color: black;
     width: 200px;
     border-radius: 4px;
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     background-color: #e5e5e5; }
-    .two-electron-input-container .popover .arrow::after {
+    .circuit-field-input-container .popover .arrow::after {
       border-right-color: #e5e5e5; }
+  .circuit-field-input-container .preview-3d-display {
+    display: inline-block;
+    vertical-align: top; }
+    .circuit-field-input-container .preview-3d-display .render-target {
+      box-sizing: border-box;
+      width: 425px;
+      height: 400px; }
 
 /**********************************************************************
 
@@ -1188,3 +1221,61 @@ All Rights Reserved.
       height: 300px; }
       .bach-chart-container .plot-container .plot .dygraph-legend {
         background-color: #e5e5e5; }
+
+/**********************************************************************
+
+File     : threejs-canvas.scss
+Project  : N Simulator Library
+Purpose  : Source file for the threejs-canvas component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2015/02/08
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+/**********************************************************************
+
+File     : core.scss
+Project  : N Simulator Library
+Purpose  : Source file for a core SCSS/CSS file.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+input::-webkit-input-placeholder {
+  color: #dddddd; }
+
+input::-moz-placeholder {
+  color: #dddddd; }
+
+input::-moz-placeholder {
+  color: #dddddd; }
+
+input:-ms-input-placeholder {
+  color: #dddddd; }
+
+/**********************************************************************
+
+File     : mixins.scss
+Project  : N Simulator Library
+Purpose  : Source file for a mixin SCSS/CSS file.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+.threejs-canvas {
+  display: block;
+  -webkit-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03);
+  -moz-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03);
+  box-shadow: 1px 1px 20px 6px rgba(15, 15, 13, 0.03);
+  border: solid 1px #8fbcdb; }
+  .threejs-canvas .render-target {
+    width: 700px;
+    height: 500px; }

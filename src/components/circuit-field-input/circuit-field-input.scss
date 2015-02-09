@@ -1,0 +1,81 @@
+/**********************************************************************
+
+File     : circuit-field-input.scss
+Project  : N Simulator Library
+Purpose  : Source file for two electron relativity simulation input component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2015/01/10
+
+Copyright (c) 2015 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+
+$input-color: #444444;
+
+@import '../../appearance/css/core.scss';
+@import '../../appearance/css/mixins.scss';
+
+.circuit-field-input-container {
+  display: inline-block;
+  clear: both;
+  color: white;
+  width: 900px;
+
+  form {
+    label {
+      font-weight: normal;
+    }
+    display: inline-block;
+    width: 440px;
+
+    .control-label {
+      display: inline-block;
+      width: 220px;
+      text-align: right;
+      margin-right: 10px;
+    }
+
+    .control-input {
+      display: inline-block;
+      width: 180px;
+    }
+
+    .form-group.run-type {
+      margin-bottom: 35px;
+    }
+
+    form.inputs {
+      //margin: 0px auto 0px auto;
+      input {
+        color: $input-color;
+      }
+    }
+
+    .run-button {
+
+    }
+
+  }
+
+  .popover {
+    color: black;
+    width: 200px;
+    @include border-radius(4px);
+    background-color: #e5e5e5;
+    .arrow::after {
+      border-right-color:  #e5e5e5;
+    }
+  }
+
+  .preview-3d-display {
+    display: inline-block;
+    vertical-align: top;
+    .render-target {
+      box-sizing: border-box;
+      width: 425px;
+      height: 400px;
+    }
+  }
+
+};

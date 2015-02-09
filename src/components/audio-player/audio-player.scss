@@ -15,6 +15,10 @@ All Rights Reserved.
 @import '../../appearance/css/mixins.scss';
 @import '../../appearance/css/common.scss';
 
+body {
+  background-color: transparent !important;
+}
+
 .audio-container {
   width: 100%;
   .audio-canvas {
@@ -26,7 +30,9 @@ All Rights Reserved.
   }
 
   .song-title {
+    background-color: transparent;
     >div {
+      background-color: transparent;
       border-bottom: gray 2px solid;
       border-top: gray 2px solid;
       color: darkgoldenrod;
@@ -35,32 +41,35 @@ All Rights Reserved.
     }
 
     .inline {
+      background-color: transparent;
       display: inline-block;
     }
 
     .btn {
-      background-color: rgba(200, 200, 200, 0.1);
+      background-color: transparent;
+      //background-color: rgba(200, 200, 200, 0.1);
       border: 1px gray solid;
     }
   }
 
   .content-panel {
     background-color: rgba(0, 0, 0, 0.0);
-    padding: 2px;
+    //margin: 12px 12px;
+    //padding: 2px;
     >div {
       border: darkgray 2px solid;
-      padding: 10px;
+      margin: 10px 10px;
+      box-sizing: border-box;
+      //padding: 10px;
       font-size: 20px;
-      background-color: #e5e5e5;
+      //background-color: #e5e5e5;
       @include border-radius(20px);
-      width: 300px;
-      height: 200px;
       .btn {
         font-size: 26px;
       }
     }
     &.child-content > div {
-      cbackground-color: rgba(255, 0, 0, 1.0);
+      //background-color: rgba(255, 0, 0, 1.0);
     }
   }
 }

@@ -16,7 +16,6 @@ Ngl.Surface.RectangularTransform = function() {
   Ngl.Surface.SurfaceMorph.call(this);
   this.pos = vec3.create();
   this.posOut = vec3.create();
-
 };
 
 Ngl.Surface.RectangularTransform.prototype.warpPoint = function(vecIn, vecOut, transformBefore, surfaceData, transformAfter, integerData) {
@@ -35,5 +34,20 @@ Ngl.Surface.RectangularTransform.prototype.warpPoint = function(vecIn, vecOut, t
   vec3.transformMat4(vecOut, this.posOut, transformAfter);
 };
 
-Ngl.Surface.RectangularTransform.prototype.warpTransform = function(transIn, transOut, transformIn, surfaceData, transformOut, integerData) {
+Ngl.Surface.RectangularTransform.prototype.warpTransform = function(transIn, transOut, transformBefore, surfaceData, transformAfter, integerData) {
+  mat4.multiply(this.trans, transformBefore, transIn);
+
+  var scaleX = surfaceData[0];
+  var scaleY = surfaceData[1];
+  var scaleZ = surfaceData[2];
+
+  // This is kind of an arbitrary choice.
+  var pixelScaling = Math.sqrt(scaleX*scaleX + scaleY*scaleY + scaleZ*scaleZ)/Math.sqrt(3.0);
+
+  this.trans[12] *= scaleX;
+  this.trans[13] *= scaleY;
+  this.trans[14] *= scaleZ;
+
+  mat4.multiply(transOut, transformAfter, this.trans);
+  return pixelScaling;
 };

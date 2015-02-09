@@ -39,7 +39,7 @@ Ngl.HtmlCanvas.prototype.load = function(gl) {
 
   var start = new Date();
   html2canvas(this.host.get(0), {
-    //background: undefined,
+    background: undefined,
     onrendered: function(canvas) {
       var element = $('.html2canvas-canvas').get(0);
       _this.updateCanvas = canvas;
@@ -52,7 +52,7 @@ Ngl.HtmlCanvas.prototype.load = function(gl) {
     },
     onclone: function(element) {
       $(element).find('.wr3d-host').css('visibility', 'visible');
-      //$(element).find('.html2canvas-container').css('background-color', 'green').css('top', '0px');
+      $(element).find('.html2canvas-container').css('background-color', 'green').css('top', '0px');
     }
   });
 

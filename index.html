@@ -7,7 +7,7 @@
   <link href='http://fonts.googleapis.com/css?family=Raleway:400,100' rel='stylesheet' type='text/css'>
   <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,800,300,600' rel='stylesheet' type='text/css'>
 
-  <link rel="stylesheet" href="src/lib/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="src/lib/bower_components/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="src/appearance/css/wr3d.css"/>
   <link rel="shortcut icon" href="src/appearance/images/wr3d.png" />
 </head>
@@ -32,6 +32,10 @@
   <script src="src/lib/bower_components/d3/d3.min.js"></script>
   <script src="src/lib/bower_components/dygraphs/dygraph-combined-dev.js"></script>
   <script src="src/lib/bower_components/dygraphs/extras/smooth-plotter.js"></script>
+  <script src="src/lib/bower_components/threejs/build/three.js"></script>
+  <script src="src/lib/threejs-extra/Detector.js"></script>
+  <script src="src/lib/threejs-extra/OrbitControls.js"></script>
+  <script src="src/lib/threejs-extra/TrackballControls.js"></script>
   <script src="src/app.js"></script>
   <script src="src/services/component-extensions.js"></script>
 
@@ -61,6 +65,14 @@
   <script src="src/directives/wr3d-object.js"></script>
   <script src="src/directives/wr3d-style.js"></script>
 
+  <script src="src/components/threejs-canvas/threejs-canvas.js"></script>
+  <script src="src/lib/bach-visualization/bach-visualization.js"></script>
+  <script src="src/lib/bach-visualization/fields/vector-field.js"></script>
+  <script src="src/lib/bach-visualization/fields/cylindrical-field.js"></script>
+  <script src="src/lib/bach-visualization/fields/electric-field.js"></script>
+  <script src="src/lib/bach-visualization/graphics/field-scene.js"></script>
+  <script src="src/lib/bach-visualization/graphics/field-grid.js"></script>
+
   <script src="src/pages/home-page/home-page.js"></script>
   <script src="src/components/home/home.js"></script>
   <script src="src/components/background-video/background-video.js"></script>
@@ -72,7 +84,7 @@
   <script src="src/components/bach-studies/bach-studies.js"></script>
   <script src="src/components/bach-tabular-output/bach-tabular-output.js"></script>
   <script src="src/components/betatron-input/betatron-input.js"></script>
-  <script src="src/components/two-electron-input/two-electron-input.js"></script>
+  <script src="src/components/circuit-field-input/circuit-field-input.js"></script>
   <script src="src/components/bach-chart/bach-chart.js"></script>
 
 </body>

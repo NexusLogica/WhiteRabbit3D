@@ -16,6 +16,7 @@ Ngl.Surface.CylindricalTransform = function() {
   Ngl.Surface.SurfaceMorph.call(this);
   this.pos = vec3.create();
   this.posOut = vec3.create();
+  this.trans = mat4.create();
 
 };
 
@@ -35,5 +36,20 @@ Ngl.Surface.CylindricalTransform.prototype.warpPoint = function(vecIn, vecOut, t
   vec3.transformMat4(vecOut, this.posOut, transformAfter);
 };
 
-Ngl.Surface.CylindricalTransform.prototype.warpTransform = function(transIn, transOut, transformIn, surfaceData, transformOut, integerData) {
+Ngl.Surface.CylindricalTransform.prototype.warpTransform = function(transIn, transOut, transformBefore, surfaceData, transformAfter, integerData) {
+  mat4.multiply(this.trans, transformBefore, transIn);
+
+  // surface data:
+  var referenceRadius = surfaceData[0];
+
+  var angle = this.trans[0]/referenceRadius;
+
+  var pixelScaling = Math.pow(Math.E, -this.trans[1]/referenceRadius);
+  var radius = referenceRadius*pixelScaling;
+  this.trans[12] = 0.0;
+  this.trans[13] = radius;
+  mat4.rotateZ(angle);
+
+  mat4.multiply(transOut, transformAfter, this.trans);
+  return pixelScaling;
 };

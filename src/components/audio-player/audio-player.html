@@ -5,32 +5,8 @@
   <wr3d-style wr-import="src/components/audio-player/audio-player.json"></wr3d-style>
 
   <wr3d-dock wr-class="page-anchor" wr-display="true" wr-id="main-dock">
-    <wr3d-object wr-class="anchor-cube" wr-id="box"></wr3d-object>
+    <!--<wr3d-object wr-class="anchor-cube" wr-id="box"></wr3d-object>-->
   </wr3d-dock>
-
-  <wr3d-panel wr-class="latin-panel" wr-display="true" wr-id="latin-panel">
-    <div class="song-title">
-      <div>
-        <div class="inline">Hi there</div>
-        <button class="inline btn" ng-click="onNext()" ng-bind="buttonText"></button>
-        <div class="inline">
-          Lorem ipsum dolor sit amet, dicat adipiscing id sed. Qui natum euismod pertinacia eu, mei ad summo tempor sententiae.
-        </div>
-      </div>
-    </div>
-  </wr3d-panel>
-
-  <wr3d-panel wr-class="latin-cylinder" wr-display="false" wr-id="latin-cylinder">
-    <div class="song-title">
-      <div>
-        <div class="inline">Hi there</div>
-        <button class="inline btn" ng-click="onNext()" ng-bind="buttonText"></button>
-        <div class="inline">
-          This is not at all latin. But it could be if I it is warped looking enough.
-        </div>
-      </div>
-    </div>
-  </wr3d-panel>
 
   <wr3d-panel wr-display="true" wr-id="main-content" wr-class="main-content">
     <div class="main-content content-panel">
@@ -56,6 +32,30 @@
       <div>
         <div class="inline">Blah</div>
         <button class="btn" ng-click="onNext()" ng-bind="buttonText"></button>
+      </div>
+    </div>
+  </wr3d-panel>
+
+  <wr3d-panel wr-class="latin-panel" wr-display="true" wr-id="latin-panel">
+    <div class="song-title">
+      <div>
+        <div class="inline">Hi there</div>
+        <button class="inline btn" ng-click="onNext()" ng-bind="buttonText"></button>
+        <div class="inline">
+          Lorem ipsum dolor sit amet, dicat adipiscing id sed. Qui natum euismod pertinacia eu, mei ad summo tempor sententiae.
+        </div>
+      </div>
+    </div>
+  </wr3d-panel>
+
+  <wr3d-panel wr-class="latin-cylinder" wr-display="false" wr-id="latin-cylinder">
+    <div class="song-title">
+      <div>
+        <div class="inline">Hi there</div>
+        <button class="inline btn" ng-click="onNext()" ng-bind="buttonText"></button>
+        <div class="inline">
+          This is not at all latin. But it could be if I it is warped looking enough.
+        </div>
       </div>
     </div>
   </wr3d-panel>

@@ -346,15 +346,35 @@ Ngl.WrDock.prototype.anchorToScreen = function(scene) {
 };
 
 /***
- * For a given point in the pixel metric space this function returns the position, up and normal vectors, and pixel sizes.
- * Returned is:
- *     transform: The transform of the point in pixel metric coordinates.
- *     pixelMetric: The base pixel metric for the dock. Note that this may be inherited from a parent dock.
- *     pixSizes: The pixel space unit pixel sizes in the x, y (up), and z (norm) directions.
+ * For a given point in the pixel metric space this function returns the position in this dock's view transform.
  *
- * @method getMetricsFromPoint
- * @param p { vec4 } The position in pixel coordinates.
- * @returns {{pos: *, up: *, norm: *, pixSizes: *}}
+ * @method warpPointInPixelSpace
+ * @param vecIn
+ * @param vecOut
+ */
+Ngl.WrDock.prototype.warpPointInPixelSpace = function(vecIn, vecOut) {
+
+  vec3.set(vecOut, this.size[0]*vecIn[0], this.size[1]*vecIn[1], this.size[2]*vecIn[2]);
+
+  for(var i=0; i<this.surfaces.length; i++) {
+    vec3.copy(this.workingVec3, vecOut);
+    var surface = this.surfaces[i];
+    surface.warpPoint(this.workingVec3, vecOut);
+  }
+
+  vecOut[0] *= this.pixelSize;
+  vecOut[1] *= this.pixelSize;
+  vecOut[2] *= this.pixelSize;
+
+  vec3.transformMat4(vecOut, vecOut, this.viewTransform);
+};
+
+/***
+ * For a given point in the pixel metric space this function returns the position in this dock's view transform.
+ *
+ * @method warpPoint
+ * @param vecIn
+ * @param vecOut
  */
 Ngl.WrDock.prototype.warpPoint = function(vecIn, vecOut) {
 
@@ -371,6 +391,37 @@ Ngl.WrDock.prototype.warpPoint = function(vecIn, vecOut) {
   vecOut[2] *= this.pixelSize;
 
   vec3.transformMat4(vecOut, vecOut, this.viewTransform);
+};
+
+/***
+ * For a given point in the pixel metric space this function returns the position, up and normal vectors, and pixel sizes.
+ * Returned is:
+ *     transform: The transform of the point in pixel metric coordinates.
+ *     pixelMetric: The base pixel metric for the dock. Note that this may be inherited from a parent dock.
+ *     pixSizes: The pixel space unit pixel sizes in the x, y (up), and z (norm) directions.
+ *
+ * @method warpTransformInPixelSpace
+ * @param p { vec4 } The position in pixel coordinates.
+ * @returns {{pos: *, up: *, norm: *, pixSizes: *}}
+ */
+Ngl.WrDock.prototype.warpTransformInPixelSpace = function(vecIn, vecOut) {
+
+  var pixelSizel = 1.0;
+  vec3.set(vecOut, this.size[0]*vecIn[0], this.size[1]*vecIn[1], this.size[2]*vecIn[2]);
+
+  for(var i=0; i<this.surfaces.length; i++) {
+    vec3.copy(this.workingVec3, vecOut);
+    var surface = this.surfaces[i];
+    surface.warpPoint(this.workingVec3, vecOut);
+  }
+
+  vecOut[0] *= this.pixelSize;
+  vecOut[1] *= this.pixelSize;
+  vecOut[2] *= this.pixelSize;
+
+  vec3.transformMat4(vecOut, vecOut, this.viewTransform);
+
+  return
 };
 
 /*************************************************************************

@@ -2,26 +2,24 @@
 
   <div class="bach-title"><div class="higher">B</div><div class="lower">ACH</div></div>
 
-  <form role="form" class="form-horizontal inputs row-fluid study-type-select">
-    <row>
-      <div class="form-group run-type">
-        <label class="col-sm-offset-2 col-sm-3 control-label" for="study-type-select">
-          Study type:
-        </label>
-        <div class="col-sm-2">
-          <select
-              id="study-type-select"
-              class="form-control"
-              ng-init="study.type = study.type || studyTypes[1]"
-              ng-model="study.type"
-              ng-options="study.name for study in studyTypes">
-          </select>
-        </div>
+  <form role="form" class="form-horizontal inputs study-type-select">
+    <div class="form-group run-type">
+      <label class="control-label" for="study-type-select">
+        Study type:
+      </label>
+      <div class="select-container">
+        <select
+            id="study-type-select"
+            class="form-control"
+            ng-init="study.type = study.type || studyTypes[1]"
+            ng-model="study.type"
+            ng-options="study.name for study in studyTypes">
+        </select>
       </div>
-    </row>
+    </div>
   </form>
 
-  <div ng-show="study.type.value === 'betatron'" class="run-container row">
+  <div ng-show="study.type.value === 'betatron'" class="run-container">
 
     <betatron-input></betatron-input>
 
@@ -33,10 +31,7 @@
 
   </div>
 
-  <div ng-show="study.type.value === 'twoElectronRelativity'" class="run-container row">
-
-    <two-electron-input></two-electron-input>
-
-
+  <div ng-show="study.type.value === 'circuitField'" class="run-container">
+    <circuit-field-input></circuit-field-input>
   </div>
 </div>

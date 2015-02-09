@@ -83,11 +83,9 @@ Ngl.VertexShaders.textureVertexShader = '                                   \n\
     float referenceRadius = surfaceDataArray[dataIndex].floatData[0][0];    \n\
                                                                             \n\
     float angle = pos.x/referenceRadius;                                    \n\
-    float radius = referenceRadius*pow(NXGR_E, -(referenceRadius-pos.y)/referenceRadius);     \n\
-    float x = posIn.x;//radius*cos(angle);                                            \n\
- //   if(referenceRadius < 201.0) { x -= 1.0; }//radius*cos(angle);                                            \n\
- //   if(pixelSize < 0.1) { x -= 1.0; }//radius*cos(angle);                                            \n\
-    float y = posIn.y+referenceRadius*0.001;//radius*sin(angle);                                            \n\
+    float radius = referenceRadius*pow(NXGR_E, -pos.y/referenceRadius);     \n\
+    float x = radius*cos(angle);                                            \n\
+    float y = radius*sin(angle);                                            \n\
     float z = pos.z;                                                        \n\
                                                                             \n\
     return surfaceDataArray[dataIndex].transformAfter*vec4(x, y, z, 1.0);   \n\
