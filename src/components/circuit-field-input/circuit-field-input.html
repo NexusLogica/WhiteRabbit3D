@@ -26,6 +26,7 @@
                  min="{{inputType.min}}"
                  max="{{inputType.max}}"
                  step="{{inputType.step}}"
+                 ng-change="updateInputType($index, inputType.arg)"
                  data-toggle="popover"
                  data-content="{{inputType.description}}">
         </div>

@@ -814,7 +814,14 @@ All Rights Reserved.
 */
 body {
   position: relative;
-  background-color: #2B374D; }
+  background-color: #2B374D;
+  position: fixed;
+  bottom: 0px;
+  top: 0px;
+  left: 0px;
+  right: 0px; }
+  body > div {
+    height: 100%; }
 
 .bach {
   position: relative;

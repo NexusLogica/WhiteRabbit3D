@@ -19,6 +19,7 @@ Bach.FieldScene = function() {
   this.showArrows = true;
   this.charges = [];
   this.arrows = [];
+  this.graphics = [];
 
   this.gridCenterOriginal = new THREE.Vector3(0.0, 0.0, 0.0);
   this.gridCenterCurrent = this.gridCenterOriginal.clone();
@@ -34,9 +35,13 @@ Bach.FieldScene.prototype.addCharge = function(position, magnitude, color) {
   this.charges.push(charge);
 }
 
-Bach.FieldScene.prototype.build = function(scene) {
+Bach.FieldScene.prototype.addGraphic = function(graphic) {
+  this.graphics.push(graphic);
+}
 
-  this.scene = scene;
+Bach.FieldScene.prototype.build = function(scene3js) {
+
+  this.scene3js = scene3js;
 
   this.grid.build();
   this.grid.applyField(this.field, this.gridCenterOriginal);
@@ -70,11 +75,15 @@ Bach.FieldScene.prototype.build = function(scene) {
   this.createCharges();
 
   this.axis = new THREE.AxisHelper(2.0);
-  this.scene.add(this.axis);
+  this.scene3js.add(this.axis);
 
-  this.setLighting(scene);
+  this.setLighting(this.scene3js);
 
   this.range = this.gridMax-this.gridMin;
+
+  for(var i=0; i<this.graphics.length; i++) {
+    this.graphics[i].build(this.scene3js);
+  }
 
   this.update(this.gridCenterOriginal);
 };
@@ -111,14 +120,14 @@ Bach.FieldScene.prototype.createArrows = function() {
     var arrowFrame = new THREE.Object3D();
     arrowFrame.add(arrow);
     this.arrows.push(arrowFrame);
-    this.scene.add(arrowFrame);
+    this.scene3js.add(arrowFrame);
   }
 };
 
 Bach.FieldScene.prototype.buildCloud = function() {
   var material = new THREE.PointCloudMaterial({ size: 0.025, vertexColors: THREE.VertexColors });
   this.pointCloud = new THREE.PointCloud(this.geometry, material);
-  this.scene.add(this.pointCloud);
+  this.scene3js.add(this.pointCloud);
 };
 
 Bach.FieldScene.prototype.createCharges = function() {
@@ -134,7 +143,7 @@ Bach.FieldScene.prototype.createCharges = function() {
           shininess: 8  })
       );
       charge.graphic.overdraw = true;
-      this.scene.add(charge.graphic);
+      this.scene3js.add(charge.graphic);
     }
   }
 };
@@ -214,13 +223,13 @@ Bach.FieldScene.prototype.updateArrow = function(arrowFrame, point, color) {
   arrow.setColor(color);
 };
 
-Bach.FieldScene.prototype.setLighting = function(scene) {
+Bach.FieldScene.prototype.setLighting = function(scene3js) {
   // add subtle ambient lighting
   var ambientLight = new THREE.AmbientLight(0x303030);
-  scene.add(ambientLight);
+  scene3js.add(ambientLight);
 
   // directional lighting
   var directionalLight = new THREE.DirectionalLight(0xB0B0B0);
   directionalLight.position.set(0.8, 0.6, 1.2).normalize();
-  scene.add(directionalLight);
+  scene3js.add(directionalLight);
 };

@@ -42,6 +42,7 @@ angular.module('wr3dApp').directive('circuitFieldInput', [function() {
               min: 0.001,
               max: 5.0,
               step: 0.01,
+              onChange: function(value) { $scope.circuit.width = value; $scope.circuit.update(); },
               validate: function(d) { if(d <= 0.0) { return "The width must be greater than zero"; } }
             },
             {
@@ -53,6 +54,7 @@ angular.module('wr3dApp').directive('circuitFieldInput', [function() {
               min: 0.001,
               max: 5.0,
               step: 0.01,
+              onChange: function(value) { $scope.circuit.length = value; $scope.circuit.update(); },
               validate: function(d) { if(d <= 0.0) { return "The length must be greater than zero"; } }
             },
             {
@@ -81,22 +83,32 @@ angular.module('wr3dApp').directive('circuitFieldInput', [function() {
         }
       };
 
+      $scope.updateInputType = function(index, arg) {
+        var input = $scope.simTypes[$scope.targetType].inputs[index];
+        if(input.onChange) {
+          input.onChange($scope.model[arg]);
+        }
+      };
+
       $scope.setElectricField = function() {
         $scope.field = new Bach.ElectricField();
         $scope.grid  = new Bach.FieldGrid();
         $scope.grid.grid = new THREE.Vector3(3, 3, 3);
+        $scope.circuit = new Bach.RectangularCircuit();
         $scope.scene = new Bach.FieldScene();
         $scope.scene.setFieldAndGrid($scope.field, $scope.grid);
         $scope.scene.addCharge(new THREE.Vector3(0.0, 0.0, 0.0), -1.0);
+        $scope.scene.addGraphic($scope.circuit);
       };
-
-      $scope.setElectricField();
 
       $scope.initRunType = function() {
         $scope.model = $scope.model || {};
         _.forEach($scope.simTypes[$scope.targetType].inputs, function(input){
           if(!$scope.model.hasOwnProperty(input.arg)) {
             $scope.model[input.arg] = input.default;
+            if(input.onChange) {
+              input.onChange(input.default);
+            }
           }
         });
 
@@ -130,8 +142,8 @@ angular.module('wr3dApp').directive('circuitFieldInput', [function() {
 
     }],
     link: function($scope, $element, $attrs, $ctrl) {
+      $scope.setElectricField();
       $scope.initRunType();
-
     }
   };
 }]);
