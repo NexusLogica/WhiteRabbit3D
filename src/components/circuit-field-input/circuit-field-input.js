@@ -66,6 +66,7 @@ angular.module('wr3dApp').directive('circuitFieldInput', [function() {
               min: -10.0,
               max: 10.0,
               step: 0.05,
+              onChange: function(value) { $scope.circuitFrame.x = value; $scope.circuitFrame.update(); },
               validate: function() { }
             },
             {
@@ -77,6 +78,43 @@ angular.module('wr3dApp').directive('circuitFieldInput', [function() {
               min: -10.0,
               max: 10.0,
               step: 0.05,
+              onChange: function(value) { $scope.circuitFrame.z = value; $scope.circuitFrame.update(); },
+              validate: function() { }
+            },
+            {
+              arg: "circuitRotationX",
+              name: "Circuit Rotation X",
+              description: "Rotation of the circuit around the x axis.",
+              units: "degrees",
+              default: 0.0,
+              min: -180.0,
+              max: 180.0,
+              step: 1.0,
+              onChange: function(value) { $scope.circuitFrame.rotationX = Bach.toRadians(value); $scope.circuitFrame.update(); },
+              validate: function() { }
+            },
+            {
+              arg: "circuitRotationY",
+              name: "Circuit Rotation Y",
+              description: "Rotation of the circuit around the y axis.",
+              units: "degrees",
+              default: 0.0,
+              min: -180.0,
+              max: 180.0,
+              step: 1.0,
+              onChange: function(value) { $scope.circuitFrame.rotationY = Bach.toRadians(value); $scope.circuitFrame.update(); },
+              validate: function() { }
+            },
+            {
+              arg: "circuitRotationZ",
+              name: "Circuit Rotation Z",
+              description: "Rotation of the circuit around the z axis.",
+              units: "degrees",
+              default: 0.0,
+              min: -180.0,
+              max: 180.0,
+              step: 1.0,
+              onChange: function(value) { $scope.circuitFrame.rotationZ = Bach.toRadians(value); $scope.circuitFrame.update(); },
               validate: function() { }
             }
           ]
@@ -91,14 +129,18 @@ angular.module('wr3dApp').directive('circuitFieldInput', [function() {
       };
 
       $scope.setElectricField = function() {
-        $scope.field = new Bach.ElectricField();
-        $scope.grid  = new Bach.FieldGrid();
-        $scope.grid.grid = new THREE.Vector3(3, 3, 3);
+        //$scope.field = new Bach.ElectricField();
+        //$scope.grid  = new Bach.FieldGrid();
+        //$scope.grid.grid = new THREE.Vector3(3, 3, 3);
+        $scope.circuitFrame = new Bach.ReferenceFrame();
         $scope.circuit = new Bach.RectangularCircuit();
         $scope.scene = new Bach.FieldScene();
         $scope.scene.setFieldAndGrid($scope.field, $scope.grid);
         $scope.scene.addCharge(new THREE.Vector3(0.0, 0.0, 0.0), -1.0);
-        $scope.scene.addGraphic($scope.circuit);
+        $scope.scene.addGraphic($scope.circuitFrame);
+        $scope.circuitFrame.addGraphic($scope.circuit);
+
+        $scope.initialCameraPosition = new THREE.Vector3(0.2, 0.2, 1.0);
       };
 
       $scope.initRunType = function() {

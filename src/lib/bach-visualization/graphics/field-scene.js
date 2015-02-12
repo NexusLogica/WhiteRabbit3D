@@ -43,39 +43,41 @@ Bach.FieldScene.prototype.build = function(scene3js) {
 
   this.scene3js = scene3js;
 
-  this.grid.build();
-  this.grid.applyField(this.field, this.gridCenterOriginal);
+  if(this.grid) {
+    this.grid.build();
+    this.grid.applyField(this.field, this.gridCenterOriginal);
 
-  // Set the max and min and keep those values. Note that if both values are positive then it is assumed the minimum
-  // is zero, and the reverse if both are negative.
-  this.gridMax = this.grid.max;
-  this.gridMin = this.grid.min;
-  if(this.gridMin > 0) {
-    this.gridMin = 0.0;
-    this.arrowAutoScaling = 1.0/this.gridMax;
+    // Set the max and min and keep those values. Note that if both values are positive then it is assumed the minimum
+    // is zero, and the reverse if both are negative.
+    this.gridMax = this.grid.max;
+    this.gridMin = this.grid.min;
+    if (this.gridMin > 0) {
+      this.gridMin = 0.0;
+      this.arrowAutoScaling = 1.0 / this.gridMax;
+    }
+    else if (this.gridMax < 0) {
+      this.gridMax = 0.0;
+      this.arrowAutoScaling = -1.0 / this.gridMin;
+    } else {
+      this.arrowAutoScaling = 1.0 / Math.max(Math.abs(this.gridMax), Math.abs(this.gridMin));
+    }
+
+    this.absoluteMaxArrowLength = 2.0 * this.maxArrowLength;
+
+    if (this.showPoints) {
+      this.geometry = this.createPoints()
+      var buffer = this.buildCloud();
+    }
+
+    if (this.showArrows) {
+      this.createArrows();
+    }
+
+    this.createCharges();
   }
-  else if(this.gridMax < 0) {
-    this.gridMax = 0.0;
-    this.arrowAutoScaling = -1.0/this.gridMin;
-  } else {
-    this.arrowAutoScaling = 1.0/Math.max(Math.abs(this.gridMax), Math.abs(this.gridMin));
-  }
 
-  this.absoluteMaxArrowLength = 2.0*this.maxArrowLength;
-
-  if(this.showPoints) {
-    this.geometry = this.createPoints()
-    var buffer = this.buildCloud();
-  }
-
-  if(this.showArrows) {
-    this.createArrows();
-  }
-
-  this.createCharges();
-
-  this.axis = new THREE.AxisHelper(2.0);
-  this.scene3js.add(this.axis);
+  //this.axis = new THREE.AxisHelper(2.0);
+  //this.scene3js.add(this.axis);
 
   this.setLighting(this.scene3js);
 

@@ -14,3 +14,6 @@ All Rights Reserved.
 
 var Bach = Bach || {};
 
+Bach.toRadians = function(deg) {
+  return deg*Math.PI/180;
+};

@@ -18,7 +18,8 @@ angular.module('wr3dApp').directive('threejsCanvas', [function() {
   return {
     restrict: 'E',
     scope: {
-      scene: '=scene'
+      scene: '=scene',
+      initialCameraPosition: '=initialCameraPosition'
     },
     templateUrl: 'src/components/threejs-canvas/threejs-canvas.html',
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', function (ComponentExtensions, $scope, $element, $attrs) {
@@ -52,7 +53,12 @@ angular.module('wr3dApp').directive('threejsCanvas', [function() {
 
         scene = new THREE.Scene();
         camera = new THREE.PerspectiveCamera( 75, target.width() / target.height(), 0.1, 1000 );
-        camera.position.z = 3;
+        if($scope.initialCameraPosition) {
+          camera.position.copy($scope.initialCameraPosition);
+        } else {
+          camera.position.z = -3.0;
+        }
+        camera.updateMatrix();
 
         if(useTrackingControls) {
           var controls = new THREE.OrbitControls(camera, target[0]);
